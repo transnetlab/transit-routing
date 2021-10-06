@@ -3,13 +3,13 @@
 
 ## Table of Contents
 
-- [Introduction](#intro)
-- [What's included](#LOA)
-- [Usage Instructions](#UsageInstructions)
+- [Introduction](#Introduction)
+- [What's included](#What's included)
+- [Usage Instructions](#Usage Instructions)
 - [Contributing](#contributing)
 - [Creators](#Creators)
 - [References](#References)
-- [Copyright and license](#license)
+- [Copyright and license](#Copyright and license)
 
 ### Introduction
 This repository contains Python implemtation of various transit routing algorithms.
