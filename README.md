@@ -1,21 +1,19 @@
-rea![TB1](logo1.png)
+![TB1](logo1.png)
 
-Details
-=========================
-
-This repository contains Python implemtation of various transit routing algorithms. 
 
 ## Table of Contents
 
 - [Introduction](#intro)
 - [What's included](#LOA)
-- [Usage Instructions](#Usage Instructions)
+- [Usage Instructions](#UsageInstructions)
 - [Contributing](#contributing)
 - [Creators](#Creators)
 - [References](#References)
 - [Copyright and license](#license)
 
 ### Introduction
+This repository contains Python implemtation of various transit routing algorithms.
+
 ### What's included
 Algorithm | Source |  Status | Comments |
 |---|---|---|---|
