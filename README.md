@@ -4,7 +4,7 @@
 ## Table of Contents
 
 - [Introduction](#Introduction)
-- [What's included](#What's-included)
+- [List of Algorihtms](#List-of-Algorihtms)
 - [Usage Instructions](#usage-instructions)
 - [Contributing](#contributing)
 - [Creators](#Creators)
