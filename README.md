@@ -1,4 +1,4 @@
-![TB1](logo1.png)
+![TB1](logo.png)
 
 
 ## Table of Contents
