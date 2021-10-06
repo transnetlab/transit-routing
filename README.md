@@ -14,7 +14,7 @@
 ### Introduction
 This repository contains Python implemtation of various transit routing algorithms.
 
-### What's included
+### List of Algorihtms
 Algorithm | Source |  Status | Comments |
 |---|---|---|---|
 | RAPTOR | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) | Complete|
