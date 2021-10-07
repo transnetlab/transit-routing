@@ -15,7 +15,7 @@
 This repository contains Python implemtation of various transit routing algorithms.
 
 ### List of Algorihtms
-Algorithm | Source |  Status | Comments |
+Algorithm | SOURCE |  Status | Comments |
 |---|---|---|---|
 | RAPTOR | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) | Complete|
 | TBTR | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) |Complete|
@@ -29,6 +29,9 @@ Algorithm | Source |  Status | Comments |
 | NHypTBTR |  |To be updated soon|
 
 ### Usage Instructions
+To be updated soon.
+
+
 ### Contributing
 We welcome all suggestions from the community. If you wish to contribute or report any bug please contact the creaters or create an issue on the issue tracking system.
 ### Creators
