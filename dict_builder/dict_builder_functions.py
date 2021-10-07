@@ -1,0 +1,106 @@
+"""
+Module defines a function to save (using pickling) the GTFS information in the form of a dictionary.
+This is done for easy/faster data lookup.
+"""
+def build_save_route_by_stop(stop_times_file, FOLDER):
+    """
+    This function saves a dictionary to provide easy access to all the routes passing through a stop_id.
+    Args:
+        stop_times_file (pandas.dataframe): stop_times.txt file in GTFS
+        FOLDER (str): Network FOLDER
+    Returns:
+        route_by_stop_dict_new (dict): keys:stop_id (int), values: list of routes passing through the stop_id (list). Format-> dict[stop_id] = [route_id]
+    """
+    print("building routes_by_stop")
+    stops_by_route = stop_times_file.drop_duplicates(subset=['route_id', 'stop_sequence'])[['stop_id', 'route_id']].groupby('stop_id')
+    route_by_stop_dict_new = {id:list(routes.route_id) for id, routes in stops_by_route}
+    import pickle
+    with open(f'./dict_builder/{FOLDER}/routes_by_stop.pkl', 'wb') as pickle_file:
+        pickle.dump(route_by_stop_dict_new,pickle_file)
+    print("routes_by_stop done")
+    return route_by_stop_dict_new
+
+
+def build_save_stops_dict(stop_times_file,trips_file, FOLDER):
+    """
+    This function saves a dictionary to provide easy access to all the stops in the route.
+    Args:
+        stop_times_file (pandas.dataframe): stop_times.txt file in GTFS
+        trips_file (pandas.dataframe): trips.txt file in GTFS
+        FOLDER (str): Network FOLDER
+    Returns:
+        stops_dict (dict): keys :route_id (int), values: list of stop in the route_id (list). Format-> dict[route_id] = [stop_id]
+    """
+    from tqdm import tqdm
+    print("building stops dict")
+
+    trips_group = stop_times_file.groupby("trip_id")        #This drops all trips for which timestamps are not sorted
+    trips_with_correct_timestamps = [id for id, trip in tqdm(trips_group) if list(trip.arrival_time) == list(trip.arrival_time.sort_values())]
+    if len(trips_with_correct_timestamps) != len(trips_file):
+        print(f"Incorrecet time sequence in stoptimes builder file")
+    stop_times = stop_times_file[stop_times_file["trip_id"].isin(trips_with_correct_timestamps)]
+    route_groups = stop_times.drop_duplicates(subset=['route_id', 'stop_sequence'])[['stop_id', 'route_id', 'stop_sequence']].groupby('route_id')
+    stops_dict = {id:routes.sort_values(by='stop_sequence')['stop_id'].to_list() for id, routes in route_groups}
+
+    import pickle
+    with open(f'./dict_builder/{FOLDER}/stops_dict_pkl.pkl', 'wb') as pickle_file:
+        pickle.dump(stops_dict,pickle_file)
+    print("stops_dict done")
+    return stops_dict
+
+
+def build_save_stopstimes_dict(stop_times_file,trips_file, FOLDER):
+    """
+    This function saves a dictionary to provide easy access to all the trips passing along a route id. Trips are sorted
+    in the increasing order of departure time. A trip is list of tuple of form (stop id, arrival time)
+    Args:
+        stop_times_file (pandas.dataframe): stop_times.txt file in GTFS
+        trips_file (pandas.dataframe): dataframe with transfers (footpath) details
+        FOLDER (str): Network FOLDER
+    Returns:
+        stoptimes_dict (dict): keys: route ID (int), values: list of trips in the increasing order of start time. Format-> dict[route_ID] = [trip_1, trip_2] where trip_1 = [(stop id, arrival time), (stop id, arrival time)]
+    """
+    import pandas as pd
+    from tqdm import tqdm
+    print("building stoptimes dict")
+
+    stop_times_file.arrival_time = pd.to_datetime(stop_times_file.arrival_time)
+    route_group = stop_times_file.groupby("route_id")
+    stoptimes_dict = {r_id:[] for r_id,_ in route_group}
+    for r_id,route in tqdm(route_group):
+        trip_group = route.groupby("trip_id")   #Collect trip start points
+        temp = route[route.stop_sequence==0][["trip_id","arrival_time"]].sort_values(by=["arrival_time"])
+        for trip_id in temp["trip_id"]:                                                     #Add them inorder
+            trip = trip_group.get_group(trip_id).sort_values(by=["stop_sequence"])
+            stoptimes_dict[r_id].append(list(zip(trip.stop_id,trip.arrival_time)))
+
+    import pickle
+    with open(f'./dict_builder/{FOLDER}/stoptimes_dict_pkl.pkl', 'wb') as pickle_file:
+        pickle.dump(stoptimes_dict, pickle_file)
+    print("stoptimes dict done")
+    return stoptimes_dict
+
+
+def build_save_footpath_dict(transfser, FOLDER):
+    """
+    This function saves a dictionary to provide easy access to all the footpaths through a stop id.
+    Args:
+        transfser (pandas.dataframe): dataframe with transfers (footpath) details
+        FOLDER (str): Network FOLDER
+    Returns:
+        transfers_dict (dict): keys:from stop_id (int), values: list of tuples of form (to stop id, footpath duration) (list). Format-> dict[stop_id] = [(stop_id, footpath_duration)]
+    """
+    import pandas as pd
+    from tqdm import tqdm
+    print("building footpath dict..")
+    transfers_dict={}
+    g=transfser.groupby("from_stop_id")
+    for from_stop,details in tqdm(g):
+        transfers_dict[from_stop]=[]
+        for _,row in details.iterrows():
+            transfers_dict[from_stop].append((row.to_stop_id,pd.to_timedelta(float(row.min_transfer_time),unit='seconds')))
+    import pickle
+    with open(f'./dict_builder/{FOLDER}/transfers_dict_full.pkl', 'wb') as pickle_file:
+        pickle.dump(transfers_dict,pickle_file)
+    print("transfers_dict done")
+    return transfers_dict
