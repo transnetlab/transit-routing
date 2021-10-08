@@ -25,7 +25,7 @@ if TEST_CASE==0:
             pass
 
 elif TEST_CASE==1:
-    from mislaneous_func import *
+    from miscellaneous_func import *
     SOURCE, DESTINATION = input("Enter SOURCE stop-id (int)"), input("Enter SOURCE stop-id (int)")
     PRINT_PARA = input("Press 1 to print complete journey details else 0")
     WALKING_FROM_SOURCE = input("Press 1 to allow walking from SOURCE stop else 0")
