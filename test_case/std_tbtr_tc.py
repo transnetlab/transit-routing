@@ -10,7 +10,6 @@ from collections import defaultdict
 print_logo()
 print("Reading Testcase...")
 FOLDER = './swiss'
-get_full_trans(FOLDER, time_limit="full")
 stops_file, trips_file, stop_times_file, transfers_file = gtfs_loader.load_all_db(FOLDER)
 try:
     stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict = gtfs_loader.load_all_dict(FOLDER)
