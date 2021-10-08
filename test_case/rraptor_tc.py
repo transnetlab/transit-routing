@@ -19,15 +19,8 @@ except FileNotFoundError:
     stoptimes_dict = dict_builder_functions.build_save_stopstimes_dict(stop_times_file, trips_file, FOLDER)
     routes_by_stop_dict = dict_builder_functions.build_save_route_by_stop(stop_times_file, FOLDER)
     footpath_dict = dict_builder_functions.build_save_footpath_dict(transfers_file, FOLDER)
-
-overlap = check_nonoverlap(stoptimes_dict, stops_dict)
-for x in overlap:
-    stoptimes_dict[x] = []
-check_footpath(footpath_dict)
-stop_times_file = stop_times_file[~stop_times_file.route_id.isin(overlap)]
-
 print_network_details(transfers_file, trips_file, stops_file)
-
+########################################
 FOLDER = './test_case/swiss'
 SOURCE = 9260
 DESTINATION = 12407
@@ -38,6 +31,7 @@ PRINT_PARA = 1
 OPTIMIZED = 0
 D_TIME = -1
 print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE)
+########################################
 d_time_groups = stop_times_file.groupby("stop_id")
 print("Optimal journeys are:\n###################################")
 start = time_measure()
@@ -49,3 +43,4 @@ if OPTIMIZED == 1:
 else:
     print(f"Routes required to cover optimal journeys are {output}")
 print(f'Time for rraptor: {round((time_measure() - start) * 1000)} milliseconds')
+########################################

@@ -19,12 +19,6 @@ except FileNotFoundError:
     routes_by_stop_dict = dict_builder_functions.build_save_route_by_stop(stop_times_file, FOLDER)
     footpath_dict = dict_builder_functions.build_save_footpath_dict(transfers_file,  FOLDER)
 
-overlap = check_nonoverlap(stoptimes_dict, stops_dict)
-for x in overlap:
-    stoptimes_dict[x] = []
-check_footpath(footpath_dict)
-stop_times_file = stop_times_file[~stop_times_file.route_id.isin(overlap)]
-
 with open(f'./GTFS/{FOLDER}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
     trip_transfer_dict = pickle.load(file)
 
@@ -33,9 +27,8 @@ for tid, connnections in trip_transfer_dict.items():
     deaf = defaultdict(lambda : [])
     deaf.update(connnections)
     trip_transfer_dict[tid] = deaf
-
 print_network_details(transfers_file, trips_file, stops_file)
-
+########################################
 SOURCE= 9260
 DESTINATION= 12407
 D_TIME = stop_times_file.arrival_time.sort_values().iloc[0]
@@ -43,11 +36,11 @@ MAX_TRANSFER= 4
 WALKING_FROM_SOURCE= 0
 CHANGE_TIME_SEC = 0
 PRINT_PARA = 0
-
 print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER , WALKING_FROM_SOURCE)
-
+########################################
 start = time_measure()
 output = std_TBTR(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER , WALKING_FROM_SOURCE, PRINT_PARA, routes_by_stop_dict, stops_dict, stoptimes_dict,
                   footpath_dict, trip_transfer_dict, trip_set)
 print(f"Optimal arrival times are: {output[0]}")
 print(f'Time for std_raptor: {round((time_measure() - start)*1000)} milliseconds')
+########################################
