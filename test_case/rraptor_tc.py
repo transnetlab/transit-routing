@@ -6,7 +6,7 @@ from time import process_time as time_measure
 import gtfs_loader
 from RAPTOR.rraptor import rraptor
 from dict_builder import dict_builder_functions
-from mislaneous_func import *
+from miscellaneous_func import *
 
 print_logo()
 print("Reading Testcase...")

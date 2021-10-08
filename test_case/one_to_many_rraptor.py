@@ -5,7 +5,7 @@ Module contains the test case for standard One-To-Many rRAPTOR implementation
 from time import process_time as time_measure
 import gtfs_loader
 from RAPTOR.one_to_many_rraptor import onetomany_rraptor
-from mislaneous_func import *
+from miscellaneous_func import *
 from dict_builder import dict_builder_functions
 print_logo()
 print("Reading Testcase...")

@@ -4,7 +4,7 @@ Module contains the test case for standard TBTR implementation
 from time import process_time as time_measure
 import gtfs_loader
 from TBTR.std_tbtr import std_TBTR
-from mislaneous_func import *
+from miscellaneous_func import *
 from dict_builder import dict_builder_functions
 from collections import defaultdict
 print_logo()

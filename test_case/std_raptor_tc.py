@@ -4,7 +4,7 @@ Module contains the test case for standard RAPTOR implementation
 from time import process_time as time_measure
 import gtfs_loader
 from RAPTOR.std_raptor import std_raptor
-from mislaneous_func import *
+from miscellaneous_func import *
 from dict_builder import dict_builder_functions
 print_logo()
 print("Reading Testcase...")
