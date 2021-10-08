@@ -6,31 +6,31 @@ import numpy as np
 from RAPTOR.raptor_functions import *
 
 
-def fill_in_rap(max_transfer, source, destination, d_time, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, walking_from_source, print_para, save_routes, change_time_sec):
-    start_tid, d_time = d_time
+def fill_in_rap(MAX_TRANSFER, SOURCE, DESTINATION, D_TIME, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, WALKING_FROM_SOURCE, PRINT_PARA, save_routes, CHANGE_TIME_SEC):
+    start_tid, D_TIME = D_TIME
     routes_exp = {}
     ############################################################################################################################################################################################
     # Inputs and check
     ############################################################################################################################################################################################
-    #    d_time=pd.to_datetime('2019-10-03 06:00:00')
-    #    (source,destination,max_transfer)=(3,9,3)
-    if print_para==1:print(source,destination,d_time)
-    # check_stop_validity(stops_file,source,destination)
+    #    D_TIME=pd.to_datetime('2019-10-03 06:00:00')
+    #    (SOURCE,DESTINATION,MAX_TRANSFER)=(3,9,3)
+    if PRINT_PARA==1:print(SOURCE,DESTINATION,D_TIME)
+    # check_stop_validity(stops_file,SOURCE,DESTINATION)
     ############################################################################################################################################################################################
     # '''Intilization'''
     ############################################################################################################################################################################################
-    marked_stop, label, pi_label, star_label, inf_time = initlize(routes_by_stop_dict, source, max_transfer)
-    change_time = pd.to_timedelta(change_time_sec,unit='seconds')
-    (label[0][source], star_label[source]) = (d_time, d_time)
+    marked_stop, label, pi_label, star_label, inf_time = initlize(routes_by_stop_dict, SOURCE, MAX_TRANSFER)
+    change_time = pd.to_timedelta(CHANGE_TIME_SEC,unit='seconds')
+    (label[0][SOURCE], star_label[SOURCE]) = (D_TIME, D_TIME)
     Q = {}
-    if walking_from_source == 1:
+    if WALKING_FROM_SOURCE == 1:
         try:
-            trans_info = footpath_dict[source]
+            trans_info = footpath_dict[SOURCE]
             for i in trans_info:
                 (p_dash, to_pdash_time) = i
-                label[0][p_dash] = d_time + to_pdash_time
-                star_label[p_dash] = d_time + to_pdash_time
-                pi_label[0][p_dash] = ('walking', source, p_dash, to_pdash_time, d_time + to_pdash_time)
+                label[0][p_dash] = D_TIME + to_pdash_time
+                star_label[p_dash] = D_TIME + to_pdash_time
+                pi_label[0][p_dash] = ('walking', SOURCE, p_dash, to_pdash_time, D_TIME + to_pdash_time)
                 marked_stop.append(p_dash)
         except KeyError:
             pass
@@ -39,12 +39,12 @@ def fill_in_rap(max_transfer, source, destination, d_time, routes_by_stop_dict, 
     # Main Code
     ######################################################################################################################################################################################################################
     # '''Main code part 1'''
-    for k in range(1, max_transfer + 1):
+    for k in range(1, MAX_TRANSFER + 1):
         Q.clear()  # Format of Q is {route:stop}
         while marked_stop:
             p = marked_stop.pop()
             if k == 1:
-                Q[int(start_tid.split('_')[0])] = source
+                Q[int(start_tid.split('_')[0])] = SOURCE
                 break
             try:
                 routes_serving_p = routes_by_stop_dict[p]
@@ -67,12 +67,12 @@ def fill_in_rap(max_transfer, source, destination, d_time, routes_by_stop_dict, 
                 previous_arrival_at_pi = label[k - 1][p_i]
                 if current_trip_t != -1:
                     arr_by_t_at_pi = arri_by_t_at_pi(current_trip_t, p_i)
-                    if arr_by_t_at_pi < min(star_label[p_i], star_label[destination]):
+                    if arr_by_t_at_pi < min(star_label[p_i], star_label[DESTINATION]):
                         label[k][p_i], star_label[p_i] = arr_by_t_at_pi, arr_by_t_at_pi
                         pi_label[k][p_i] = (boarding_time, borading_point, p_i, arr_by_t_at_pi, tid)
                         marked_stop.append(p_i)
-                #                        if p_i == destination: print(k, route, label[k][destination])
-                #                        if p_i == destination and route == 20070: print(label[k][destination])
+                #                        if p_i == DESTINATION: print(k, route, label[k][DESTINATION])
+                #                        if p_i == DESTINATION and route == 20070: print(label[k][DESTINATION])
                 if current_trip_t != -1 and p_i_is_last_stop_for_currentTrip(current_trip_t, p_i):
                     break
                 if current_trip_t == -1 or previous_arrival_at_pi + change_time < arri_by_t_at_pi(current_trip_t,p_i):
@@ -93,7 +93,7 @@ def fill_in_rap(max_transfer, source, destination, d_time, routes_by_stop_dict, 
                 for i in trans_info:
                     (p_dash, to_pdash_time) = i
                     if (label[k][p_dash] > label[k][p] + to_pdash_time) and (label[k][p] + to_pdash_time) < min(
-                            star_label[p_dash], star_label[destination]):
+                            star_label[p_dash], star_label[DESTINATION]):
                         label[k][p_dash] = label[k][p] + to_pdash_time
                         star_label[p_dash] = label[k][p] + to_pdash_time
                         pi_label[k][p_dash] = ('walking', p, p_dash, to_pdash_time, label[k][p_dash])
@@ -107,5 +107,5 @@ def fill_in_rap(max_transfer, source, destination, d_time, routes_by_stop_dict, 
             break
     #############################################################################################################################################################################################################################################################################
 
-    _ , _, rap_out = post_processing(destination, pi_label,print_para, label, save_routes, routes_exp)
-    if print_para == 1: print('------------------------------------')
+    _ , _, rap_out = post_processing(DESTINATION, pi_label,PRINT_PARA, label, save_routes, routes_exp)
+    if PRINT_PARA == 1: print('------------------------------------')
