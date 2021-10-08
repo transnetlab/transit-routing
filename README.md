@@ -12,7 +12,7 @@
 - [Copyright and license](#Copyright-and-license)
 
 ### Introduction
-This repository contains Python implemtation of various transit routing algorithms.
+To be updated soon.
 
 ### List of Algorihtms
 Algorithm | SOURCE |  Status | Comments |
@@ -21,19 +21,19 @@ Algorithm | SOURCE |  Status | Comments |
 | TBTR | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) |Complete|
 | rRAPTOR | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) |Complete|
 | rTBTR| [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) |Complete|
-| One-To-Many rRAPTOR |  |Complete|
-| One-To-Many rTBTR |  |Complete|
+| One-To-Many rRAPTOR | Archive |Complete|
+| One-To-Many rTBTR | Archive |Complete|
 | HypRAPTOR | [link](https://drops.dagstuhl.de/opus/volltexte/2017/7896/) |Complete|
-| HypTBTR |  |Complete|
-| NHypTBTR |  |To be updated soon|
-| NHypTBTR |  |To be updated soon|
+| HypTBTR |  Archive |Complete|
+| NHypTBTR | Archive |To be updated soon|
+| NHypTBTR | Archive |To be updated soon|
 
 ### Usage Instructions
 To be updated soon.
 
 
 ### Contributing
-We welcome all suggestions from the community. If you wish to contribute or report any bug please contact the creaters or create an issue on the issue tracking system.
+We welcome all suggestions from the community. If you wish to contribute or report any bug please contact the creaters or create an issue on [issue tracking system](https://github.com/tarunrambha/transit-routing/issues).
 ### Creators
 - **Prateek Agarwal**
     - Ph.D. at Indian Institute of Science (IISc) Bengaluru, India.
@@ -45,9 +45,9 @@ We welcome all suggestions from the community. If you wish to contribute or repo
     - <http://civil.iisc.ernet.in/~tarunr/>
 
 ### References
-- Delling, D., Pajor, T. and Werneck, R.F., 2015. Round-based public transit routing. Transportation Science, 49(3), pp.591-604.
-- Delling, D., Dibbelt, J., Pajor, T. and Zündorf, T., 2017. Faster transit routing by hyper partitioning. In 17th Workshop on Algorithmic Approaches for Transportation Modelling, Optimization, and Systems (ATMOS 2017). Schloss Dagstuhl-Leibniz-Zentrum fuer Informatik.
-- Witt, S., 2015. Trip-based public transit routing. In Algorithms-ESA 2015 (pp. 1025-1036). Springer, Berlin, Heidelberg.
+- [Delling, D., Pajor, T. and Werneck, R.F., 2015. Round-based public transit routing. Transportation Science, 49(3), pp.591-604.](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) 
+- [Delling, D., Dibbelt, J., Pajor, T. and Zündorf, T., 2017. Faster transit routing by hyper partitioning. In 17th Workshop on Algorithmic Approaches for Transportation Modelling, Optimization, and Systems (ATMOS 2017). Schloss Dagstuhl-Leibniz-Zentrum fuer Informatik.](https://drops.dagstuhl.de/opus/volltexte/2017/7896/)
+- [Witt, S., 2015. Trip-based public transit routing. In Algorithms-ESA 2015 (pp. 1025-1036). Springer, Berlin, Heidelberg.](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85)
 
 ### Copyright and license
 The content of this repository is bound by the following licenses:
