@@ -8,7 +8,7 @@ import pandas as pd
 
 ################################################################################################################################################################################################
 
-def initlize_raptor(routes_by_stop_dict, SOURCE, transfer):
+def initlize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
     '''
     Initialize values for RAPTOR.
     Args:
@@ -24,8 +24,8 @@ def initlize_raptor(routes_by_stop_dict, SOURCE, transfer):
     '''
     inf_time = pd.Timestamp(year=2022, month=1, day=1, hour=1, second=1)
 
-    pi_label = {x: {stop: -1 for stop in routes_by_stop_dict.keys()} for x in range(0, transfer + 1)}
-    label = {x: {stop: inf_time for stop in routes_by_stop_dict.keys()} for x in range(0, transfer + 1)}
+    pi_label = {x: {stop: -1 for stop in routes_by_stop_dict.keys()} for x in range(0, MAX_TRANSFER + 1)}
+    label = {x: {stop: inf_time for stop in routes_by_stop_dict.keys()} for x in range(0, MAX_TRANSFER + 1)}
     star_label = {stop: inf_time for stop in routes_by_stop_dict.keys()}
 
     marked_stop = deque()
