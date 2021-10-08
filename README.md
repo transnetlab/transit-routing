@@ -29,7 +29,7 @@ Algorithm | SOURCE |  Status | Comments |
 | NHypTBTR | Archive |To be updated soon|
 
 ### Usage Instructions
-To be updated soon.
+See [Usage Instructions](/docs/Usage Instructions.md) for details on the usage instructions. 
 
 
 ### Contributing
