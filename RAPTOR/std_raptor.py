@@ -24,14 +24,8 @@ def std_raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, C
     Returns:
         out (list): List of pareto-optimal arrival Timestamps
     '''
-    #    D_TIME=pd.to_datetime('2019-10-03 06:00:00')
-    #    (SOURCE,DESTINATION,MAX_TRANSFER)=3 , 160, 4
     out = []
-    # check_stop_validity(stops_file,SOURCE,DESTINATION)
-    # if PRINT_PARA == 1: print(SOURCE, DESTINATION, D_TIME)
-    #####################################################
     # '''Intilization'''
-    #####################################################
     marked_stop, label, pi_label, star_label, inf_time = initlize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER)
     change_time = pd.to_timedelta(CHANGE_TIME_SEC, unit='seconds')
     (label[0][SOURCE], star_label[SOURCE]) = (D_TIME, D_TIME)
@@ -47,9 +41,7 @@ def std_raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, C
                 marked_stop.append(p_dash)
         except KeyError:
             pass
-    #####################################################
     # Main Code
-    #####################################################
     # '''Main code part 1'''
     for k in range(1, MAX_TRANSFER + 1):
         Q.clear()  # Format of Q is {route:stop}
@@ -66,7 +58,6 @@ def std_raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, C
                         Q[route] = stp_idx
             except KeyError:
                 continue
-        #####################################################
         # '''Main code part 2'''
         for route, current_stopindex_by_route in Q.items():
             current_trip_t = -1
@@ -88,7 +79,6 @@ def std_raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, C
                         borading_point = p_i
                         boarding_time = current_trip_t[current_stopindex_by_route][1]
                 current_stopindex_by_route = current_stopindex_by_route + 1
-        #####################################################
         # '''Main code part 3'''
         marked_stop_copy = [*marked_stop]
         for p in marked_stop_copy:
@@ -104,12 +94,10 @@ def std_raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, C
                         marked_stop.append(p_dash)
             except KeyError:
                 continue
-        #####################################################
         # '''Main code End'''
         if marked_stop == deque([]):
             if PRINT_PARA == 1: print('code ended with termination condition')
             break
-    #####################################################
     _, _, rap_out = post_processing(DESTINATION, pi_label, PRINT_PARA, label)
     out.append(rap_out)
     return out
