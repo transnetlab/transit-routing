@@ -38,11 +38,11 @@ def main():
         if VARIANT==0:
             import test_case.std_tbtr_tc
         elif VARIANT==1:
-            import test_case.rraptor_tc
+            pass
         elif VARIANT==2:
-            import test_case.one_to_many_rtbtr_tc
+            pass
         elif VARIANT==3:
-            import test_case.hyptbtr_tc
+            pass
 
 if __name__ == "__main__":
     main()
