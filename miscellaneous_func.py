@@ -34,13 +34,18 @@ def print_network_details(transfers_file, trips_file, stops_file):
     print("____________________________________________________________________")
 
 
-def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER , WALKING_FROM_SOURCE):
+def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER ,WALKING_FROM_SOURCE, NO_OF_PARTITIONS=None, WEIGHING_SCHEME=None, PARTITIONING_ALGORITHM=None):
     """
     Prints the input parameters related to the shortest path query
     Args:
-        transfers_file (pandas.dataframe):
-        trips_file (pandas.dataframe):
-        stops_file (pandas.dataframe):
+        SOURCE (int): stop-id DESTINATION stop
+        DESTINATION (int): stop-id SOURCE stop
+        D_TIME (pandas.datetime): Departure time
+        MAX_TRANSFER (int): Max transfer limit
+        WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
+        NO_OF_PARTITIONS: Number of partitions network has been divided into
+        WEIGHING_SCHEME: Which weighing scheme has been used to generate partitions.
+        PARTITIONING_ALGORITHM: Which algorithm has been used to generate partitions.
     Returns: None
     """
     print("___________________Query Parameters__________________")
@@ -53,6 +58,10 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER , WALKING_F
         print(f"Earliest departure time: {D_TIME}")
     print(f"Maximum Transfer allowed: {MAX_TRANSFER}")
     print(f"Is walking from SOURCE allowed ?: {WALKING_FROM_SOURCE}")
+    if NO_OF_PARTITIONS!=None:
+        print(f"Number of partitions: {NO_OF_PARTITIONS}")
+        print(f"Partitioning Algorithm used: {PARTITIONING_ALGORITHM}")
+        print(f"Weighing scheme: {WEIGHING_SCHEME}")
     print("_____________________________________________________")
 
 def check(stops_dict, stoptimes_dict, stop_times_file):
@@ -110,20 +119,37 @@ def read_partitions_HypRAPTOR(stop_times_file, FOLDER, partitions, scheme,trip_s
 
 
 def read_partitions_new(stop_times_file, FOLDER, part, scheme, algo):
+    """
+    Reads the fill-in information.
+    Args:
+        stop_times_file (pandas.dataframe): dataframe with stoptimes details
+        FOLDER (str): Network FOLDER
+        part (int) : Number of partitions network has been divided into
+        scheme (str) : which weighing scheme has been used to generate partitions.
+        algo (str) : k or h. Which algorithm has been used to generate partitions.
+    Returns:
+        stop_out (dict) : key: stop-id (int), value: stop-cell id (int).
+        Note: if stop-cell id of -1 denotes cut stop.
+        route_groups (dict): key: tuple of all possible combinations of stop cell id,
+        value: set of route ids belonging to the stop cell combination
+        cut_trips (set): set of trip ids that are part of fill-in.
+        trip_groups (dict): key: tuple of all possible combinations of stop cell id,
+        value: set of trip ids belonging to the stop cell combination
+    """
     import itertools
-    if algo=="h":
+    if algo=="hmetis":
         route_out = pd.read_csv(f'./partitions/{FOLDER}/routeout_{scheme}_{part}.csv', usecols=['path_id', 'group']).groupby('group')
         stop_out = pd.read_csv(f'./partitions/{FOLDER}/cutstops_{scheme}_{part}.csv', usecols=['stop_id', 'g_id'])
         fill_ins = pd.read_csv(f'./partitions/{FOLDER}/fill_ins_{scheme}_{part}.csv')
-    elif algo=="k":
+    elif algo=="kahypar":
         route_out = pd.read_csv(f'./kpartitions/{FOLDER}/routeout_{scheme}_{part}.csv', usecols=['path_id', 'group']).groupby('group')
         stop_out = pd.read_csv(f'./kpartitions/{FOLDER}/cutstops_{scheme}_{part}.csv', usecols=['stop_id', 'g_id'])
         fill_ins = pd.read_csv(f'./kpartitions/{FOLDER}/fill_ins_{scheme}_{part}.csv')
 
     fill_ins.fillna(-1, inplace=True)
     fill_ins['routes'] = fill_ins['routes'].astype(int)
-    print(f'Partition: {len(set(stop_out.g_id))-1}')
-    print(f'{(len(stop_out[stop_out.g_id==-1]))} ({round((len(stop_out[stop_out.g_id==-1]))/(len(stop_out))*100,2)}%) are cut stops')
+    print(f'_________Fill-in information for {len(set(stop_out.g_id))-1} Partition_________')
+    print(f'Number of cutstops: {(len(stop_out[stop_out.g_id==-1]))} ({round((len(stop_out[stop_out.g_id==-1]))/(len(stop_out))*100,2)}%)')
     stop_out = {row.stop_id: row.g_id for _, row in stop_out.iterrows()}
     cut_trips = set(fill_ins['trips'])
     route_partitions, trip_partitions = {}, {}
@@ -144,8 +170,9 @@ def read_partitions_new(stop_times_file, FOLDER, part, scheme, algo):
         route_groups[tuple(sorted(group))] = route_partitions[group[0]].union(route_partitions[group[1]]).union(route_partitions[-1])
     for x in route_partitions.keys():
         route_groups[(x,x)] = route_partitions[x].union(route_partitions[-1])
-    print(f"{len(cut_trips)} ({round(len(cut_trips)/len(set(stop_times_file.trip_id))*100,2)}%) are cut trips")
-    print(f'{len(set(fill_ins.routes))-1} ({round((len(set(fill_ins.routes))-1)/len(set(stop_times_file.route_id))*100,2)})% are cut routes')
+    print(f"fill-in trips: {len(cut_trips)} ({round(len(cut_trips)/len(set(stop_times_file.trip_id))*100,2)}%)")
+    print(f'fill-in routes: {len(set(fill_ins.routes))-1} ({round((len(set(fill_ins.routes))-1)/len(set(stop_times_file.route_id))*100,2)}%)')
+    print("____________________________________________________")
     return stop_out, route_groups, cut_trips, trip_groups
 
 
