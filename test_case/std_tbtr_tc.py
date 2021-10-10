@@ -36,7 +36,7 @@ MAX_TRANSFER= 4
 WALKING_FROM_SOURCE= 0
 CHANGE_TIME_SEC = 0
 PRINT_PARA = 0
-print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER , WALKING_FROM_SOURCE)
+print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE)
 ########################################
 start = time_measure()
 output = std_TBTR(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER , WALKING_FROM_SOURCE, PRINT_PARA, routes_by_stop_dict, stops_dict, stoptimes_dict,
