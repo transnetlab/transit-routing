@@ -94,6 +94,53 @@ def initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, destination_l
 
 
 
+def initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict, D_TIME,
+                               MAX_TRANSFER, WALKING_FROM_SOURCE):
+    '''
+    Initialize trips from SOURCE in std_TBTR
+    Args:
+        footpath_dict: Pre-processed dict- format {from_stop_id: [(to_stop_id, footpath_time)]}
+        SOURCE: SOURCE stop id (int)
+        routes_by_stop_dict: Pre-processed dict- format {stop_id: [routes]}
+        stops_dict: Pre-processed dict- format {route_id: [stops]}
+        stoptimes_dict: Pre-processed dict- format {route_id: [[trip1], [trip1]]}
+        D_TIME: Departure time (pandas.datetime)
+        MAX_TRANSFER: Maximum transfer  (int)
+        WALKING_FROM_SOURCE: 1 or 0. 1 means walking from SOURCE is allowed.
+
+    Returns:
+        R_t: Dict with keys as trip id. format - {trip_id : first reached stop}
+        Q: Queue of trips
+    '''
+    Q = [[] for x in range(MAX_TRANSFER + 1)]
+    R_t = defaultdict(lambda: 1000)
+    if WALKING_FROM_SOURCE == 1:
+        try:
+            source_footpaths = footpath_dict[SOURCE]
+            for connection in source_footpaths:
+                delta_tau = connection[1]
+                walkable_source_routes = routes_by_stop_dict[connection[0]]
+                for route in walkable_source_routes:
+                    stop_index = stops_dict[route].index(connection[0])
+                    route_trip = stoptimes_dict[route]
+                    for trip_idx, trip in enumerate(route_trip):
+                        if D_TIME + delta_tau <= trip[stop_index][1]:
+                            _enqueue1(f'{route}_{trip_idx}', stop_index, 0, (0, connection[0]), R_t, Q,
+                                      stoptimes_dict)
+                            break
+        except KeyError:
+            pass
+    #    delta_tau = pd.to_timedelta(0, unit="seconds")
+    for route in routes_by_stop_dict[SOURCE]:
+        stop_index = stops_dict[route].index(SOURCE)
+        route_trip = stoptimes_dict[route]
+        for trip_idx, trip in enumerate(route_trip):
+            #            if D_TIME + delta_tau <= trip[stop_index][1]:
+            if D_TIME <= trip[stop_index][1]:
+                _enqueue1(f'{route}_{trip_idx}', stop_index, 0, (0, 0), R_t, Q, stoptimes_dict)
+                break
+    return R_t, Q
+
 
 def initialize_from_source_range(D_TIME, MAX_TRANSFER, stops_dict, stoptimes_dict, SOURCE, n, R_t):
     '''
@@ -166,53 +213,6 @@ def enqueue_range2(connection_list, nextround, pointer, R_t, Q, stoptimes_dict, 
                     if R_t[r][new_tid] > to_trip_id_stop:
                         R_t[r][new_tid] = to_trip_id_stop
 
-
-def initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict, D_TIME,
-                               MAX_TRANSFER, WALKING_FROM_SOURCE):
-    '''
-    Initialize trips from SOURCE in std_TBTR
-    Args:
-        footpath_dict: Pre-processed dict- format {from_stop_id: [(to_stop_id, footpath_time)]}
-        SOURCE: SOURCE stop id (int)
-        routes_by_stop_dict: Pre-processed dict- format {stop_id: [routes]}
-        stops_dict: Pre-processed dict- format {route_id: [stops]}
-        stoptimes_dict: Pre-processed dict- format {route_id: [[trip1], [trip1]]}
-        D_TIME: Departure time (pandas.datetime)
-        MAX_TRANSFER: Maximum transfer  (int)
-        WALKING_FROM_SOURCE: 1 or 0. 1 means walking from SOURCE is allowed.
-
-    Returns:
-        R_t: Dict with keys as trip id. format - {trip_id : first reached stop}
-        Q: Queue of trips
-    '''
-    Q = [[] for x in range(MAX_TRANSFER + 1)]
-    R_t = defaultdict(lambda: 1000)
-    if WALKING_FROM_SOURCE == 1:
-        try:
-            source_footpaths = footpath_dict[SOURCE]
-            for connection in source_footpaths:
-                delta_tau = connection[1]
-                walkable_source_routes = routes_by_stop_dict[connection[0]]
-                for route in walkable_source_routes:
-                    stop_index = stops_dict[route].index(connection[0])
-                    route_trip = stoptimes_dict[route]
-                    for trip_idx, trip in enumerate(route_trip):
-                        if D_TIME + delta_tau <= trip[stop_index][1]:
-                            _enqueue1(f'{route}_{trip_idx}', stop_index, 0, (0, connection[0]), R_t, Q,
-                                      stoptimes_dict)
-                            break
-        except KeyError:
-            pass
-    #    delta_tau = pd.to_timedelta(0, unit="seconds")
-    for route in routes_by_stop_dict[SOURCE]:
-        stop_index = stops_dict[route].index(SOURCE)
-        route_trip = stoptimes_dict[route]
-        for trip_idx, trip in enumerate(route_trip):
-            #            if D_TIME + delta_tau <= trip[stop_index][1]:
-            if D_TIME <= trip[stop_index][1]:
-                _enqueue1(f'{route}_{trip_idx}', stop_index, 0, (0, 0), R_t, Q, stoptimes_dict)
-                break
-    return R_t, Q
 
 
 
@@ -307,7 +307,7 @@ def post_process_range_oldx(J, Q, rounds_desti_reached, DESTINATION):
             current_trip = [x for x in Q[round] if x[1] == current_trip][-1][-1][0]
             round = round - 1
         TBTR_out.extend(journey)
-    return set(TBTR_out)
+    return TBTR_out
 
 def post_process_range(J, Q, rounds_desti_reached):
     '''
