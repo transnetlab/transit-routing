@@ -1,9 +1,9 @@
 """
-Module contains the test case for standard TBTR implementation
+Module contains the test case for TBTR implementation
 """
 from time import process_time as time_measure
 import gtfs_loader
-from TBTR.std_tbtr import std_TBTR
+from TBTR.tbtr import tbtr
 from miscellaneous_func import *
 from dict_builder import dict_builder_functions
 from collections import defaultdict
@@ -39,8 +39,8 @@ PRINT_PARA = 0
 print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE)
 ########################################
 start = time_measure()
-output = std_TBTR(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER , WALKING_FROM_SOURCE, PRINT_PARA, routes_by_stop_dict, stops_dict, stoptimes_dict,
+output = tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER , WALKING_FROM_SOURCE, PRINT_PARA, routes_by_stop_dict, stops_dict, stoptimes_dict,
                   footpath_dict, trip_transfer_dict, trip_set)
 print(f"Optimal arrival times are: {output[0]}")
-print(f'Time for std_raptor: {round((time_measure() - start)*1000)} milliseconds')
+print(f'Time for tbtr: {round((time_measure() - start)*1000)} milliseconds')
 ########################################
