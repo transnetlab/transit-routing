@@ -1,28 +1,28 @@
 """
-Module contains standard RAPTOR implementation.
+Module contains RAPTOR implementation.
 """
 
 from RAPTOR.raptor_functions import *
 
 
-def std_raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
+def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
                routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict):
     '''
     Standard Raptor implementation
     Args:
-        SOURCE (int): stop-id DESTINATION stop
-        DESTINATION (int): stop-id SOURCE stop
-        D_TIME (pandas.datetime): Departure time
-        MAX_TRANSFER (int): Max transfer limit
+        SOURCE (int): stop id of source stop.
+        DESTINATION (int): stop id of destination stop.
+        D_TIME (pandas.datetime): departure time.
+        MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
-        CHANGE_TIME_SEC (int): Change time in seconds
-        PRINT_PARA (int): 1 or 0. 1 means print complete path
-        routes_by_stop_dict (dict): Pre-processed dict- format {stop_id: [routes]}
-        stops_dict (dict): Pre-processed dict- format {route_id: [stops]}
-        stoptimes_dict (dict): Pre-processed dict- format {route_id: [[trip_1], [trip_2]]}
-        footpath_dict (dict): Pre-processed dict- format {from_stop_id: [(to_stop_id, footpath_time)]}
+        CHANGE_TIME_SEC (int): change-time in seconds.
+        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
+        stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
+        stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+        footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
     Returns:
-        out (list): List of pareto-optimal arrival Timestamps
+        out (list): list of pareto-optimal arrival Timestamps.
     '''
     out = []
     #Intilization
