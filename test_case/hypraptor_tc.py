@@ -1,5 +1,5 @@
 """
-Module contains the test case for standard HypRAPTOR implementation
+Module contains the test case for HypRAPTOR implementation
 """
 from time import process_time as time_measure
 
@@ -41,4 +41,5 @@ print("Optimal journeys are:\n###################################")
 start = time_measure()
 output = hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
                    stop_out, route_groups, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict)
-print(f'Time for std_raptor: {round((time_measure() - start) * 1000)} milliseconds')
+print(f'Time for hypraptor: {round((time_measure() - start) * 1000)} milliseconds')
+########################################
