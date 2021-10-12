@@ -1,10 +1,10 @@
 """
-Module contains the test case for standard RAPTOR implementation
+Module contains the test case for RAPTOR implementation
 """
 from time import process_time as time_measure
 
 import gtfs_loader
-from RAPTOR.std_raptor import std_raptor
+from RAPTOR.std_raptor import raptor
 from dict_builder import dict_builder_functions
 from miscellaneous_func import *
 
@@ -33,6 +33,7 @@ print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_S
 ########################################
 print("Optimal journeys are:\n###################################")
 start = time_measure()
-output = std_raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
+output = raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
                     routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict)
-print(f'Time for std_raptor: {round((time_measure() - start) * 1000)} milliseconds')
+print(f'Time for raptor: {round((time_measure() - start) * 1000)} milliseconds')
+########################################
