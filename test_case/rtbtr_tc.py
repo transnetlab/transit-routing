@@ -1,13 +1,13 @@
 """
 Module contains the test case for rRAPTOR implementation
 """
+from collections import defaultdict
 from time import process_time as time_measure
 
 import gtfs_loader
 from TBTR.rtbtr import rtbtr
 from dict_builder import dict_builder_functions
 from miscellaneous_func import *
-from collections import defaultdict
 
 print_logo()
 print("Reading Testcase...")

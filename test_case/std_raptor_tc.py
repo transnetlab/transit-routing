@@ -34,6 +34,6 @@ print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_S
 print("Optimal journeys are:\n###################################")
 start = time_measure()
 output = raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
-                    routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict)
+                routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict)
 print(f'Time for raptor: {round((time_measure() - start) * 1000)} milliseconds')
 ########################################

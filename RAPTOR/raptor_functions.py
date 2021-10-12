@@ -73,7 +73,6 @@ def get_latest_trip_new(stoptimes_dict, route, arrival_time_at_pi, pi_index, cha
         return -1, -1  # NO trip exsist for this route. in this case check tripid from trip file for this route and then look waybill.ID. Likely that trip is across days thats why it is rejected in stoptimes builder while checking
 
 
-
 def post_processing(DESTINATION, pi_label, PRINT_PARA, label):
     '''
     Post processing for std_RAPTOR. Currently supported functionality:
@@ -158,7 +157,7 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, OP
         elif OPTIMIZED==0:
             final_routes (list): list of routes required to cover all pareto-optimal journeys. format - [route_id]
     '''
-    if OPTIMIZED==1:
+    if OPTIMIZED == 1:
         final_trips = []
         for DESTINATION in DESTINATION_LIST:
             rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
@@ -211,8 +210,6 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, OP
         return list(set(final_routes))
 
 
-
-
 def post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED):
     '''
     Full post processing for rRAPTOR. Currently supported functionality:
@@ -232,7 +229,7 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED)
             final_routes (list): List of routes required to cover all pareto-optimal journeys. Format - [route_id]
     '''
     rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
-    if OPTIMIZED==1:
+    if OPTIMIZED == 1:
         final_trip = []
         if rounds_inwhich_desti_reached:
             rounds_inwhich_desti_reached.reverse()
@@ -278,6 +275,7 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED)
                 for trip in trip_set:
                     final_routes.append(int(trip.split("_")[0]))
         return final_routes
+
 
 """
 ##############################   Deprecated Functions   ##############################

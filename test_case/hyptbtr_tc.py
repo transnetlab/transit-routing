@@ -45,7 +45,7 @@ print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_S
                        WEIGHING_SCHEME, PARTITIONING_ALGORITHM)
 ########################################
 stop_out, _, _, trip_groups = read_partitions_new(stop_times_file, FOLDER, part=NO_OF_PARTITIONS,
-                                                   scheme=WEIGHING_SCHEME, algo=PARTITIONING_ALGORITHM)
+                                                  scheme=WEIGHING_SCHEME, algo=PARTITIONING_ALGORITHM)
 start = time_measure()
 output = hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_PARA, stop_out, trip_groups,
                  routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, trip_transfer_dict, trip_set)

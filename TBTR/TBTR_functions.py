@@ -140,6 +140,7 @@ def initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops
     enqueue(connection_list, 0, (0, 0), R_t, Q, stoptimes_dict)
     return R_t, Q
 
+
 def enqueue(connection_list, nextround, pointer, R_t, Q, stoptimes_dict):
     '''
     Main enqueue function used in TBTR to add trips segments to next round and update first reached stop of each trip.
@@ -208,7 +209,6 @@ def post_process_range(J, Q, rounds_desti_reached):
     return set(necessory_trips)
 
 
-
 def initialize_from_source_range(d_time, MAX_TRANSFER, stoptimes_dict, n, R_t):
     '''
     Initialize trips segments from source in rTBTR
@@ -224,12 +224,10 @@ def initialize_from_source_range(d_time, MAX_TRANSFER, stoptimes_dict, n, R_t):
     Q = [[] for x in range(MAX_TRANSFER + 1)]
     route, trip_idx = [int(x) for x in d_time[0].split("_")]
     stop_index = d_time[2]
-    #_enqueue_range1(f'{route}_{trip_idx}', stop_index, n, (0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
+    # _enqueue_range1(f'{route}_{trip_idx}', stop_index, n, (0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
     connection_list = [(f'{route}_{trip_idx}', stop_index)]
-    enqueue_range2(connection_list, n, (0,0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
+    enqueue_range2(connection_list, n, (0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
     return Q
-
-
 
 
 def enqueue_range2(connection_list, nextround, pointer, R_t, Q, stoptimes_dict, MAX_TRANSFER):
@@ -254,7 +252,6 @@ def enqueue_range2(connection_list, nextround, pointer, R_t, Q, stoptimes_dict, 
                     new_tid = f"{route}_{x}"
                     if R_t[r][new_tid] > to_trip_id_stop:
                         R_t[r][new_tid] = to_trip_id_stop
-
 
 
 def post_process_range_onemany(J, Q, rounds_desti_reached, desti):
