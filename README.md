@@ -11,8 +11,8 @@
 - [References](#References)
 - [Copyright and license](#Copyright-and-license)
 
-### Introduction
-To be updated soon.
+### Introduction <img align="right" alt="GIF" height="100px" src="https://media.giphy.com/media/U4FkC2VqpeNRHjTDQ5/giphy.gif" />
+
 
 ### List of Algorihtms
 Algorithm | SOURCE |  Status | Comments |
