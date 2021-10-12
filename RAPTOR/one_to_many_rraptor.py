@@ -1,8 +1,31 @@
+"""
+Module contains One-To-Many rRAPTOR implementation
+"""
 from RAPTOR.raptor_functions import *
 
 
 def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC,
                       PRINT_PARA, OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict):
+    """
+    Args:
+        SOURCE (int): stop id of source stop.
+        DESTINATION_LIST (list): list of stop ids of destination stop.
+        d_time_groups (pandas.group): all possible departures times from all stops.
+        MAX_TRANSFER (int): maximum transfer limit.
+        WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
+        CHANGE_TIME_SEC (int): change-time in seconds.
+        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
+        routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
+        stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
+        stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+        footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+    Returns:
+        if optimized==1:
+            out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
+        elif optimized==0:
+            out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
+    """
     try:
         DESTINATION_LIST.remove(SOURCE)
     except ValueError:
