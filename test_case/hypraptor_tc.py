@@ -22,7 +22,7 @@ except FileNotFoundError:
     footpath_dict = dict_builder_functions.build_save_footpath_dict(transfers_file, FOLDER)
 print_network_details(transfers_file, trips_file, stops_file)
 ########################################
-SOURCE = 9260
+SOURCE = 9865
 DESTINATION = 12407
 D_TIME = stop_times_file.arrival_time.sort_values().iloc[0]
 MAX_TRANSFER = 4
