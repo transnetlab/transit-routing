@@ -1,29 +1,31 @@
+"""
+Module contains rRAPTOR implementation
+"""
 from RAPTOR.raptor_functions import *
 
 
 def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
-            OPTIMIZED,
-            routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict):
+            OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict):
     '''
-    Standard Raptor implementation
+    Standard rRaptor implementation
     Args:
-        SOURCE (int): stop-id DESTINATION stop
-        DESTINATION (int): stop-id SOURCE stop
-        d_time_groups (pandas.group):
-        MAX_TRANSFER (int): Max transfer limit
+        SOURCE (int): stop id of source stop.
+        DESTINATION (int): stop id of destination stop.
+        d_time_groups (pandas.group): all possible departures times from all stops.
+        MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
-        CHANGE_TIME_SEC (int): Change time in seconds
-        PRINT_PARA (int): 1 or 0. 1 means print complete path
-        optimized (int): 1 or 0. 1 means collect trips and 0 means collect routes
-        routes_by_stop_dict (dict): Pre-processed dict- format {stop_id: [routes]}
-        stops_dict (dict): Pre-processed dict- format {route_id: [stops]}
-        stoptimes_dict (dict): Pre-processed dict- format {route_id: [[trip_1], [trip_2]]}
-        footpath_dict (dict): Pre-processed dict- format {from_stop_id: [(to_stop_id, footpath_time)]}
+        CHANGE_TIME_SEC (int): change-time in seconds.
+        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
+        routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
+        stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
+        stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+        footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
     Returns:
         if optimized==1:
-            out (list):  List of trips required to cover all optimal journeys Format: [trip_id]
-        else:
-            out (list):  List of routes required to cover all optimal journeys. Format: [route_id]
+            out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
+        elif optimized==0:
+            out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
     '''
     out = []
 
