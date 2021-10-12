@@ -26,7 +26,7 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
         out (list): list of pareto-optimal arrival Timestamps.
     """
     out = []
-    # Intilization
+    # Initialization
     reduced_routes = route_groups[tuple(sorted((stop_out[SOURCE], stop_out[DESTINATION])))]
 
     marked_stop, label, pi_label, star_label, inf_time = initlize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER)

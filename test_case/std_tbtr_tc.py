@@ -24,23 +24,23 @@ with open(f'./GTFS/{FOLDER}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
 
 trip_set = set(trip_transfer_dict.keys())
 for tid, connnections in trip_transfer_dict.items():
-    deaf = defaultdict(lambda : [])
+    deaf = defaultdict(lambda: [])
     deaf.update(connnections)
     trip_transfer_dict[tid] = deaf
 print_network_details(transfers_file, trips_file, stops_file)
 ########################################
-SOURCE= 9865
-DESTINATION= 12683
+SOURCE = 9865
+DESTINATION = 12683
 D_TIME = stop_times_file.arrival_time.sort_values().iloc[0]
-MAX_TRANSFER= 4
-WALKING_FROM_SOURCE= 0
+MAX_TRANSFER = 4
+WALKING_FROM_SOURCE = 0
 CHANGE_TIME_SEC = 0
 PRINT_PARA = 0
 print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE)
 ########################################
 start = time_measure()
-output = tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER , WALKING_FROM_SOURCE, PRINT_PARA, routes_by_stop_dict, stops_dict, stoptimes_dict,
-                  footpath_dict, trip_transfer_dict, trip_set)
+output = tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_PARA, routes_by_stop_dict,
+              stops_dict, stoptimes_dict, footpath_dict, trip_transfer_dict, trip_set)
 print(f"Optimal arrival times are: {output[0]}")
 print(f'Time for tbtr: {round((time_measure() - start)*1000)} milliseconds')
 ########################################

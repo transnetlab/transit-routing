@@ -29,7 +29,7 @@ def hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRIN
     out = []
     final_trips = trip_groups[tuple(sorted((stop_out[SOURCE], stop_out[DESTINATION])))]
 
-    J = initlize_tbtr()
+    J = initialize_tbtr()
 
     L = initialize_from_desti_new(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict)
 
@@ -64,7 +64,7 @@ def hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRIN
             except IndexError:
                 pass
         n = n + 1
-    TBTR_out = post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, PRINT_PARA,
+    tbtr_out = post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, PRINT_PARA,
                             D_TIME, MAX_TRANSFER)
-    out.append(TBTR_out)
+    out.append(tbtr_out)
     return out

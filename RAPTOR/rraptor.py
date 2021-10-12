@@ -22,9 +22,9 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
     Returns:
-        if optimized==1:
+        if OPTIMIZED==1:
             out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
-        elif optimized==0:
+        elif OPTIMIZED==0:
             out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
     '''
     out = []
@@ -48,12 +48,13 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
         marked_stop = deque()
         marked_stop.append(SOURCE)
         start_tid, d_time, s_idx = d_time
-        if PRINT_PARA == 1: print(f"SOURCE, DESTINATION, d_time: {SOURCE, DESTINATION, d_time}")
-        #Intilization
+        if PRINT_PARA == 1:
+            print(f"SOURCE, DESTINATION, d_time: {SOURCE, DESTINATION, d_time}")
+        # Initialization
         (label[0][SOURCE], star_label[SOURCE]) = (d_time, d_time)
         Q = {}
         # Main Code
-        #Main code part 1
+        # Main code part 1
         for k in range(1, MAX_TRANSFER + 1):
             Q.clear()  # Format of Q is {route:stop}
             marked_stop = list(set(marked_stop))
@@ -72,7 +73,7 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
                             Q[route] = stp_idx
                 except KeyError:
                     continue
-            #Main code part 2
+            # Main code part 2
             for route, current_stopindex_by_route in Q.items():
                 current_trip_t = -1
                 for p_i in stops_dict[route][current_stopindex_by_route:]:
@@ -93,7 +94,7 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
                             borading_point = p_i
                             boarding_time = current_trip_t[current_stopindex_by_route][1]
                     current_stopindex_by_route = current_stopindex_by_route + 1
-            #Main code part 3
+            # Main code part 3
             marked_stop_copy = [*marked_stop]
             for p in marked_stop_copy:
                 try:
@@ -108,10 +109,11 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
                             marked_stop.append(p_dash)
                 except KeyError:
                     continue
-            #Main code End
+            # Main code End
             if marked_stop == deque([]):
                 # print('code ended with termination condition')
                 break
         out.extend(post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED))
-        if PRINT_PARA == 1: print('------------------------------------')
+        if PRINT_PARA == 1:
+            print('------------------------------------')
     return list(set(out))

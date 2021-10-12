@@ -1,5 +1,6 @@
 """
 Module contains TBTR implementation
+#TODO: Add backtracking label system
 """
 from TBTR.TBTR_functions import *
 
@@ -7,7 +8,7 @@ from TBTR.TBTR_functions import *
 def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_PARA, routes_by_stop_dict, stops_dict,
          stoptimes_dict, footpath_dict, trip_transfer_dict, trip_set):
     """
-    Standard TBTR implementation. #TODO: Add backtracking label system
+    Standard TBTR implementation.
     Args:
         SOURCE (int): stop id of source stop.
         DESTINATION (int): stop id of destination stop.
@@ -25,7 +26,7 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_P
         out (list): List of pareto-optimal arrival Timestamps
     """
     out = []
-    J = initlize_tbtr()
+    J = initialize_tbtr()
     L = initialize_from_desti_new(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict)
 
     R_t, Q = initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict, D_TIME,

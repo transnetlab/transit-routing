@@ -1,5 +1,6 @@
 """
 Module contains One-To-Many rTBTR implementation
+#TODO: Add backtracking label
 """
 from TBTR.TBTR_functions import *
 
@@ -7,6 +8,7 @@ from TBTR.TBTR_functions import *
 def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_PARA, OPTIMIZED,
                     routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, trip_transfer_dict, trip_set):
     """
+    One to many rTBTR implementation
     Args:
         SOURCE (int): stop id of source stop.
         DESTINATION_LIST (list): list of stop ids of destination stop.
@@ -14,6 +16,7 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
         MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
         PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
@@ -21,9 +24,9 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
         trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {keys: stop number, value: list of tuples of form (id of trip we are transferring to, stop number)}.
         trip_set (set): set of trip ids from which trip-transfers are available.
     Returns:
-        if optimized==1:
+        if OPTIMIZED==1:
             out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
-        elif optimized==0:
+        elif OPTIMIZED==0:
             out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
     """
     d_time_list = d_time_groups.get_group(SOURCE)[["trip_id", 'arrival_time', 'stop_sequence']].values.tolist()
@@ -38,14 +41,14 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
     d_time_list.sort(key=lambda x: x[1], reverse=True)
 
     out = []
-    J, inf_time = initlize_onemany(MAX_TRANSFER, DESTINATION_LIST)
+    J, inf_time = initialize_onemany(MAX_TRANSFER, DESTINATION_LIST)
     L = initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_LIST, footpath_dict)
     R_t = {x: defaultdict(lambda: 1000) for x in range(0, MAX_TRANSFER + 1)}
 
-    for D_TIME in d_time_list:
+    for d_time in d_time_list:
         rounds_desti_reached = {x: [] for x in DESTINATION_LIST}
         n = 0
-        Q = initialize_from_source_range(D_TIME, MAX_TRANSFER, stops_dict, stoptimes_dict, SOURCE, n, R_t)
+        Q = initialize_from_source_range(d_time, MAX_TRANSFER, stoptimes_dict, n, R_t)
         while n < MAX_TRANSFER:
             for trip in Q[n]:
                 from_stop, tid, to_stop, trip_route, tid_idx = trip[0: 5]

@@ -25,13 +25,13 @@ with open(f'./GTFS/{FOLDER}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
 
 trip_set = set(trip_transfer_dict.keys())
 for tid, connnections in trip_transfer_dict.items():
-    deaf = defaultdict(lambda : [])
+    deaf = defaultdict(lambda: [])
     deaf.update(connnections)
     trip_transfer_dict[tid] = deaf
 print_network_details(transfers_file, trips_file, stops_file)
 ########################################
-SOURCE= 9865
-DESTINATION= 12683
+SOURCE = 9865
+DESTINATION = 12683
 MAX_TRANSFER = 4
 WALKING_FROM_SOURCE = 0
 CHANGE_TIME_SEC = 0
@@ -42,7 +42,7 @@ print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_S
 ########################################
 d_time_groups = stop_times_file.groupby("stop_id")
 start = time_measure()
-output = rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_PARA,OPTIMIZED,
+output = rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_PARA, OPTIMIZED,
                routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, trip_transfer_dict, trip_set)
 if OPTIMIZED == 1:
     print(f"Trips required to cover optimal journeys are {output}")

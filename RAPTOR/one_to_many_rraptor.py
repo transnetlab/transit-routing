@@ -21,9 +21,9 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
     Returns:
-        if optimized==1:
+        if OPTIMIZED==1:
             out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
-        elif optimized==0:
+        elif OPTIMIZED==0:
             out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
     """
     try:
@@ -112,5 +112,6 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
                 # print('code ended with termination condition')
                 break
         output.extend(post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, OPTIMIZED))
-        if PRINT_PARA == 1: print('------------------------------------')
+        if PRINT_PARA == 1:
+            print('------------------------------------')
     return output

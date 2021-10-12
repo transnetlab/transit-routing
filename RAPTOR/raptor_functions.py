@@ -12,15 +12,15 @@ def initlize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
     '''
     Initialize values for RAPTOR.
     Args:
-        routes_by_stop_dict (dict): Pre-processed dict- format {stop_id: [routes]}
-        SOURCE (int): SOURCE stop id
-        transfer (int): Max transfer limit
+        routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
+        SOURCE (int): stop id of source stop.
+        MAX_TRANSFER (int): maximum transfer limit.
     Returns:
-        marked_stop (Deque): Deque to store marked stop
-        label (dict): Nested dict to maintain label {round : {stop_id: pandas.datetime}}
-        pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id format- {round : {stop_id: pointer_label}}
-        star_label (dict): dict to maintain best arrival label {stop id: pandas.datetime}
-        inf_time (pd.timestamp): Variable indicating infinite time (pandas.datetime)
+        marked_stop (deque): deque to store marked stop.
+        label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
+        pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
+        star_label (dict): dict to maintain best arrival label {stop id: pandas.datetime}.
+        inf_time (pd.timestamp): Variable indicating infinite time (pandas.datetime).
     '''
     inf_time = pd.Timestamp(year=2022, month=1, day=1, hour=1, second=1)
 
@@ -30,7 +30,7 @@ def initlize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
 
     marked_stop = deque()
     marked_stop.append(SOURCE)
-    return (marked_stop, label, pi_label, star_label, inf_time)
+    return marked_stop, label, pi_label, star_label, inf_time
 
 
 def check_stop_validity(stops, SOURCE, DESTINATION):
@@ -38,8 +38,8 @@ def check_stop_validity(stops, SOURCE, DESTINATION):
     Check if the entered SOURCE and DESTINATION stop id are present in stop list or not.
     Args:
         stops: GTFS stops.txt
-        SOURCE (int): SOURCE stop id
-        DESTINATION (int): DESTINATION stop id
+        SOURCE (int): stop id of source stop.
+        DESTINATION (int): stop id of destination stop.
     Returns:
         None
     '''
@@ -49,33 +49,21 @@ def check_stop_validity(stops, SOURCE, DESTINATION):
         print("incorrect inputs")
 
 
-##################################################################################################################################################################################################
-# N##ote3:A route(stops 1 to 20) may contain 2 trip pattern with trip 1 from 1 to 10 and trip 2  from 10 to 20.  I want earliest trip from 10 after 11pm. Now Trip 1
-# may end at 10 at 12pm thus stop 10 has time stamp greater than 10 but I cannot hop on this trip from stop 10. Technically this is coz  we should use dep_time
-# for finding trip and for such a case dep_time would not be defined for ending station. For now dep_time is populated same is arrival time everywhere. Trip[:1] skips
-# the last element and thus takes care of this
-# Note:(Not Correct now i gues.. coz on one route bus might not be defined but it might be on other routes.) get_latest_trip may produce error 'local variable 'current_trip' referenced before assignment' coz if the SOURCE stop is  2 then  there is no bus from it after 9AM.
-# Thus, it may cause error if the deaprting time is after 9Am at stop 2. To avoid it, intilize the departing time early like 6 Am. This
-# Also. from stop zero there first bus is at 6AM. If the departing time is 5Am , that is taken care of(meaning itll give earliest trip at that stop as that of 6 Am)
-####Call:get_latest_trip(route,p_i,d_time_at_pi)
-# d_time_at_pi=previous_arrival_at_pi
-# stoptimes_dict[22543][0]
 def get_latest_trip_new(stoptimes_dict, route, arrival_time_at_pi, pi_index, change_time):
     '''
     Get latest trip after a certain timestamp from the given stop of a route.
     Args:
-        stoptimes_dict (dict): Pre-processed dict- format {route_id: [[trip_1], [trip_2]]}
-        route (int): Route-id
-        arrival_time_at_pi (pandas.datetime): Arrival time at stop pi_index
-        pi_index (int): stop index of the boarding stop on the route.
-        change_time (pandas.datetime): Change time
+        stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+        route (int): id of route.
+        arrival_time_at_pi (pandas.datetime): arrival time at stop pi.
+        pi_index (int): index of the stop from which route was boarded.
+        change_time (pandas.datetime): change time at stop (set to 0).
     Returns:
         If a trip exists:
-            trip index , Trip
+            trip index, trip
         else:
             -1,-1   (e.g. when there is no trip after the given timestamp)
     '''
-#    arrival_time_at_pi, pi_index =  label[k - 1][p_i], current_stopindex_by_route
     try:
         for trip_idx, trip in enumerate(stoptimes_dict[route]):
             if trip[pi_index][1] >= arrival_time_at_pi + change_time:
@@ -93,15 +81,14 @@ def post_processing(DESTINATION, pi_label, PRINT_PARA, label):
         2. Trips for covering pareto optimal set
         3. Pareto optimal timestamps.
     Args:
-        DESTINATION (int): DESTINATION stop id
-        pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id format- {round : {stop_id: pointer_label}}
-        PRINT_PARA (int): 1 or 0. 1 means print complete path
-        label (dict): Nested dict to maintain label {round : {stop_id: pandas.datetime}}
+        DESTINATION (int): stop id of destination stop.
+        pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
+        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
     Returns:
-        rounds_inwhich_desti_reached (list): List of rounds in which DESTINATION is reached. Format - [int, int...]
-        trip_set (list): List of rounds in which DESTINATION is reached. Format - [char, char...]
-        rap_out (list): pareto-optimal arrival timestamps. format = [(pandas.datetime),(pandas.datetime)... ]
-
+        rounds_inwhich_desti_reached (list): list of rounds in which DESTINATION is reached. Format - [int]
+        trip_set (list): list of trips ids required to cover optimal journeys. Format - [char]
+        rap_out (list): list of pareto-optimal arrival timestamps. Format = [(pandas.datetime)]
     '''
     rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
 
@@ -154,24 +141,24 @@ def _print_Journey_legs(pareto_journeys):
         print("####################################")
 
 
-def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, optimized):
+def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, OPTIMIZED):
     '''
     post processing for Ont-To-Many rRAPTOR. Currently supported functionality:
         1. Print the output
         2. Routes required for covering pareto-optimal set.
         3. Trips required for covering pareto-optimal set.
     Args:
-        DESTINATION_LIST (list): list of DESTINATION stop id. Format: [stop_id, stop_id]
+        DESTINATION_LIST (list): list of stop ids of destination stop.
         pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
-        PRINT_PARA (int): 1 or 0. 1 means print complete journeys
-        optimized (int): 1 or 0. 1 means collect trips required for optimal journeys , 0 means collect routes
+        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
     Returns:
-        if optimized==1:
-            final_trips (list): List of trips required to cover all pareto-optimal journeys. format - [trip_id, trip_id...]
-        else:
-            final_routes (list): List of routes required to cover all pareto-optimal journeys. format - [route_id, route_id...]
+        if OPTIMIZED==1:
+            final_trips (list): list of trips required to cover all pareto-optimal journeys. format - [trip_id]
+        elif OPTIMIZED==0:
+            final_routes (list): list of routes required to cover all pareto-optimal journeys. format - [route_id]
     '''
-    if optimized==1:
+    if OPTIMIZED==1:
         final_trips = []
         for DESTINATION in DESTINATION_LIST:
             rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
@@ -233,16 +220,16 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED)
         2. Routes required for covering pareto-optimal journeys.
         3. Trips required for covering pareto-optimal journeys.
     Args:
-        DESTINATION (int): DESTINATION stop id
+        DESTINATION (int): stop id of destination stop.
         pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
-        PRINT_PARA (int): 1 or 0. 1 means print complete path
-        label (dict): Nested dict to maintain label {round : {stop_id: pandas.datetime}}
-        optimized (int): 1 or 0. 1 means collect trips required for optimal journeys , 0 means collect routes
+        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
+        OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
     Returns:
-        if optimized==1:
-            final_trips (list): List of trips required to cover all pareto-optimal journeys. Format - [trip_id, trip_id...]
-        else:
-            final_routes (list): List of routes required to cover all pareto-optimal journeys. Format - [route_id, route_id...]
+        if OPTIMIZED==1:
+            final_trips (list): List of trips required to cover all pareto-optimal journeys. Format - [trip_id]
+        elif OPTIMIZED==0:
+            final_routes (list): List of routes required to cover all pareto-optimal journeys. Format - [route_id]
     '''
     rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
     if OPTIMIZED==1:

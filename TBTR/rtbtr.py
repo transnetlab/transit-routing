@@ -15,6 +15,7 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
         MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
         PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
@@ -22,7 +23,10 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
         trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {keys: stop number, value: list of tuples of form (id of trip we are transferring to, stop number)}.
         trip_set (set): set of trip ids from which trip-transfers are available.
     Returns:
-        out (list): List of pareto-optimal arrival Timestamps
+        if OPTIMIZED==1:
+            out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
+        elif OPTIMIZED==0:
+            out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
     """
     d_time_list = d_time_groups.get_group(SOURCE)[["trip_id", 'arrival_time', 'stop_sequence']].values.tolist()
     if WALKING_FROM_SOURCE == 1:
@@ -35,16 +39,16 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
     d_time_list.sort(key=lambda x: x[1], reverse=True)
 
     out = []
-    J = initlize_tbtr()
+    J = initialize_tbtr()
 
     L = initialize_from_desti_new(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict)
 
     R_t = {x: defaultdict(lambda: 1000) for x in range(0, MAX_TRANSFER + 1)}
 
-    for D_TIME in d_time_list:
+    for d_time in d_time_list:
         rounds_desti_reached = []
         n = 0
-        Q = initialize_from_source_range(D_TIME, MAX_TRANSFER, stops_dict, stoptimes_dict, SOURCE, n, R_t)
+        Q = initialize_from_source_range(d_time, MAX_TRANSFER, stoptimes_dict, n, R_t)
         while n < MAX_TRANSFER:
             for trip in Q[n]:
                 from_stop, tid, to_stop, trip_route, tid_idx = trip[0: 5]
@@ -64,14 +68,15 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
                 except KeyError:
                     pass
                 try:
-                    if tid in trip_set  and trip[1][1]<J[n][0]:
+                    if tid in trip_set and trip[1][1] < J[n][0]:
                         connection_list = [connection for from_stop_idx, transfer_stop_id in enumerate(trip[1:], from_stop + 1)
                                            for connection in trip_transfer_dict[tid][from_stop_idx]]
                         enqueue_range2(connection_list, n + 1, (tid, 0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
-                except IndexError:pass
+                except IndexError:
+                    pass
             n = n + 1
         if rounds_desti_reached:
-            out.extend(post_process_range_oldx(J, Q, rounds_desti_reached, DESTINATION))
-    if OPTIMIZED==1:
+            out.extend(list(post_process_range(J, Q, rounds_desti_reached)))
+    if OPTIMIZED == 1:
         out = [int(trip.split("_")[0]) for trip in out]
     return list(set(out))
