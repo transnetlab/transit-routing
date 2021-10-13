@@ -22,7 +22,7 @@ def load_all_dict(FOLDER):
         footpath_dict = pickle.load(file)
     with open(f'./dict_builder/{FOLDER}/routes_by_stop.pkl', 'rb') as file:
         routes_by_stop = pickle.load(file)
-    return (stops_dict, stoptimes_dict, footpath_dict, routes_by_stop)
+    return stops_dict, stoptimes_dict, footpath_dict, routes_by_stop
 
 
 def load_all_db(FOLDER):
@@ -43,4 +43,4 @@ def load_all_db(FOLDER):
     stop_times.arrival_time = pd.to_datetime(stop_times.arrival_time)
     stop_times = pd.merge(stop_times, trips, on='trip_id')
     transfers = pd.read_csv(f'{path}/transfers_full.csv', sep=',')
-    return (stops, trips, stop_times, transfers)
+    return stops, trips, stop_times, transfers

@@ -8,14 +8,18 @@ def take_inputs():
     defines the use input
     Returns:
         algorithm (int): algorithm type. 0 for RAPTOR and 1 for TBTR
-        variant (int): variant of the algorithm. 0 for normal version, 1 for range version, 2 for One-To-Many version, 3 for Hyper version
+        variant (int): variant of the algorithm. 0 for normal version,
+                                                 1 for range version,
+                                                 2 for One-To-Many version,
+                                                 3 for Hyper version
     """
-    algorithm = int(input("Press 0 for RAPTOR  \nPress 1 for TBTR\n"))
+    algorithm = int(input("Press 0 for RAPTOR \nPress 1 for TBTR \n"))
     print("***************")
     if algorithm == 0:
-        variant = int(input("Press 0 for RAPTOR\nPress 1 for rRAPTOR  \nPress 2 for One-To-Many rRAPTOR \nPress 3 for HypRAPTOR\n"))
+        variant = int(input(
+            "Press 0 for RAPTOR \nPress 1 for rRAPTOR \nPress 2 for One-To-Many rRAPTOR \nPress 3 for HypRAPTOR \n"))
     elif algorithm == 1:
-        variant = int(input("Press 0: TBTR\n Press 1: rTBTR  \nPress 2: One-To-Many rTBTR \nPress 3: HypTBTR\n"))
+        variant = int(input("Press 0: TBTR \nPress 1: rTBTR \nPress 2: One-To-Many rTBTR \nPress 3: HypTBTR \n"))
     print("***************")
     return algorithm, variant
 

@@ -40,7 +40,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
         except KeyError:
             pass
     d_time_list.sort(key=lambda x: x[1], reverse=True)
-    marked_stop, label, pi_label, star_label, inf_time = initlize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER)
+    marked_stop, label, pi_label, star_label, inf_time = initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER)
     change_time = pd.to_timedelta(CHANGE_TIME_SEC, unit='seconds')
     output = []
     for D_TIME in d_time_list:

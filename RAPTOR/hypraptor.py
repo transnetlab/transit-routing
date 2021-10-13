@@ -29,7 +29,7 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
     # Initialization
     reduced_routes = route_groups[tuple(sorted((stop_out[SOURCE], stop_out[DESTINATION])))]
 
-    marked_stop, label, pi_label, star_label, inf_time = initlize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER)
+    marked_stop, label, pi_label, star_label, inf_time = initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER)
     change_time = pd.to_timedelta(CHANGE_TIME_SEC, unit='seconds')
     (label[0][SOURCE], star_label[SOURCE]) = (D_TIME, D_TIME)
     Q = {}

@@ -8,8 +8,8 @@ import pandas as pd
 
 ################################################################################################################################################################################################
 
-def initlize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
-    '''
+def initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
+    ''' # TODO: pi is to trace the path? what does the pointer point to?
     Initialize values for RAPTOR.
     Args:
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
@@ -18,7 +18,7 @@ def initlize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
     Returns:
         marked_stop (deque): deque to store marked stop.
         label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
-        pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
+        pi_label (dict): Nested dict used for backtracking. Format {round : {stop_id: pointer_label}}
         star_label (dict): dict to maintain best arrival label {stop id: pandas.datetime}.
         inf_time (pd.timestamp): Variable indicating infinite time (pandas.datetime).
     '''

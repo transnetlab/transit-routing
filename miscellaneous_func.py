@@ -3,7 +3,6 @@ Module contains miscellaneous functions used for reading data, printing logo etc
 """
 import pickle
 from random import sample
-
 import networkx as nx
 import pandas as pd
 
@@ -70,7 +69,6 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FR
         print(f"Weighing scheme: {WEIGHING_SCHEME}")
     print("_____________________________________________________")
     return None
-
 
 
 def read_partitions_new(stop_times_file, FOLDER, part, scheme, algo):
@@ -230,7 +228,7 @@ def check_nonoverlap(stoptimes_dict, stops_dict):
                     for idx, _ in enumerate(first_trip):
                         if second_trip[idx][1] <= first_trip[idx][1]:
                             stoptimes_dict[r_idx][x][idx] = (
-                            second_trip[idx][0], second_trip[idx][1] - pd.to_timedelta(1, unit="seconds"))
+                                second_trip[idx][0], second_trip[idx][1] - pd.to_timedelta(1, unit="seconds"))
                 overlap = set()
             for r_idx, route_trips in stoptimes_dict.items():
                 for x in range(len(route_trips) - 1):
@@ -313,7 +311,6 @@ def check_footpath(footpath_dict):
                     print(SOURCE, desti)
                     raise Exception("Transitive Error in footpath dict")
     return None
-
 
 
 def get_random_od(routes_by_stop_dict, FOLDER):
