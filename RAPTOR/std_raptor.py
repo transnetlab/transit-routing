@@ -54,10 +54,10 @@ def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANG
                 routes_serving_p = routes_by_stop_dict[p]
                 for route in routes_serving_p:
                     stp_idx = stops_dict[route].index(p)  # TODO: searching for index is expensive. Can it be avoided?
-                    if route in Q.keys() and Q[route] != stp_idx:  # TODO: avoid the if and replace with a try statement
+                    try:
                         Q[route] = min(stp_idx, Q[route])
-                    else:
-                        Q[route] = stp_idx
+                    except KeyError:
+                            Q[route] = stp_idx
             except KeyError:
                 continue
 
