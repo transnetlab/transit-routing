@@ -9,7 +9,7 @@ def load_all_dict(FOLDER):
         FOLDER (str): network folder.
     Returns:
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
-        stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+        stoptimes_dict (dict): keys: route ID, values: list of trips in the increasing order of start time. Format-> dict[route_ID] = [trip_1, trip_2] where trip_1 = [(stop id, arrival time), (stop id, arrival time)]
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
     """
