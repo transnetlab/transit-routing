@@ -6,6 +6,19 @@ from random import sample
 import networkx as nx
 import pandas as pd
 
+def read_testcase():
+    import gtfs_loader
+    from dict_builder import dict_builder_functions
+    FOLDER = './swiss'
+    stops_file, trips_file, stop_times_file, transfers_file = gtfs_loader.load_all_db(FOLDER)
+    try:
+        stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict = gtfs_loader.load_all_dict(FOLDER)
+    except FileNotFoundError:
+        stops_dict = dict_builder_functions.build_save_stops_dict(stop_times_file, trips_file, FOLDER)
+        stoptimes_dict = dict_builder_functions.build_save_stopstimes_dict(stop_times_file, trips_file, FOLDER)
+        routes_by_stop_dict = dict_builder_functions.build_save_route_by_stop(stop_times_file, FOLDER)
+        footpath_dict = dict_builder_functions.build_save_footpath_dict(transfers_file, FOLDER)
+    return stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict
 
 def print_logo():
     """
@@ -38,7 +51,7 @@ def print_network_details(transfers_file, trips_file, stops_file):
     return None
 
 
-def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, NO_OF_PARTITIONS=None,
+def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE,variant, NO_OF_PARTITIONS=None,
                            WEIGHING_SCHEME=None, PARTITIONING_ALGORITHM=None):
     """
     Prints the input parameters related to the shortest path query
@@ -48,6 +61,10 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FR
         D_TIME (pandas.datetime): Departure time
         MAX_TRANSFER (int): Max transfer limit
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
+        variant (int): variant of the algorithm. 0 for normal version,
+                                                 1 for range version,
+                                                 2 for One-To-Many version,
+                                                 3 for Hyper version
         NO_OF_PARTITIONS: Number of partitions network has been divided into
         WEIGHING_SCHEME: Which weighing scheme has been used to generate partitions.
         PARTITIONING_ALGORITHM: Which algorithm has been used to generate partitions.
@@ -57,29 +74,28 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FR
     print("Network: Switzerland")
     print(f"SOURCE stop id: {SOURCE}")
     print(f"DESTINATION stop id: {DESTINATION}")
-    if D_TIME == -1:
+    print(f"Maximum Transfer allowed: {MAX_TRANSFER}")
+    print(f"Is walking from SOURCE allowed ?: {WALKING_FROM_SOURCE}")
+    if variant ==2 or variant ==1:
         print(f"Earliest departure time: 24 hour (Profile Query)")
     else:
         print(f"Earliest departure time: {D_TIME}")
-    print(f"Maximum Transfer allowed: {MAX_TRANSFER}")
-    print(f"Is walking from SOURCE allowed ?: {WALKING_FROM_SOURCE}")
-    if NO_OF_PARTITIONS != None:
+    if variant == 4:
         print(f"Number of partitions: {NO_OF_PARTITIONS}")
         print(f"Partitioning Algorithm used: {PARTITIONING_ALGORITHM}")
         print(f"Weighing scheme: {WEIGHING_SCHEME}")
     print("_____________________________________________________")
     return None
 
-
-def read_partitions_new(stop_times_file, FOLDER, part, scheme, algo):
+def read_partitions_new(stop_times_file, FOLDER, no_of_partitions, weighting_scheme, partitioning_algorithm):
     """
     Reads the fill-in information.
     Args:
         stop_times_file (pandas.dataframe): dataframe with stoptimes details
         FOLDER (str): path to network folder.
-        part (int): number of partitions network has been divided into.
-        scheme (str): which weighing scheme has been used to generate partitions.
-        algo (str):which algorithm has been used to generate partitions. Currently supported arguments are hmetis or kahypar.
+        no_of_partitions (int): number of partitions network has been divided into.
+        weighting_scheme (str): which weighing scheme has been used to generate partitions.
+        partitioning_algorithm (str):which algorithm has been used to generate partitions. Currently supported arguments are hmetis or kahypar.
     Returns:
         stop_out (dict) : key: stop-id (int), value: stop-cell id (int). Note: if stop-cell id of -1 denotes cut stop.
         route_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of route ids belonging to the stop cell combination
@@ -87,16 +103,16 @@ def read_partitions_new(stop_times_file, FOLDER, part, scheme, algo):
         trip_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of trip ids belonging to the stop cell combination
     """
     import itertools
-    if algo == "hmetis":
-        route_out = pd.read_csv(f'./partitions/{FOLDER}/routeout_{scheme}_{part}.csv',
+    if partitioning_algorithm == "hmetis":
+        route_out = pd.read_csv(f'./partitions/{FOLDER}/routeout_{weighting_scheme}_{no_of_partitions}.csv',
                                 usecols=['path_id', 'group']).groupby('group')
-        stop_out = pd.read_csv(f'./partitions/{FOLDER}/cutstops_{scheme}_{part}.csv', usecols=['stop_id', 'g_id'])
-        fill_ins = pd.read_csv(f'./partitions/{FOLDER}/fill_ins_{scheme}_{part}.csv')
-    elif algo == "kahypar":
-        route_out = pd.read_csv(f'./kpartitions/{FOLDER}/routeout_{scheme}_{part}.csv',
+        stop_out = pd.read_csv(f'./partitions/{FOLDER}/cutstops_{weighting_scheme}_{no_of_partitions}.csv', usecols=['stop_id', 'g_id'])
+        fill_ins = pd.read_csv(f'./partitions/{FOLDER}/fill_ins_{weighting_scheme}_{no_of_partitions}.csv')
+    elif partitioning_algorithm == "kahypar":
+        route_out = pd.read_csv(f'./kpartitions/{FOLDER}/routeout_{weighting_scheme}_{no_of_partitions}.csv',
                                 usecols=['path_id', 'group']).groupby('group')
-        stop_out = pd.read_csv(f'./kpartitions/{FOLDER}/cutstops_{scheme}_{part}.csv', usecols=['stop_id', 'g_id'])
-        fill_ins = pd.read_csv(f'./kpartitions/{FOLDER}/fill_ins_{scheme}_{part}.csv')
+        stop_out = pd.read_csv(f'./kpartitions/{FOLDER}/cutstops_{weighting_scheme}_{no_of_partitions}.csv', usecols=['stop_id', 'g_id'])
+        fill_ins = pd.read_csv(f'./kpartitions/{FOLDER}/fill_ins_{weighting_scheme}_{no_of_partitions}.csv')
 
     fill_ins.fillna(-1, inplace=True)
     fill_ins['routes'] = fill_ins['routes'].astype(int)
