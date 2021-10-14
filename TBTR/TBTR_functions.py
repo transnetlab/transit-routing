@@ -13,7 +13,7 @@ def initialize_tbtr():
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time. 
         inf_time (pandas.datetime): Variable indicating infinite time.
     '''
-    inf_time = pd.Timestamp(year=2022, month=1, day=1, hour=1, second=1)
+    inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day") 
     J = defaultdict(lambda: [inf_time, 0])
     return J
 
@@ -28,7 +28,7 @@ def initialize_onemany(MAX_TRANSFER, DESTINATION_LIST):
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time.
         inf_time (pandas.datetime): Variable indicating infinite time.
     '''
-    inf_time = pd.Timestamp(year=2022, month=1, day=1, hour=1, second=1)
+    inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day") 
     J = {desti: {x: [inf_time, 0] for x in range(MAX_TRANSFER)} for desti in DESTINATION_LIST}
     return J, inf_time
 
@@ -402,7 +402,7 @@ def initlize_old():
         J: defaultdict to store arrival timestamps
         inf_time: Variable indicating infinite time (pandas.datetime)
     '''
-    inf_time = pd.Timestamp(year=2022, month=1, day=1, hour=1, second=1)
+    inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day") 
     J = defaultdict(lambda: [inf_time, 0])
     return J, inf_time
 
@@ -413,7 +413,7 @@ def initlize(MAX_TRANSFER):
         J: defaultdict to store arrival timestamps
         inf_time: Variable indicating infinite time (pandas.datetime)
     '''
-    inf_time = pd.Timestamp(year=2022, month=1, day=1, hour=1, second=1)
+    inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day") 
     J = {x:[inf_time, 0] for x in range(MAX_TRANSFER)}
 #    J = defaultdict(lambda: [inf_time, 0])
     return J

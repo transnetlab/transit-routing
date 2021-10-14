@@ -22,7 +22,7 @@ def initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
         star_label (dict): dict to maintain best arrival label {stop id: pandas.datetime}.
         inf_time (pd.timestamp): Variable indicating infinite time (pandas.datetime).
     '''
-    inf_time = pd.Timestamp(year=2022, month=1, day=1, hour=1, second=1)
+    inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day")
 
     pi_label = {x: {stop: -1 for stop in routes_by_stop_dict.keys()} for x in range(0, MAX_TRANSFER + 1)}
     label = {x: {stop: inf_time for stop in routes_by_stop_dict.keys()} for x in range(0, MAX_TRANSFER + 1)}
@@ -334,7 +334,7 @@ def initlize(routes_by_stop_dict, SOURCE, transfer):
         star_label: dict to maintain best arrival label {stop id: pandas.datetime}
         inf_time: Variable indicating infinite time (pandas.datetime)
     '''
-    inf_time = pd.Timestamp(year=2022, month=1, day=1, hour=1, second=1)
+    inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day") 
     
     pi_label = {x: {stop: -1 for stop in routes_by_stop_dict.keys()} for x in range(0, transfer + 1)}
     label = {x: {stop: inf_time for stop in routes_by_stop_dict.keys()} for x in range(0, transfer + 1)}
