@@ -5,7 +5,7 @@ from RAPTOR.raptor_functions import *
 
 
 def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
-            OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict):
+            OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
     '''
     Standard rRaptor implementation
     Args:
@@ -21,6 +21,7 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+        idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
     Returns:
         if OPTIMIZED==1:
             out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
@@ -66,7 +67,7 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
                 try:
                     routes_serving_p = routes_by_stop_dict[p]
                     for route in routes_serving_p:
-                        stp_idx = stops_dict[route].index(p)
+                        stp_idx = idx_by_route_stop_dict[(route, p)]
                         if route in Q.keys() and Q[route] != stp_idx:
                             Q[route] = min(stp_idx, Q[route])
                         else:
@@ -111,7 +112,8 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
                     continue
             # Main code End
             if marked_stop == deque([]):
-                # print('code ended with termination condition')
+                if PRINT_PARA == 1:
+                    print('code ended with termination condition')
                 break
         out.extend(post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED))
         if PRINT_PARA == 1:

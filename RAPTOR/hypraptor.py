@@ -5,7 +5,7 @@ from RAPTOR.raptor_functions import *
 
 
 def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA, stop_out,
-              route_groups, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict):
+              route_groups, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
     """
     Standard HypRaptor implementation
     Args:
@@ -22,6 +22,7 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+        idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
     Returns:
         out (list): list of pareto-optimal arrival Timestamps.
     """
@@ -55,7 +56,7 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
                 routes_serving_p = routes_by_stop_dict[p]
                 for route in routes_serving_p:
                     if route not in reduced_routes: continue
-                    stp_idx = stops_dict[route].index(p)
+                    stp_idx = idx_by_route_stop_dict[(route, p)]
                     if route in Q.keys() and Q[route] != stp_idx:
                         Q[route] = min(stp_idx, Q[route])
                     else:
