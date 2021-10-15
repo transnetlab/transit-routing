@@ -6,7 +6,7 @@ from RAPTOR.raptor_functions import *
 
 
 def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
-           routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict):
+           routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
     '''
     Standard Raptor implementation
     Args:
@@ -21,6 +21,7 @@ def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANG
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+        idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
     Returns:
         out (list): list of pareto-optimal arrival timestamps.
     '''
@@ -53,7 +54,7 @@ def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANG
             try:
                 routes_serving_p = routes_by_stop_dict[p]
                 for route in routes_serving_p:
-                    stp_idx = stops_dict[route].index(p)  # TODO: searching for index is expensive. Can it be avoided?
+                    stp_idx = idx_by_route_stop_dict[(route, p)]
                     try:
                         Q[route] = min(stp_idx, Q[route])
                     except KeyError:
