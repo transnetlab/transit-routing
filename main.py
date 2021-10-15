@@ -101,10 +101,6 @@ if __name__ == "__main__":
     with open(f'./GTFS/{FOLDER}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
         trip_transfer_dict = pickle.load(file)
     trip_set = set(trip_transfer_dict.keys())
-    for tid, connnections in trip_transfer_dict.items():
-        deaf = defaultdict(lambda: [])
-        deaf.update(connnections)
-        trip_transfer_dict[tid] = deaf
     print_network_details(transfers_file, trips_file, stops_file)
 
     # Query parameters
