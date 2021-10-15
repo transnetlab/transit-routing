@@ -48,11 +48,11 @@ def main():
     if algorithm == 0:
         if variant == 0:
             output = raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
-                            routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict)
+                            routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
             print(f"Optimal arrival time are: {output}")
         elif variant == 1:
             output = rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
-                             OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict)
+                             OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
             if OPTIMIZED == 1:
                 print(f"Trips required to cover optimal journeys are {output}")
             else:
@@ -60,14 +60,14 @@ def main():
         elif variant == 2:
             output = onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC,
                                        PRINT_PARA, OPTIMIZED,
-                                       routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict)
+                                       routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
             if OPTIMIZED == 1:
                 print(f"Trips required to cover optimal journeys are {output}")
             else:
                 print(f"Routes required to cover optimal journeys are {output}")
         elif variant == 3:
             output = hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
-                               stop_out, route_groups, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict)
+                               stop_out, route_groups, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
             print(f"Optimal arrival time are: {output}")
     if algorithm == 1:
         if variant == 0:
@@ -97,7 +97,9 @@ def main():
 if __name__ == "__main__":
     # Read network
     FOLDER = './swiss'
-    stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict = read_testcase()
+
+    stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase()
+
     with open(f'./GTFS/{FOLDER}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
         trip_transfer_dict = pickle.load(file)
     trip_set = set(trip_transfer_dict.keys())
