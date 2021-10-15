@@ -113,7 +113,7 @@ if __name__ == "__main__":
     DESTINATION_LIST = [12683]
     D_TIME = stop_times_file.arrival_time.sort_values().iloc[0]
     MAX_TRANSFER = 4
-    WALKING_FROM_SOURCE = 0
+    WALKING_FROM_SOURCE = 1
     CHANGE_TIME_SEC = 0
     PRINT_PARA = 0
     OPTIMIZED = 1
