@@ -50,7 +50,7 @@ def main():
             output = raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
                             routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
             print(f"Optimal arrival time are: {output}")
-        elif variant == 1:
+        elif variant == 1:  # TODO: Why is d_time_groups not in CAPS?
             output = rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
                              OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
             if OPTIMIZED == 1:
@@ -116,6 +116,7 @@ if __name__ == "__main__":
     PRINT_PARA = 0
     OPTIMIZED = 1
     stop_out, route_groups, _, trip_groups = read_partitions_new(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2", partitioning_algorithm="kahypar")
+    # TODO: What is the difference between the csv and txt files? Is there a description of data somewhere
 
     # main function
     d_time_groups = stop_times_file.groupby("stop_id")

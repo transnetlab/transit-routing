@@ -55,7 +55,7 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
             try:
                 routes_serving_p = routes_by_stop_dict[p]
                 for route in routes_serving_p:
-                    if route not in reduced_routes: continue
+                    if route not in reduced_routes: continue  # TODO: is this the only change?
                     stp_idx = idx_by_route_stop_dict[(route, p)]
                     if route in Q.keys() and Q[route] != stp_idx:
                         Q[route] = min(stp_idx, Q[route])
@@ -101,7 +101,7 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
                 continue
         # Main code End
         if marked_stop == deque([]):
-            #            print('code ended with termination condition')
+            # print('code ended with termination condition')
             break
     _, _, rap_out = post_processing(DESTINATION, pi_label, PRINT_PARA, label)
     out.append(rap_out)

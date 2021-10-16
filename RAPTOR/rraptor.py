@@ -16,7 +16,7 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
         CHANGE_TIME_SEC (int): change-time in seconds.
         PRINT_PARA (int): 1 or 0. 1 means print complete path.
-        OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
+        OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.  # TODO: Why don't you have this in std_raptor?
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.

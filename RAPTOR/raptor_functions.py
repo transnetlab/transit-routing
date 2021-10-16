@@ -70,7 +70,7 @@ def get_latest_trip_new(stoptimes_dict, route, arrival_time_at_pi, pi_index, cha
                 return f'{route}_{trip_idx}', stoptimes_dict[route][trip_idx]
         return -1, -1  # No trip is found after arrival_time_at_pi
     except KeyError:
-        return -1, -1  # NO trip exsist for this route. in this case check tripid from trip file for this route and then look waybill.ID. Likely that trip is across days thats why it is rejected in stoptimes builder while checking
+        return -1, -1  # No trip exsist for this route. in this case check tripid from trip file for this route and then look waybill.ID. Likely that trip is across days thats why it is rejected in stoptimes builder while checking
 
 
 def post_processing(DESTINATION, pi_label, PRINT_PARA, label):

@@ -32,7 +32,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
     except ValueError:
         pass
     d_time_list = d_time_groups.get_group(SOURCE)[["trip_id", 'arrival_time', 'stop_sequence']].values.tolist()
-    if WALKING_FROM_SOURCE == 1:
+    if WALKING_FROM_SOURCE == 1:  # TODO: when you are doing fill ins you have to enable walking from source right?
         try:
             source_footpaths = footpath_dict[SOURCE]
             for connection in source_footpaths:
@@ -48,7 +48,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
         pi_label = {x: {stop: -1 for stop in routes_by_stop_dict.keys()} for x in range(0, MAX_TRANSFER + 1)}
         marked_stop = deque()
         marked_stop.append(SOURCE)
-        start_tid, D_TIME, s_idx = D_TIME
+        start_tid, D_TIME, s_idx = D_TIME  # TODO: What is happening to D_TIME on the left. Is s_idx stop index?
         # if PRINT_PARA == 1: print(SOURCE, D_TIME)
         (label[0][SOURCE], star_label[SOURCE]) = (D_TIME, D_TIME)
         Q = {}
@@ -59,7 +59,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
             while marked_stop:
                 p = marked_stop.pop()
                 if k == 1:
-                    Q[int(start_tid.split('_')[0])] = s_idx
+                    Q[int(start_tid.split('_')[0])] = s_idx  # TODO: This is picking up the trip id?
                     break
                 try:
                     routes_serving_p = routes_by_stop_dict[p]
@@ -81,7 +81,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
                         arr_by_t_at_pi = current_trip_t[current_stopindex_by_route][1]
                         label[k][p_i], star_label[p_i] = arr_by_t_at_pi, arr_by_t_at_pi
                         pi_label[k][p_i] = (boarding_time, borading_point, p_i, arr_by_t_at_pi, tid)
-                        marked_stop.append(p_i)
+                        marked_stop.append(p_i)  # TODO: What is \tau^* int he pseudocode and where is that in this code?
                     if current_trip_t == -1 or label[k - 1][p_i] + change_time < \
                             current_trip_t[current_stopindex_by_route][1]:
                         tid, current_trip_t = get_latest_trip_new(stoptimes_dict, route, label[k - 1][p_i],
