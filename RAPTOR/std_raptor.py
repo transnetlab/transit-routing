@@ -69,21 +69,20 @@ def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANG
                 if current_trip_t != -1 and current_trip_t[current_stopindex_by_route][1] < min(star_label[p_i],
                                                                                                 star_label[
                                                                                                     DESTINATION]):
-                    # TODO: current_trip_t is a scalar or a dictionary? How is it related to arr(t,j)?
                     arr_by_t_at_pi = current_trip_t[current_stopindex_by_route][1]
                     label[k][p_i], star_label[p_i] = arr_by_t_at_pi, arr_by_t_at_pi
-                    pi_label[k][p_i] = (boarding_time, borading_point, p_i, arr_by_t_at_pi, tid)
+                    pi_label[k][p_i] = (boarding_time, boarding_point, p_i, arr_by_t_at_pi, tid)
                     marked_stop.append(p_i)  # TODO: you allow duplicates here and remove them later?
                 if current_trip_t == -1 or label[k - 1][p_i] + change_time < current_trip_t[current_stopindex_by_route][
                     1]:  # TODO: Change time should be on the right? because current_trip_t is storing the arrival times right?
                     tid, current_trip_t = get_latest_trip_new(stoptimes_dict, route, label[k - 1][p_i],
                                                               current_stopindex_by_route, change_time)
                     if current_trip_t == -1:
-                        boarding_time, borading_point = -1, -1
+                        boarding_time, boarding_point = -1, -1  # TODO: Change spelling of boarding_point in other variants of RAPTOR
                     else:
-                        borading_point = p_i
+                        boarding_point = p_i
                         boarding_time = current_trip_t[current_stopindex_by_route][1]
-                current_stopindex_by_route = current_stopindex_by_route + 1  # TODO: this is equivalent to line 14 in the psueudocode?
+                current_stopindex_by_route = current_stopindex_by_route + 1
 
         # Main code part 3
         marked_stop_copy = [*marked_stop]

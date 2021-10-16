@@ -45,6 +45,7 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
                 marked_stop.append(p_dash)
         except KeyError:
             pass
+
     # Main Code
     # Main code part 1
     for k in range(1, MAX_TRANSFER + 1):
@@ -55,7 +56,8 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
             try:
                 routes_serving_p = routes_by_stop_dict[p]
                 for route in routes_serving_p:
-                    if route not in reduced_routes: continue  # TODO: is this the only change?
+                    if route not in reduced_routes:
+                        continue
                     stp_idx = idx_by_route_stop_dict[(route, p)]
                     if route in Q.keys() and Q[route] != stp_idx:
                         Q[route] = min(stp_idx, Q[route])

@@ -32,7 +32,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
     except ValueError:
         pass
     d_time_list = d_time_groups.get_group(SOURCE)[["trip_id", 'arrival_time', 'stop_sequence']].values.tolist()
-    if WALKING_FROM_SOURCE == 1:  # TODO: when you are doing fill ins you have to enable walking from source right?
+    if WALKING_FROM_SOURCE == 1:
         try:
             source_footpaths = footpath_dict[SOURCE]
             for connection in source_footpaths:
@@ -59,7 +59,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
             while marked_stop:
                 p = marked_stop.pop()
                 if k == 1:
-                    Q[int(start_tid.split('_')[0])] = s_idx  # TODO: This is picking up the trip id?
+                    Q[int(start_tid.split('_')[0])] = s_idx
                     break
                 try:
                     routes_serving_p = routes_by_stop_dict[p]
@@ -81,7 +81,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
                         arr_by_t_at_pi = current_trip_t[current_stopindex_by_route][1]
                         label[k][p_i], star_label[p_i] = arr_by_t_at_pi, arr_by_t_at_pi
                         pi_label[k][p_i] = (boarding_time, borading_point, p_i, arr_by_t_at_pi, tid)
-                        marked_stop.append(p_i)  # TODO: What is \tau^* int he pseudocode and where is that in this code?
+                        marked_stop.append(p_i)
                     if current_trip_t == -1 or label[k - 1][p_i] + change_time < \
                             current_trip_t[current_stopindex_by_route][1]:
                         tid, current_trip_t = get_latest_trip_new(stoptimes_dict, route, label[k - 1][p_i],
