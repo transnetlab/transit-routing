@@ -3,8 +3,10 @@ Module contains miscellaneous functions used for reading data, printing logo etc
 """
 import pickle
 from random import sample
+
 import networkx as nx
 import pandas as pd
+
 
 def read_testcase():
     """
@@ -33,6 +35,7 @@ def read_testcase():
         footpath_dict = dict_builder_functions.build_save_footpath_dict(transfers_file, FOLDER)
         idx_by_route_stop_dict = dict_builder_functions.stop_idx_in_route(stop_times_file, FOLDER)
     return stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict
+
 
 def print_logo():
     """
@@ -65,8 +68,8 @@ def print_network_details(transfers_file, trips_file, stops_file):
     return None
 
 
-def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE,variant, NO_OF_PARTITIONS=None,
-                           WEIGHING_SCHEME=None, PARTITIONING_ALGORITHM=None):
+def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, variant, no_of_partitions=None,
+                           weighting_scheme=None, partitioning_algorithm=None):
     """
     Prints the input parameters related to the shortest path query
     Args:
@@ -79,9 +82,9 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FR
                                                  1 for range version,
                                                  2 for One-To-Many version,
                                                  3 for Hyper version
-        NO_OF_PARTITIONS: Number of partitions network has been divided into
-        WEIGHING_SCHEME: Which weighing scheme has been used to generate partitions.
-        PARTITIONING_ALGORITHM: Which algorithm has been used to generate partitions.
+        no_of_partitions: number of partitions network has been divided into
+        weighting_scheme: which weighing scheme has been used to generate partitions.
+        partitioning_algorithm: which algorithm has been used to generate partitions.
     Returns: None
     """
     print("___________________Query Parameters__________________")
@@ -90,16 +93,17 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FR
     print(f"DESTINATION stop id: {DESTINATION}")
     print(f"Maximum Transfer allowed: {MAX_TRANSFER}")
     print(f"Is walking from SOURCE allowed ?: {WALKING_FROM_SOURCE}")
-    if variant ==2 or variant ==1:
+    if variant == 2 or variant == 1:
         print(f"Earliest departure time: 24 hour (Profile Query)")
     else:
         print(f"Earliest departure time: {D_TIME}")
     if variant == 4:
-        print(f"Number of partitions: {NO_OF_PARTITIONS}")
-        print(f"Partitioning Algorithm used: {PARTITIONING_ALGORITHM}")
-        print(f"Weighing scheme: {WEIGHING_SCHEME}")
+        print(f"Number of partitions: {no_of_partitions}")
+        print(f"Partitioning Algorithm used: {partitioning_algorithm}")
+        print(f"Weighing scheme: {weighting_scheme}")
     print("_____________________________________________________")
     return None
+
 
 def read_partitions_new(stop_times_file, FOLDER, no_of_partitions, weighting_scheme, partitioning_algorithm):
     """
