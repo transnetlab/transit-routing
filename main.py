@@ -116,7 +116,6 @@ if __name__ == "__main__":
     PRINT_PARA = 0
     OPTIMIZED = 1
     stop_out, route_groups, _, trip_groups = read_partitions_new(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2", partitioning_algorithm="kahypar")
-    # TODO: What is the difference between the csv and txt files? Is there a description of data somewhere
 
     # main function
     d_time_groups = stop_times_file.groupby("stop_id")
