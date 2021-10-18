@@ -74,16 +74,16 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
                                                                                                     DESTINATION]):
                     arr_by_t_at_pi = current_trip_t[current_stopindex_by_route][1]
                     label[k][p_i], star_label[p_i] = arr_by_t_at_pi, arr_by_t_at_pi
-                    pi_label[k][p_i] = (boarding_time, borading_point, p_i, arr_by_t_at_pi, tid)
+                    pi_label[k][p_i] = (boarding_time, boarding_point, p_i, arr_by_t_at_pi, tid)
                     marked_stop.append(p_i)
                 if current_trip_t == -1 or label[k - 1][p_i] + change_time < \
                         current_trip_t[current_stopindex_by_route][1]:
                     tid, current_trip_t = get_latest_trip_new(stoptimes_dict, route, label[k - 1][p_i],
                                                               current_stopindex_by_route, change_time)
                     if current_trip_t == -1:
-                        boarding_time, borading_point = -1, -1
+                        boarding_time, boarding_point = -1, -1
                     else:
-                        borading_point = p_i
+                        boarding_point = p_i
                         boarding_time = current_trip_t[current_stopindex_by_route][1]
                 current_stopindex_by_route = current_stopindex_by_route + 1
         # Main code part 3
