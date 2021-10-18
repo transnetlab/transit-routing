@@ -101,9 +101,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
                     for i in trans_info:
                         (p_dash, to_pdash_time) = i
                         new_p_dash_time = label[k][p] + to_pdash_time
-                        if (label[k][p_dash] > new_p_dash_time) and new_p_dash_time < star_label[
-                            p_dash] and new_p_dash_time < max(
-                            [star_label[DESTINATION] for DESTINATION in DESTINATION_LIST]):
+                        if (label[k][p_dash] > new_p_dash_time):
                             label[k][p_dash], star_label[p_dash] = new_p_dash_time, new_p_dash_time
                             pi_label[k][p_dash] = ('walking', p, p_dash, to_pdash_time, new_p_dash_time)
                             marked_stop.append(p_dash)

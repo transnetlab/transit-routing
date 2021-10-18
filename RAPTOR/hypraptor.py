@@ -94,8 +94,7 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
                 for i in trans_info:
                     (p_dash, to_pdash_time) = i
                     new_p_dash_time = label[k][p] + to_pdash_time
-                    if (label[k][p_dash] > new_p_dash_time) and new_p_dash_time < min(star_label[p_dash],
-                                                                                      star_label[DESTINATION]):
+                    if (label[k][p_dash] > new_p_dash_time):
                         label[k][p_dash], star_label[p_dash] = new_p_dash_time, new_p_dash_time
                         pi_label[k][p_dash] = ('walking', p, p_dash, to_pdash_time, new_p_dash_time)
                         marked_stop.append(p_dash)
