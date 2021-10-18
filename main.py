@@ -43,8 +43,8 @@ def main():
     Runs the test case depending upon the values of algorithm, variant
     """
     algorithm, variant = take_inputs()
-    print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, variant, NO_OF_PARTITIONS=4,
-                           WEIGHING_SCHEME="S2", PARTITIONING_ALGORITHM="KaHyPar")  # TODO: should keyword arguments be CAPS?
+    print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, variant, no_of_partitions=4,
+                           weighting_scheme="S2", partitioning_algorithm="KaHyPar")
     if algorithm == 0:
         if variant == 0:
             output = raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
