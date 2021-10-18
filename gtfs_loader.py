@@ -42,7 +42,7 @@ def load_all_db(FOLDER):
     path = f"./GTFS/{FOLDER}"
     stops_file = pd.read_csv(f'{path}/stops.txt', sep=',').sort_values(by=['stop_id']).reset_index(drop=True)
     trips_file = pd.read_csv(f'{path}/trips.txt', sep=',')
-    stop_times_file = pd.read_csv(f'{path}/stop_times.csv', sep=',')
+    stop_times_file = pd.read_csv(f'{path}/stop_times.txt', sep=',')
     stop_times_file.arrival_time = pd.to_datetime(stop_times_file.arrival_time)
     stop_times_file = pd.merge(stop_times_file, trips_file, on='trip_id')
     transfers_file = pd.read_csv(f'{path}/transfers_full.csv', sep=',')
