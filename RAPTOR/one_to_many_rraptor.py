@@ -31,6 +31,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
         DESTINATION_LIST.remove(SOURCE)
     except ValueError:
         pass
+    # d_time_list is list tuples. Format = [(trip_id, arrival time, stop index)]
     d_time_list = d_time_groups.get_group(SOURCE)[["trip_id", 'arrival_time', 'stop_sequence']].values.tolist()
     if WALKING_FROM_SOURCE == 1:
         try:
@@ -44,13 +45,13 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
     marked_stop, label, pi_label, star_label, inf_time = initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER)
     change_time = pd.to_timedelta(CHANGE_TIME_SEC, unit='seconds')
     output = []
-    for D_TIME in d_time_list:
+    for dep_details in d_time_list:
         pi_label = {x: {stop: -1 for stop in routes_by_stop_dict.keys()} for x in range(0, MAX_TRANSFER + 1)}
         marked_stop = deque()
         marked_stop.append(SOURCE)
-        start_tid, D_TIME, s_idx = D_TIME  # TODO: What is happening to D_TIME on the left. Is s_idx stop index?
-        # if PRINT_PARA == 1: print(SOURCE, D_TIME)
-        (label[0][SOURCE], star_label[SOURCE]) = (D_TIME, D_TIME)
+        start_tid, d_time, s_idx = dep_details
+        # if PRINT_PARA == 1: print(SOURCE, d_time)
+        (label[0][SOURCE], star_label[SOURCE]) = (d_time, d_time)
         Q = {}
         # Main code part 1
         for k in range(1, MAX_TRANSFER + 1):
@@ -80,16 +81,16 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
                         [star_label[DESTINATION] for DESTINATION in DESTINATION_LIST]):
                         arr_by_t_at_pi = current_trip_t[current_stopindex_by_route][1]
                         label[k][p_i], star_label[p_i] = arr_by_t_at_pi, arr_by_t_at_pi
-                        pi_label[k][p_i] = (boarding_time, borading_point, p_i, arr_by_t_at_pi, tid)
+                        pi_label[k][p_i] = (boarding_time, boarding_point, p_i, arr_by_t_at_pi, tid)
                         marked_stop.append(p_i)
                     if current_trip_t == -1 or label[k - 1][p_i] + change_time < \
                             current_trip_t[current_stopindex_by_route][1]:
                         tid, current_trip_t = get_latest_trip_new(stoptimes_dict, route, label[k - 1][p_i],
                                                                   current_stopindex_by_route, change_time)
                         if current_trip_t == -1:
-                            boarding_time, borading_point = -1, -1
+                            boarding_time, boarding_point = -1, -1
                         else:
-                            borading_point = p_i
+                            boarding_point = p_i
                             boarding_time = current_trip_t[current_stopindex_by_route][1]
                     current_stopindex_by_route = current_stopindex_by_route + 1
             # Main code part 3
