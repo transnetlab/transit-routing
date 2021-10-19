@@ -17,6 +17,7 @@ def initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
         MAX_TRANSFER (int): maximum transfer limit.
     Returns:
         marked_stop (deque): deque to store marked stop.
+        marked_stop_dict (dict): Binary variable indicating if a stop is marked. Keys: stop Id, value: 0 or 1.
         label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
         pi_label (dict): Nested dict used for backtracking labels. Format {round : {stop_id: pointer_label}}
         if stop is reached by walking, pointer_label= ('walking', from stop id, to stop id, time, arrival time)}} else pointer_label= (trip boarding time, boarding_point, stop id, arr_by_trip, trip id)
@@ -30,8 +31,10 @@ def initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
     star_label = {stop: inf_time for stop in routes_by_stop_dict.keys()}
 
     marked_stop = deque()
+    marked_stop_dict = {stop: 0 for stop in routes_by_stop_dict.keys()}
     marked_stop.append(SOURCE)
-    return marked_stop, label, pi_label, star_label, inf_time
+    marked_stop_dict[SOURCE] = 1
+    return marked_stop, marked_stop_dict, label, pi_label, star_label, inf_time
 
 
 def check_stop_validity(stops, SOURCE, DESTINATION):
