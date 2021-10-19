@@ -35,20 +35,21 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
         try:
             source_footpaths = footpath_dict[SOURCE]
             for connection in source_footpaths:
-                d_time_list.extend(d_time_groups.get_group(connection[0])[
-                                       ["trip_id", 'arrival_time', 'stop_sequence']].values.tolist())
+                d_time_list.extend(d_time_groups.get_group(connection[0])[["trip_id", 'arrival_time', 'stop_sequence']].values.tolist())
         except KeyError:
             pass
     d_time_list.sort(key=lambda x: x[1], reverse=True)
 
-    marked_stop, label, pi_label, star_label, inf_time = initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER)
+    _, _, label, _, star_label, inf_time = initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER)
     change_time = pd.to_timedelta(CHANGE_TIME_SEC, unit='seconds')
 
-    for d_time in d_time_list:
+    for dep_details in d_time_list:
         pi_label = {x: {stop: -1 for stop in routes_by_stop_dict.keys()} for x in range(0, MAX_TRANSFER + 1)}
         marked_stop = deque()
+        marked_stop_dict = {stop: 0 for stop in routes_by_stop_dict.keys()}  # Binary variable indicating if a stop is marked
         marked_stop.append(SOURCE)
-        start_tid, d_time, s_idx = d_time
+        marked_stop_dict[SOURCE] = 1
+        start_tid, d_time, s_idx = dep_details
         if PRINT_PARA == 1:
             print(f"SOURCE, DESTINATION, d_time: {SOURCE, DESTINATION, d_time}")
         # Initialization
@@ -58,9 +59,9 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
         # Main code part 1
         for k in range(1, MAX_TRANSFER + 1):
             Q.clear()  # Format of Q is {route:stop}
-            marked_stop = list(set(marked_stop))
             while marked_stop:
                 p = marked_stop.pop()
+                marked_stop_dict[p] = 0
                 if k == 1:
                     Q[int(start_tid.split('_')[0])] = s_idx
                     break
@@ -78,17 +79,15 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
             for route, current_stopindex_by_route in Q.items():
                 current_trip_t = -1
                 for p_i in stops_dict[route][current_stopindex_by_route:]:
-                    if current_trip_t != -1 and current_trip_t[current_stopindex_by_route][1] < min(star_label[p_i],
-                                                                                                    star_label[
-                                                                                                        DESTINATION]):
+                    if current_trip_t != -1 and current_trip_t[current_stopindex_by_route][1] < min(star_label[p_i], star_label[DESTINATION]):
                         arr_by_t_at_pi = current_trip_t[current_stopindex_by_route][1]
                         label[k][p_i], star_label[p_i] = arr_by_t_at_pi, arr_by_t_at_pi
                         pi_label[k][p_i] = (boarding_time, boarding_point, p_i, arr_by_t_at_pi, tid)
-                        marked_stop.append(p_i)
-                    if current_trip_t == -1 or label[k - 1][p_i] + change_time < \
-                            current_trip_t[current_stopindex_by_route][1]:
-                        tid, current_trip_t = get_latest_trip_new(stoptimes_dict, route, label[k - 1][p_i],
-                                                                  current_stopindex_by_route, change_time)
+                        if marked_stop_dict[p_i] == 0:
+                            marked_stop.append(p_i)
+                            marked_stop_dict[p_i] = 1
+                    if current_trip_t == -1 or label[k - 1][p_i] + change_time < current_trip_t[current_stopindex_by_route][1]: # assuming arrival_time = departure_time
+                        tid, current_trip_t = get_latest_trip_new(stoptimes_dict, route, label[k - 1][p_i], current_stopindex_by_route, change_time)
                         if current_trip_t == -1:
                             boarding_time, boarding_point = -1, -1
                         else:
@@ -103,10 +102,12 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
                     for i in trans_info:
                         (p_dash, to_pdash_time) = i
                         new_p_dash_time = label[k][p] + to_pdash_time
-                        if (label[k][p_dash] > new_p_dash_time):
+                        if (label[k][p_dash] > new_p_dash_time) and new_p_dash_time < min(star_label[p_dash], star_label[DESTINATION]):
                             label[k][p_dash], star_label[p_dash] = new_p_dash_time, new_p_dash_time
                             pi_label[k][p_dash] = ('walking', p, p_dash, to_pdash_time, new_p_dash_time)
-                            marked_stop.append(p_dash)
+                            if marked_stop_dict[p_dash] == 0:
+                                marked_stop.append(p_dash)
+                                marked_stop_dict[p_dash] = 1
                 except KeyError:
                     continue
             # Main code End
