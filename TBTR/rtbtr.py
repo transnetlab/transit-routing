@@ -77,6 +77,6 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
             n = n + 1
         if rounds_desti_reached:
             out.extend(list(post_process_range(J, Q, rounds_desti_reached)))
-    if OPTIMIZED == 1:
+    if OPTIMIZED == 0:
         out = [int(trip.split("_")[0]) for trip in out]
     return list(set(out))
