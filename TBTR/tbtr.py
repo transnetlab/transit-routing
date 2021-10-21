@@ -20,7 +20,8 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_P
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
-        trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {keys: stop number, value: list of tuples of form (id of trip we are transferring to, stop number)}
+        trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
+        of form (id of trip we are transferring to, stop number)}
         trip_set (set): set of trip ids from which trip-transfers are available.
     Returns:
         out (list): List of pareto-optimal arrival Timestamps
@@ -28,22 +29,21 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_P
     out = []
     J = initialize_tbtr()
     L = initialize_from_desti_new(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict)
-
     R_t, Q = initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict, D_TIME,
                                         MAX_TRANSFER, WALKING_FROM_SOURCE)
     n = 0
-    while n < MAX_TRANSFER:
+    while n < MAX_TRANSFER:  # TODO: Pseudocdoe is n \leq \lambda?
         for trip in Q[n]:
-            from_stop, tid, to_stop, trip_route, tid_idx = trip[0: 5]
+            from_stop, tid, to_stop, trip_route, tid_idx = trip[0: 5]  # TODO: can you use a different name in 36 and 37 instead of trip so that it is not confused with 38
             trip = stoptimes_dict[trip_route][tid_idx][from_stop:to_stop]
             try:
-                L[trip_route]
+                L[trip_route]  # TODO: what's this line doing? Checking if trip_route is in L?
                 stop_list, _ = zip(*trip)
                 for last_leg in L[trip_route]:
                     idx = [x[0] for x in enumerate(stop_list) if x[1] == last_leg[2]]
                     if idx and from_stop < last_leg[0] and trip[idx[0]][1] + last_leg[1] < J[n][0]:
                         if last_leg[1] == 0:
-                            walking = (0, 0)
+                            walking = (0, 0)  # TODO: Is this for tracking the path? I don't see it in the pseudocode
                         else:
                             walking = (1, stops_dict[trip_route][last_leg[0]])
                         J = update_label(trip[idx[0]][1] + last_leg[1], n, (tid, walking), J, MAX_TRANSFER)

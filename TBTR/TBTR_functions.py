@@ -34,7 +34,7 @@ def initialize_onemany(MAX_TRANSFER, DESTINATION_LIST):
 
 
 def initialize_from_desti_new(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict):
-    '''
+    '''  # TODO: Why are you calling this function new. Avoid this unless there is an old one that is being used
     initialize routes/footpath to leading to destination stop.
     Args:
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
@@ -46,12 +46,12 @@ def initialize_from_desti_new(routes_by_stop_dict, stops_dict, DESTINATION, foot
     '''
     L_dict = defaultdict(lambda: [])
     try:
-        transfer_to_desti = footpath_dict[DESTINATION]
+        transfer_to_desti = footpath_dict[DESTINATION]  # TODO: isn't the key to stop, but in line 50 it becomes from stop? Are footpaths same in both directions?
         for from_stop, foot_time in transfer_to_desti:
             try:
                 walkalble_desti_route = routes_by_stop_dict[from_stop]
                 for route in walkalble_desti_route:
-                    L_dict[route].append((stops_dict[route].index(from_stop), foot_time, from_stop))
+                    L_dict[route].append((stops_dict[route].index(from_stop), foot_time, from_stop)) # TODO: What's the complexity of the index operation? Can we get O(1) with the new dictionary that you have for RAPTOR?
             except KeyError:
                 pass
     except KeyError:
@@ -59,7 +59,7 @@ def initialize_from_desti_new(routes_by_stop_dict, stops_dict, DESTINATION, foot
     delta_tau = pd.to_timedelta(0, unit="seconds")
     for route in routes_by_stop_dict[DESTINATION]:
         L_dict[route].append((stops_dict[route].index(DESTINATION), delta_tau, DESTINATION))
-    return dict(L_dict)
+    return dict(L_dict) # TODO: Why typecast it again?
 
 
 def initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_LIST, footpath_dict):
@@ -108,11 +108,11 @@ def initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops
         MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
     Returns:
-        R_t (dict): dict to store first reached stop of every trip. Format - {trip_id: first reached stop}
+        R_t (dict): dict to store first reached stop of every trip. Format {trip_id: first reached stop}
         Q (list): list of trips segments
     '''
     Q = [[] for x in range(MAX_TRANSFER + 1)]
-    R_t = defaultdict(lambda: 1000)
+    R_t = defaultdict(lambda: 1000)  # TODO: What is 1000?
     connection_list = []
     if WALKING_FROM_SOURCE == 1:
         try:
@@ -121,7 +121,7 @@ def initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops
                 footpath_time = connection[1]
                 walkable_source_routes = routes_by_stop_dict[connection[0]]
                 for route in walkable_source_routes:
-                    stop_index = stops_dict[route].index(connection[0])
+                    stop_index = stops_dict[route].index(connection[0])  # TODO: Same comment as before
                     route_trip = stoptimes_dict[route]
                     for trip_idx, trip in enumerate(route_trip):
                         if D_TIME + footpath_time <= trip[stop_index][1]:
@@ -131,7 +131,7 @@ def initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops
             pass
     #    delta_tau = pd.to_timedelta(0, unit="seconds")
     for route in routes_by_stop_dict[SOURCE]:
-        stop_index = stops_dict[route].index(SOURCE)
+        stop_index = stops_dict[route].index(SOURCE)  # TODO: Same comment as before (not so critical here since it is called once)
         route_trip = stoptimes_dict[route]
         for trip_idx, trip in enumerate(route_trip):
             if D_TIME <= trip[stop_index][1]:
@@ -146,9 +146,9 @@ def enqueue(connection_list, nextround, pointer, R_t, Q, stoptimes_dict):
     Main enqueue function used in TBTR to add trips segments to next round and update first reached stop of each trip.
     Args:
         connection_list (list): list of connections to be added. Format: [(to_trip_id, to_trip_id_stop_index)].
-        nextround (int): round number to which connections are added.
-        pointer (tuple): pointer for backtracking journey ( To be developed ).
-        R_t (dict): dict with keys as trip id. format - {trip_id : first reached stop}.
+        nextround (int): round number to which connections are added.  # TODO: Why next round. During initialization, it is the first round, right?
+        pointer (tuple): pointer for backtracking journey ( To be developed ).  # TODO: Avoid calling it pointer. Call it predecessor/backtracker
+        R_t (dict): dict with keys as trip id. Format {trip_id : first reached stop}.
         Q (list): list of trips segments.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
     Returns:
@@ -158,9 +158,9 @@ def enqueue(connection_list, nextround, pointer, R_t, Q, stoptimes_dict):
         if to_trip_id_stop < R_t[to_trip_id]:
             route, tid = [int(x) for x in to_trip_id.split("_")]
             Q[nextround].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, pointer))
-            for x in range(tid, len(stoptimes_dict[route]) + 1):
+            for x in range(tid, len(stoptimes_dict[route]) + 1):  # TODO: Should we look at all subsequent trips? Can we not prune this?
                 new_tid = f"{route}_{x}"
-                #                R_t[new_tid] = min(R_t[new_tid], to_trip_id_stop)
+                # R_t[new_tid] = min(R_t[new_tid], to_trip_id_stop)
                 if R_t[new_tid] > to_trip_id_stop:
                     R_t[new_tid] = to_trip_id_stop
 
@@ -177,7 +177,7 @@ def update_label(label, no_of_transfer, pointer, J, MAX_TRANSFER):
     Returns:
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
     '''
-    J[no_of_transfer][1] = pointer
+    J[no_of_transfer][1] = pointer  # TODO: Avoid pointer
     for x in range(no_of_transfer, MAX_TRANSFER):
         J[x][0] = label
     return J

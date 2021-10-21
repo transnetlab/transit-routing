@@ -16,23 +16,22 @@ def hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRIN
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
         PRINT_PARA (int): 1 or 0. 1 means print complete path.
         stop_out (dict): key: stop-id (int), value: stop-cell id of key (int). Note: stop-cell id=-1 denotes cut stop.
-        trip_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of trip ids belonging to the stop cell combination
+        trip_groups (dict): key: tuple of all possible combinations of stop cell id,
+        value: set of trip ids belonging to the stop cell combination
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
-        trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {keys: stop number, value: list of tuples of form (id of trip we are transferring to, stop number)}.
+        trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
+        of form (id of trip we are transferring to, stop number)}
         trip_set (set): set of trip ids from which trip-transfers are available.
     Returns:
         out (list): List of pareto-optimal arrival Timestamps
     """
     out = []
     final_trips = trip_groups[tuple(sorted((stop_out[SOURCE], stop_out[DESTINATION])))]
-
     J = initialize_tbtr()
-
     L = initialize_from_desti_new(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict)
-
     R_t, Q = initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict,
                                         D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE)
 

@@ -21,7 +21,8 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
-        trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {keys: stop number, value: list of tuples of form (id of trip we are transferring to, stop number)}.
+        trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
+        of form (id of trip we are transferring to, stop number)}
         trip_set (set): set of trip ids from which trip-transfers are available.
     Returns:
         if OPTIMIZED==1:
@@ -43,7 +44,7 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
     out = []
     J, inf_time = initialize_onemany(MAX_TRANSFER, DESTINATION_LIST)
     L = initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_LIST, footpath_dict)
-    R_t = {x: defaultdict(lambda: 1000) for x in range(0, MAX_TRANSFER + 1)}
+    R_t = {x: defaultdict(lambda: 1000) for x in range(0, MAX_TRANSFER + 1)}  # TODO: 1000?
 
     for d_time in d_time_list:
         rounds_desti_reached = {x: [] for x in DESTINATION_LIST}
