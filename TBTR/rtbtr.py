@@ -5,7 +5,7 @@ from TBTR.TBTR_functions import *
 
 
 def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_PARA, OPTIMIZED,
-          routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, trip_transfer_dict, trip_set):
+          routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set):
     ################################################################################################################
     """
     Args:
@@ -20,6 +20,7 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+        idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
         trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
         of form (id of trip we are transferring to, stop number)}
         trip_set (set): set of trip ids from which trip-transfers are available.
@@ -42,7 +43,7 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
 
     out = []
     J = initialize_tbtr()
-    L = initialize_from_desti_new(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict)
+    L = initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict, idx_by_route_stop_dict)
     R_t = {x: defaultdict(lambda: 1000) for x in range(0, MAX_TRANSFER + 1)}
 
     for d_time in d_time_list:
@@ -50,8 +51,8 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
         n = 0
         Q = initialize_from_source_range(d_time, MAX_TRANSFER, stoptimes_dict, n, R_t)
         while n < MAX_TRANSFER:
-            for trip in Q[n]:
-                from_stop, tid, to_stop, trip_route, tid_idx = trip[0: 5]
+            for trip_segment in Q[n]:
+                from_stop, tid, to_stop, trip_route, tid_idx = trip_segment[0: 5]
                 trip = stoptimes_dict[trip_route][tid_idx][from_stop:to_stop]
                 try:
                     L[trip_route]
@@ -72,8 +73,8 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
                         connection_list = [connection for from_stop_idx, transfer_stop_id in
                                            enumerate(trip[1:], from_stop + 1)
                                            for connection in trip_transfer_dict[tid][from_stop_idx]]
-                        enqueue_range2(connection_list, n + 1, (tid, 0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
-                except IndexError:  # TODO: replace enqueue_range2 with enqueue_range
+                        enqueue_range(connection_list, n + 1, (tid, 0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
+                except IndexError:
                     pass
             n = n + 1
         if rounds_desti_reached:
