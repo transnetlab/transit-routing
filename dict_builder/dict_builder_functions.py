@@ -40,10 +40,10 @@ def build_save_stops_dict(stop_times_file, trips_file, FOLDER):
     print("building stops dict")
 
     trips_group = stop_times_file.groupby("trip_id")  # This drops all trips for which timestamps are not sorted
-    trips_with_correct_timestamps = [id for id, trip in tqdm(trips_group) if
-                                     list(trip.arrival_time) == list(trip.arrival_time.sort_values())]
+
+    trips_with_correct_timestamps = [id for id, trip in tqdm(trips_group) if list(trip.arrival_time) == list(trip.arrival_time.sort_values())]
     if len(trips_with_correct_timestamps) != len(trips_file):
-        print(f"Incorrecet time sequence in stoptimes builder file")
+        print(f"Incorrect time sequence in stoptimes builder file")
     stop_times = stop_times_file[stop_times_file["trip_id"].isin(trips_with_correct_timestamps)]
     route_groups = stop_times.drop_duplicates(subset=['route_id', 'stop_sequence'])[
         ['stop_id', 'route_id', 'stop_sequence']].groupby('route_id')
