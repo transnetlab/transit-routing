@@ -6,7 +6,7 @@ from TBTR.TBTR_functions import *
 
 
 def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_PARA, routes_by_stop_dict, stops_dict,
-         stoptimes_dict, footpath_dict, trip_transfer_dict, trip_set):
+         stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set):
     """
     Standard TBTR implementation.
     Args:
@@ -20,6 +20,7 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_P
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+        idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
         trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
         of form (id of trip we are transferring to, stop number)}
         trip_set (set): set of trip ids from which trip-transfers are available.
@@ -28,13 +29,13 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_P
     """
     out = []
     J = initialize_tbtr()
-    L = initialize_from_desti_new(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict)
-    R_t, Q = initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict, D_TIME,
-                                        MAX_TRANSFER, WALKING_FROM_SOURCE)
+    L = initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict, idx_by_route_stop_dict)
+    R_t, Q = initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict, D_TIME,
+                                        MAX_TRANSFER, WALKING_FROM_SOURCE, idx_by_route_stop_dict)
     n = 0
     while n < MAX_TRANSFER:  # TODO: Pseudocdoe is n \leq \lambda?
-        for trip in Q[n]:
-            from_stop, tid, to_stop, trip_route, tid_idx = trip[0: 5]  # TODO: can you use a different name in 36 and 37 instead of trip so that it is not confused with 38
+        for trip_segment in Q[n]:
+            from_stop, tid, to_stop, trip_route, tid_idx = trip_segment[0: 5]  # TODO: can you use a different name in 36 and 37 instead of trip so that it is not confused with 38
             trip = stoptimes_dict[trip_route][tid_idx][from_stop:to_stop]
             try:
                 L[trip_route]  # TODO: what's this line doing? Checking if trip_route is in L?
@@ -59,6 +60,6 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_P
                 pass
         n = n + 1
     TBTR_out = post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, PRINT_PARA, D_TIME,
-                            MAX_TRANSFER)
+                            MAX_TRANSFER, idx_by_route_stop_dict)
     out.append(TBTR_out)
     return out
