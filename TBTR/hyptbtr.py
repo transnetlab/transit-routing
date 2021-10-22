@@ -36,8 +36,8 @@ def hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRIN
     R_t, Q = initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict,
                                         D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, idx_by_route_stop_dict)
 
-    n = 0
-    while n < MAX_TRANSFER:
+    n = 1
+    while n <= MAX_TRANSFER:
         for trip_segment in Q[n]:
             from_stop, tid, to_stop, trip_route, tid_idx = trip_segment[0: 5]
             trip = stoptimes_dict[trip_route][tid_idx][from_stop:to_stop]
