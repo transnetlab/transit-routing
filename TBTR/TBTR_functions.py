@@ -33,36 +33,37 @@ def initialize_onemany(MAX_TRANSFER, DESTINATION_LIST):
     return J, inf_time
 
 
-def initialize_from_desti_new(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict):
-    '''  # TODO: Why are you calling this function new. Avoid this unless there is an old one that is being used
+def initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict, idx_by_route_stop_dict):
+    '''
     initialize routes/footpath to leading to destination stop.
     Args:
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         DESTINATION (int): stop id of destination stop.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+        idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
     Returns:
         L (dict): A dict to track routes/leading to destination stop. Format {route_id: (from_stop_idx, travel time, stop id)}
     '''
     L_dict = defaultdict(lambda: [])
     try:
-        transfer_to_desti = footpath_dict[DESTINATION]  # TODO: isn't the key to stop, but in line 50 it becomes from stop? Are footpaths same in both directions?
+        transfer_to_desti = footpath_dict[DESTINATION]  # TODO: isn't the key to stop, but in line 50 it becomes from stop? Are footpaths same in both directions? Yes
         for from_stop, foot_time in transfer_to_desti:
             try:
                 walkalble_desti_route = routes_by_stop_dict[from_stop]
                 for route in walkalble_desti_route:
-                    L_dict[route].append((stops_dict[route].index(from_stop), foot_time, from_stop)) # TODO: What's the complexity of the index operation? Can we get O(1) with the new dictionary that you have for RAPTOR?
+                    L_dict[route].append((idx_by_route_stop_dict[(route, from_stop)], foot_time, from_stop))
             except KeyError:
                 pass
     except KeyError:
         pass
     delta_tau = pd.to_timedelta(0, unit="seconds")
     for route in routes_by_stop_dict[DESTINATION]:
-        L_dict[route].append((stops_dict[route].index(DESTINATION), delta_tau, DESTINATION))
+        L_dict[route].append((idx_by_route_stop_dict[(route, DESTINATION)], delta_tau, DESTINATION))
     return dict(L_dict) # TODO: Why typecast it again?
 
 
-def initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_LIST, footpath_dict):
+def initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_LIST, footpath_dict, idx_by_route_stop_dict):
     '''
     initialize routes/footpath to leading to destination stop in case of one-to-many rTBTR
     Args:
@@ -70,6 +71,7 @@ def initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_L
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         DESTINATION_LIST (list): list of stop ids of destination stop.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+        idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
     Returns:
         L (nested dict): A dict to track routes/leading to destination stops. Key: route_id, value: {destination_stop_id: [(from_stop_idx, travel time, stop id)]}
     '''
@@ -82,20 +84,20 @@ def initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_L
                 try:
                     walkalble_desti_route = routes_by_stop_dict[from_stop]
                     for route in walkalble_desti_route:
-                        L_dict[route].append((stops_dict[route].index(from_stop), foot_time, from_stop))
+                        L_dict[route].append((idx_by_route_stop_dict[(route, from_stop)], foot_time, from_stop))
                 except KeyError:
                     pass
         except KeyError:
             pass
         delta_tau = pd.to_timedelta(0, unit="seconds")
         for route in routes_by_stop_dict[destination]:
-            L_dict[route].append((stops_dict[route].index(destination), delta_tau, destination))
+            L_dict[route].append((idx_by_route_stop_dict[(route, destination)], delta_tau, destination))
         L_dict_final[destination] = dict(L_dict)
     return L_dict_final
 
 
-def initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict, D_TIME,
-                               MAX_TRANSFER, WALKING_FROM_SOURCE):
+def initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict, D_TIME,
+                               MAX_TRANSFER, WALKING_FROM_SOURCE, idx_by_route_stop_dict):
     '''
     Initialize trips segments from source stop.
     Args:
@@ -107,6 +109,7 @@ def initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops
         D_TIME (pandas.datetime): departure time.
         MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
+        idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
     Returns:
         R_t (dict): dict to store first reached stop of every trip. Format {trip_id: first reached stop}
         Q (list): list of trips segments
@@ -121,7 +124,7 @@ def initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops
                 footpath_time = connection[1]
                 walkable_source_routes = routes_by_stop_dict[connection[0]]
                 for route in walkable_source_routes:
-                    stop_index = stops_dict[route].index(connection[0])  # TODO: Same comment as before
+                    stop_index = idx_by_route_stop_dict[(route, connection[0])]
                     route_trip = stoptimes_dict[route]
                     for trip_idx, trip in enumerate(route_trip):
                         if D_TIME + footpath_time <= trip[stop_index][1]:
@@ -131,7 +134,7 @@ def initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops
             pass
     #    delta_tau = pd.to_timedelta(0, unit="seconds")
     for route in routes_by_stop_dict[SOURCE]:
-        stop_index = stops_dict[route].index(SOURCE)  # TODO: Same comment as before (not so critical here since it is called once)
+        stop_index = idx_by_route_stop_dict[(route, SOURCE)]
         route_trip = stoptimes_dict[route]
         for trip_idx, trip in enumerate(route_trip):
             if D_TIME <= trip[stop_index][1]:
@@ -141,13 +144,13 @@ def initialize_from_source_new(footpath_dict, SOURCE, routes_by_stop_dict, stops
     return R_t, Q
 
 
-def enqueue(connection_list, nextround, pointer, R_t, Q, stoptimes_dict):
+def enqueue(connection_list, nextround, predecessor_label, R_t, Q, stoptimes_dict):
     '''
     Main enqueue function used in TBTR to add trips segments to next round and update first reached stop of each trip.
     Args:
         connection_list (list): list of connections to be added. Format: [(to_trip_id, to_trip_id_stop_index)].
         nextround (int): round number to which connections are added.  # TODO: Why next round. During initialization, it is the first round, right?
-        pointer (tuple): pointer for backtracking journey ( To be developed ).  # TODO: Avoid calling it pointer. Call it predecessor/backtracker
+        predecessor_label (tuple): used for backtracking journey ( To be developed ).  # TODO: Avoid calling it pointer. Call it predecessor/backtracker
         R_t (dict): dict with keys as trip id. Format {trip_id : first reached stop}.
         Q (list): list of trips segments.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
@@ -157,7 +160,7 @@ def enqueue(connection_list, nextround, pointer, R_t, Q, stoptimes_dict):
     for to_trip_id, to_trip_id_stop in connection_list:
         if to_trip_id_stop < R_t[to_trip_id]:
             route, tid = [int(x) for x in to_trip_id.split("_")]
-            Q[nextround].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, pointer))
+            Q[nextround].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, predecessor_label))
             for x in range(tid, len(stoptimes_dict[route]) + 1):  # TODO: Should we look at all subsequent trips? Can we not prune this?
                 new_tid = f"{route}_{x}"
                 # R_t[new_tid] = min(R_t[new_tid], to_trip_id_stop)
@@ -165,19 +168,19 @@ def enqueue(connection_list, nextround, pointer, R_t, Q, stoptimes_dict):
                     R_t[new_tid] = to_trip_id_stop
 
 
-def update_label(label, no_of_transfer, pointer, J, MAX_TRANSFER):
+def update_label(label, no_of_transfer, predecessor_label, J, MAX_TRANSFER):
     '''
     Updates and returns destination pareto set.
     Args:
         label (pandas.datetime): optimal arrival time .
         no_of_transfer (int): number of transfer.
-        pointer (tuple): Pointer for backtracking (To be developed)
+        predecessor_label (tuple): predecessor_label for backtracking (To be developed)
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
         MAX_TRANSFER (int): maximum transfer limit.
     Returns:
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
     '''
-    J[no_of_transfer][1] = pointer  # TODO: Avoid pointer
+    J[no_of_transfer][1] = predecessor_label  # TODO: Avoid pointer
     for x in range(no_of_transfer, MAX_TRANSFER):
         J[x][0] = label
     return J
@@ -226,17 +229,17 @@ def initialize_from_source_range(d_time, MAX_TRANSFER, stoptimes_dict, n, R_t):
     stop_index = d_time[2]
     # _enqueue_range1(f'{route}_{trip_idx}', stop_index, n, (0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
     connection_list = [(f'{route}_{trip_idx}', stop_index)]
-    enqueue_range2(connection_list, n, (0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
+    enqueue_range(connection_list, n, (0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
     return Q
 
 
-def enqueue_range2(connection_list, nextround, pointer, R_t, Q, stoptimes_dict, MAX_TRANSFER):
+def enqueue_range(connection_list, nextround, predecessor_label, R_t, Q, stoptimes_dict, MAX_TRANSFER):
     '''
     adds trips-segments to next round round and update R_t. Used in range queries
     Args:
         connection_list (list): list of connections to be added. Format: [(to_trip_id, to_trip_id_stop_index)].
         nextround (int): round number to which connections are added.
-        pointer (tuple): pointer for backtracking journey ( To be developed ).
+        predecessor_label (tuple): predecessor_label for backtracking journey ( To be developed ).
         R_t (nested dict): Nested_Dict with primary keys as trip id and secondary keys as number of transfers. Format {trip_id: {[round]: first reached stop}}
         Q (list): list of trips segments
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
@@ -246,7 +249,7 @@ def enqueue_range2(connection_list, nextround, pointer, R_t, Q, stoptimes_dict, 
     for to_trip_id, to_trip_id_stop in connection_list:
         if to_trip_id_stop < R_t[nextround][to_trip_id]:
             route, tid = [int(x) for x in to_trip_id.split("_")]
-            Q[nextround].append((to_trip_id_stop, to_trip_id, R_t[nextround][to_trip_id], route, tid, pointer))
+            Q[nextround].append((to_trip_id_stop, to_trip_id, R_t[nextround][to_trip_id], route, tid, predecessor_label))
             for x in range(tid, len(stoptimes_dict[route]) + 1):
                 for r in range(nextround, MAX_TRANSFER + 1):
                     new_tid = f"{route}_{x}"
@@ -282,7 +285,7 @@ def post_process_range_onemany(J, Q, rounds_desti_reached, desti):
 
 
 def post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, PRINT_PARA, D_TIME,
-                 MAX_TRANSFER):
+                 MAX_TRANSFER, idx_by_route_stop_dict):
     '''
     Contains post-processing features for TBTR.
     Currently supported functionality:
@@ -298,6 +301,7 @@ def post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes
         PRINT_PARA (int): 1 or 0. 1 means print complete path.
         D_TIME (pandas.datetime): departure time.
         MAX_TRANSFER (int): maximum transfer limit.
+        idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
     Returns:
         TBTR_out (list): pareto-optimal arrival timestamps.
     '''
@@ -339,7 +343,7 @@ def post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes
                 legs = []
                 from_trip = [int(x) for x in journey[0][1][1].split("_")]
                 from_stop = stoptimes_dict[from_trip[0]][from_trip[1]][journey[0][1][2]]
-                desti_index = stops_dict[from_trip[0]].index(DESTINATION)
+                desti_index = idx_by_route_stop_dict[(from_trip[0], DESTINATION)]
                 to_stop = stoptimes_dict[from_trip[0]][from_trip[1]][desti_index]
                 if journey[0][1][0] != -1:
                     legs.append(
@@ -558,13 +562,13 @@ def initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dic
     return R_t, Q
 
 
-def hyper_enqueue(connection_list, round, pointer, R_t, Q, stoptimes_dict, final_trips):
+def hyper_enqueue(connection_list, round, predecessor_label, R_t, Q, stoptimes_dict, final_trips):
     '''
     Main enqueue function used in std_TBTR to queue trips and update first reached stop of each trip.
     Args:
         connection_list: List of connections to be added. format: [ (to_trip_id, to_trip_id_stop_index), ... ]
         nextround: Round to which connections are added (int)
-        pointer: Pointer for backtracking journey ( To be developed )
+        predecessor_label: predecessor_label for backtracking journey ( To be developed )
         R_t: Dict with keys as trip id. format - {trip_id : first reached stop}
         Q: Queue of trips
         stoptimes_dict: Pre-processed dict- format {route_id: [[trip1], [trip1]]}
@@ -575,20 +579,20 @@ def hyper_enqueue(connection_list, round, pointer, R_t, Q, stoptimes_dict, final
     for to_trip_id, to_trip_id_stop in connection_list:
         if to_trip_id in final_trips and to_trip_id_stop < R_t[to_trip_id]:
             route, tid = [int(x) for x in to_trip_id.split("_")]
-            Q[round].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, pointer))
+            Q[round].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, predecessor_label))
             for x in range(tid, len(stoptimes_dict[route]) + 1):
                 new_tid = f"{route}_{x}"
                 #                R_t[new_tid] = min(R_t[new_tid], to_trip_id_stop)
                 if R_t[new_tid] > to_trip_id_stop:
                     R_t[new_tid] = to_trip_id_stop
 
-def update_label_old(label, round, pointer, J):
+def update_label_old(label, round, predecessor_label, J):
     '''
     Update DESTINATION pareto set as a new journey has been found.
     Args:
         label: Arrival label (pandas.datetime)
         round: Round in which DESTINATION is reached (int)
-        trip_id: Pointer for backtracking (To be developed)
+        trip_id: predecessor_label for backtracking (To be developed)
         J: defaultdict to store arrival timestamps
     Returns:
         J
@@ -596,12 +600,12 @@ def update_label_old(label, round, pointer, J):
     '''
     if J[round][0] > label:
         J[round][0] = label
-        J[round][1] = pointer
+        J[round][1] = predecessor_label
     return J
 
 
 
-def enqueue(to_trip_id, to_trip_id_stop, round, pointer, R_t, Q, stoptimes_dict):
+def enqueue(to_trip_id, to_trip_id_stop, round, predecessor_label, R_t, Q, stoptimes_dict):
     '''
     Depreciated now (enqueue > _enqueue1 and enqueue2 ).
     First enqueue function. No longer supported.
@@ -609,7 +613,7 @@ def enqueue(to_trip_id, to_trip_id_stop, round, pointer, R_t, Q, stoptimes_dict)
         to_trip_id: trip id (char)
         to_trip_id_stop: stop index (int)
         n: round (int)
-        pointer: Pointer for backtracking journey ( To be developed )
+        predecessor_label: predecessor_label for backtracking journey ( To be developed )
         R_t: Dict with keys as trip id. format - {trip_id : first reached stop}
         Q: Queue of trips
         stoptimes_dict: Pre-processed dict- format {route_id: [[trip1], [trip1]]}
@@ -621,21 +625,21 @@ def enqueue(to_trip_id, to_trip_id_stop, round, pointer, R_t, Q, stoptimes_dict)
         if R_t[to_trip_id] == 1000:
             Q[round].append((
                 stoptimes_dict[break_down[0]][break_down[1]][to_trip_id_stop:], to_trip_id_stop, to_trip_id,
-                R_t[to_trip_id], pointer))
+                R_t[to_trip_id], predecessor_label))
         else:
             Q[round].append((stoptimes_dict[break_down[0]][break_down[1]][to_trip_id_stop:R_t[to_trip_id]],
-                             to_trip_id_stop, to_trip_id, R_t[to_trip_id], pointer))
+                             to_trip_id_stop, to_trip_id, R_t[to_trip_id], predecessor_label))
         for x in range(break_down[1], len(stoptimes_dict[break_down[0]]) + 1):
             R_t[f"{break_down[0]}_{x}"] = min(R_t[f"{break_down[0]}_{x}"], to_trip_id_stop)
 
 
-def enqueue2(connection_list, round, pointer, R_t, Q, stoptimes_dict):
+def enqueue2(connection_list, round, predecessor_label, R_t, Q, stoptimes_dict):
     '''
     Main enqueue function used in std_TBTR to queue trips and update first reached stop of each trip.
     Args:
         connection_list: List of connections to be added. format: [ (to_trip_id, to_trip_id_stop_index), ... ]
         nextround: Round to which connections are added (int)
-        pointer: Pointer for backtracking journey ( To be developed )
+        predecessor_label: predecessor_label for backtracking journey ( To be developed )
         R_t: Dict with keys as trip id. format - {trip_id : first reached stop}
         Q: Queue of trips
         stoptimes_dict: Pre-processed dict- format {route_id: [[trip1], [trip1]]}
@@ -645,7 +649,7 @@ def enqueue2(connection_list, round, pointer, R_t, Q, stoptimes_dict):
     for to_trip_id, to_trip_id_stop in connection_list:
         if to_trip_id_stop < R_t[to_trip_id]:
             route, tid = [int(x) for x in to_trip_id.split("_")]
-            Q[round].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, pointer))
+            Q[round].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, predecessor_label))
             for x in range(tid, len(stoptimes_dict[route]) + 1):
                 R_t[f"{route}_{x}"] = min(to_trip_id_stop, R_t[f"{route}_{x}"])
 
@@ -653,13 +657,13 @@ def enqueue2(connection_list, round, pointer, R_t, Q, stoptimes_dict):
 
 
 
-def enqueue3(connection_list, round, pointer, R_t, Q, stoptimes_dict):
+def enqueue3(connection_list, round, predecessor_label, R_t, Q, stoptimes_dict):
     '''
     Main enqueue function used in std_TBTR to queue trips and update first reached stop of each trip.
     Args:
         connection_list: List of connections to be added. format: [ (to_trip_id, to_trip_id_stop_index), ... ]
         nextround: Round to which connections are added (int)
-        pointer: Pointer for backtracking journey ( To be developed )
+        predecessor_label: predecessor_label for backtracking journey ( To be developed )
         R_t: Dict with keys as trip id. format - {trip_id : first reached stop}
         Q: Queue of trips
         stoptimes_dict: Pre-processed dict- format {route_id: [[trip1], [trip1]]}
@@ -670,7 +674,7 @@ def enqueue3(connection_list, round, pointer, R_t, Q, stoptimes_dict):
     for to_trip_id, to_trip_id_stop in connection_list:
         if to_trip_id_stop < R_t[to_trip_id]:
             route, tid = [int(x) for x in to_trip_id.split("_")]
-            Q[round].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, pointer))
+            Q[round].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, predecessor_label))
             for x in range(tid, len(stoptimes_dict[route]) + 1):
                 new_tid = f"{route}_{x}"
 #                R_t[new_tid] = min(R_t[new_tid], to_trip_id_stop)
@@ -678,7 +682,7 @@ def enqueue3(connection_list, round, pointer, R_t, Q, stoptimes_dict):
                     R_t[new_tid] = to_trip_id_stop
 
 
-def _enqueue1(to_trip_id, to_trip_id_stop, round, pointer, R_t, Q, stoptimes_dict):
+def _enqueue1(to_trip_id, to_trip_id_stop, round, predecessor_label, R_t, Q, stoptimes_dict):
     '''
     Note:(This is called by initialize_from_source_new). This will later get merged with enqueue2.
     Add trips to round 0 in Q and update R_t dict.
@@ -686,7 +690,7 @@ def _enqueue1(to_trip_id, to_trip_id_stop, round, pointer, R_t, Q, stoptimes_dic
         to_trip_id: trip id (char)
         to_trip_id_stop: stop index (int)
         n: round (int)
-        pointer: Pointer for backtracking journey ( To be developed )
+        predecessor_label: predecessor_label for backtracking journey ( To be developed )
         R_t: Dict with keys as trip id. format - {trip_id : first reached stop}
         Q: Queue of trips
         stoptimes_dict: Pre-processed dict- format {route_id: [[trip1], [trip1]]}
@@ -696,7 +700,7 @@ def _enqueue1(to_trip_id, to_trip_id_stop, round, pointer, R_t, Q, stoptimes_dic
     '''
     if to_trip_id_stop < R_t[to_trip_id]:
         route, tid = [int(x) for x in to_trip_id.split("_")]
-        Q[round].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, pointer))
+        Q[round].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, predecessor_label))
         for x in range(tid, len(stoptimes_dict[route]) + 1):
             R_t[f"{route}_{x}"] = min(R_t[f"{route}_{x}"], to_trip_id_stop)
 
@@ -838,7 +842,7 @@ def post_process_old(J, Q, DESTINATION, SOURCE, footpath_dict, inf_time, stops_d
         for x in reversed(rounds_desti_reached):
             TBTR_out.append(J[x][0])
         return TBTR_out
-def _enqueue_range1(to_trip_id, to_trip_id_stop, n, pointer, R_t, Q, stoptimes_dict, MAX_TRANSFER):
+def _enqueue_range1(to_trip_id, to_trip_id_stop, n, predecessor_label, R_t, Q, stoptimes_dict, MAX_TRANSFER):
     '''
     Note:(This is called by initialize_from_source_range). This will later get merged with enqueue_range2.
     Add trips to round 0 in Q and update R_t dict.
@@ -846,7 +850,7 @@ def _enqueue_range1(to_trip_id, to_trip_id_stop, n, pointer, R_t, Q, stoptimes_d
         to_trip_id: trip id (char)
         to_trip_id_stop: stop index (int)
         n: round (int)
-        pointer: Pointer for backtracking journey ( To be developed )
+        predecessor_label: predecessor_label for backtracking journey ( To be developed )
         R_t: Nested_Dict with primary keys as trip id and secondary keys as round. format {trip_id {[round]: first reached stop}}
         Q: Queue of trips
         stoptimes_dict: Pre-processed dict- format {route_id: [[trip1], [trip1]]}
@@ -856,7 +860,7 @@ def _enqueue_range1(to_trip_id, to_trip_id_stop, n, pointer, R_t, Q, stoptimes_d
     '''
     if to_trip_id_stop < R_t[n][to_trip_id]:
         route, tid = [int(x) for x in to_trip_id.split("_")]
-        Q[n].append((to_trip_id_stop, to_trip_id, R_t[n][to_trip_id], route, tid, pointer))
+        Q[n].append((to_trip_id_stop, to_trip_id, R_t[n][to_trip_id], route, tid, predecessor_label))
         for x in range(tid, len(stoptimes_dict[route]) + 1):
             for r in range(n, MAX_TRANSFER + 1):
                 R_t[r][f"{route}_{x}"] = min(R_t[r][f"{route}_{x}"], to_trip_id_stop)
