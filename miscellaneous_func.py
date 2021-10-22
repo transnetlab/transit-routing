@@ -8,7 +8,7 @@ import networkx as nx
 import pandas as pd
 
 
-def read_testcase():
+def read_testcase(FOLDER):
     """
     Reads the GTFS network and preprocessed dict. If the dicts are not present, dict_builder_functions are called to construct them.
     Returns:
@@ -24,7 +24,6 @@ def read_testcase():
     """
     import gtfs_loader
     from dict_builder import dict_builder_functions
-    FOLDER = './swiss'
     stops_file, trips_file, stop_times_file, transfers_file = gtfs_loader.load_all_db(FOLDER)
     try:
         stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = gtfs_loader.load_all_dict(FOLDER)
