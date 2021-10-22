@@ -16,9 +16,14 @@
 	algorithm  -> 0 or 1
 	variant	   -> 0 or 1 or 2 or 3
 	test_case  -> 0
-To run algorithms on a different GTFS set, enter the network details in [main.py](main.py). Note that due to inconsistencies in the 
-GTFS set avaliable online, not every transit network can be directly used. Moreover, a significant amount of preprocessing (e.g. transiteively closed footpaths, 
-non-overtaking trips etc.) is required. See for details. 
+To run algorithms on a different GTFS set, enter the network details in [main.py](main.py). 
+
+## Dataset generation
+Due to inconsistencies in the GTFS set available online, a GTFS set cannot be used directly here. 
+Moreover, a significant amount of preprocessing (e.g. transitively closed footpaths,
+non-overtaking trips etc.) is required. See for details.
 The Switzerland test network  is generated in accordance with these. [switzerland_wrapper.py](Switzerland_wrapper.py) contains the code for the same.
 See [switzerland_wrapper.md](/docs/switzerland_wrapper.py) for documentation on the same. 
 
+## Special cases
+[switzerland_wrapper.md](/docs/switzerland_wrapper.py)
