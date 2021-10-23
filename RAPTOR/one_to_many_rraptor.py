@@ -5,7 +5,7 @@ from RAPTOR.raptor_functions import *
 
 
 def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC,
-                      PRINT_PARA, OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
+                      PRINT_ITINERARY, OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
     """
     Args:
         SOURCE (int): stop id of source stop.
@@ -14,7 +14,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
         MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
         CHANGE_TIME_SEC (int): change-time in seconds.
-        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
         OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
@@ -51,7 +51,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
         marked_stop.append(SOURCE)
         marked_stop_dict[SOURCE] = 1
         start_tid, d_time, s_idx = dep_details
-        # if PRINT_PARA == 1: print(SOURCE, d_time)
+        # if PRINT_ITINERARY == 1: print(SOURCE, d_time)
         (label[0][SOURCE], star_label[SOURCE]) = (d_time, d_time)
         Q = {}
         # Main code part 1
@@ -113,7 +113,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
             if marked_stop == deque([]):
                 # print('code ended with termination condition')
                 break
-        output.extend(post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, OPTIMIZED))
-        if PRINT_PARA == 1:
+        output.extend(post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERARY, OPTIMIZED))
+        if PRINT_ITINERARY == 1:
             print('------------------------------------')
     return list(set(output))
