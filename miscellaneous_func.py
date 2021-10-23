@@ -104,7 +104,7 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FR
     return None
 
 
-def read_partitions_new(stop_times_file, FOLDER, no_of_partitions, weighting_scheme, partitioning_algorithm):
+def read_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_scheme, partitioning_algorithm):
     """
     Reads the fill-in information.
     Args:
