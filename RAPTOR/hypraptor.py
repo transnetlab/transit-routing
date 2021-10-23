@@ -4,7 +4,7 @@ Module contains HypRAPTOR implementation
 from RAPTOR.raptor_functions import *
 
 
-def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA, stop_out,
+def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_ITINERARY, stop_out,
               route_groups, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
     """
     Standard HypRaptor implementation
@@ -15,7 +15,7 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
         MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
         CHANGE_TIME_SEC (int): change-time in seconds.
-        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
         stop_out (dict): key: stop-id (int), value: stop-cell id of key (int). Note: stop-cell id=-1 denotes cut stop.
         route_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of route ids belonging to the stop cell combination.
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
@@ -105,9 +105,9 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
                 continue
         # Main code End
         if marked_stop == deque([]):
-            if PRINT_PARA == 1:
+            if PRINT_ITINERARY == 1:
                 print('code ended with termination condition')
             break
-    _, _, rap_out = post_processing(DESTINATION, pi_label, PRINT_PARA, label)
+    _, _, rap_out = post_processing(DESTINATION, pi_label, PRINT_ITINERARY, label)
     out.append(rap_out)
     return out
