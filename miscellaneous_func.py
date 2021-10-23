@@ -165,29 +165,28 @@ def read_partitions_new(stop_times_file, FOLDER, no_of_partitions, weighting_sch
     return stop_out, route_groups, cut_trips, trip_groups
 
 
-def read_nested_partitions(stop_times_file, FOLDER, part, scheme):
+def read_nested_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_scheme):
     """
     Read fill-ins in case of nested partitioning.
     Args:
-        stop_times_file (pandas.dataframe): dataframe with stoptimes details.
+        stop_times_file (pandas.dataframe): dataframe with stoptimes details
         FOLDER (str): path to network folder.
-        part:
-        scheme (str): which weighing scheme has been used to generate partitions.
+        no_of_partitions (int): number of partitions network has been divided into.
+        weighting_scheme (str): which weighing scheme has been used to generate partitions.
     Returns:
         stop_out (dict) : key: stop-id (int), value: stop-cell id (int). Note: if stop-cell id of -1 denotes cut stop.
-        route_partitions :
-        cut_trips (set): set of trip ids that are part of fill-in.
         route_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of route ids belonging to the stop cell combination
+        cut_trips (set): set of trip ids that are part of fill-in.
         trip_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of trip ids belonging to the stop cell combination
     """
     import warnings
     from pandas.core.common import SettingWithCopyWarning
     warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
     import itertools
-    main_partitions = part
-    route_out = pd.read_csv(f'./kpartitions/{FOLDER}/nested/nested_route_out_{scheme}_{main_partitions}.csv')
-    stop_out = pd.read_csv(f'./kpartitions/{FOLDER}/nested/nested_cutstops_{scheme}_{main_partitions}.csv')
-    fill_ins = pd.read_csv(f'./kpartitions/{FOLDER}//nested/nested_fill_ins_{scheme}_{main_partitions}.csv')
+    main_partitions = no_of_partitions
+    route_out = pd.read_csv(f'./kpartitions/{FOLDER}/nested/nested_route_out_{weighting_scheme}_{main_partitions}.csv')
+    stop_out = pd.read_csv(f'./kpartitions/{FOLDER}/nested/nested_cutstops_{weighting_scheme}_{main_partitions}.csv')
+    fill_ins = pd.read_csv(f'./kpartitions/{FOLDER}//nested/nested_fill_ins_{weighting_scheme}_{main_partitions}.csv')
     fill_ins.fillna(-1, inplace=True)
     fill_ins['routes'] = fill_ins['routes'].astype(int)
     temp = stop_out.drop(columns=['lat', 'long', 'boundary_g_id'])
@@ -229,7 +228,7 @@ def read_nested_partitions(stop_times_file, FOLDER, part, scheme):
     cut_trips = set(fill_ins['trips'])
     #    print(f"{len(cut_trips)} ({round(len(cut_trips) / len(set(stop_times_file.trip_id)) * 100, 2)}%) are cut trips")
     #    print(f'{len(set(fill_ins.routes)) - 1} ({round((len(set(fill_ins.routes)) - 1) / len(set(stop_times_file.route_id)) * 100, 2)})% are cut routes')
-    return stop_out, route_partitions, cut_trips, trip_groups, route_groups
+    return stop_out, route_groups, cut_trips, trip_groups
 
 
 def check_nonoverlap(stoptimes_dict, stops_dict):
@@ -382,7 +381,7 @@ def get_test_file():
         if SOURCE == DESTINATION: continue
         D_TIME = pd.to_datetime(f'2019-06-10 {hour}:{min}:00')
         TBTR_out = std_TBTR(MAX_TRANSFER, SOURCE, DESTINATION, D_TIME, routes_by_stop_dict, stops_dict, stoptimes_dict,
-                            footpath_dict, trip_transfer_dict, WALKING_FROM_SOURCE, trip_set, PRINT_PARA=0)
+                            footpath_dict, trip_transfer_dict, WALKING_FROM_SOURCE, trip_set, PRINT_ITINERARY=0)
         if TBTR_out == -1 and len(non_reachable) < 401:
             non_reachable.append((SOURCE, DESTINATION, D_TIME, -1))
         if TBTR_out != -1 and len(reachable) < 1601:
