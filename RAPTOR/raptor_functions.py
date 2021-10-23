@@ -97,7 +97,7 @@ def post_processing(DESTINATION, pi_label, PRINT_PARA, label):
 
     if rounds_inwhich_desti_reached == []:
         if PRINT_PARA == 1:
-            print('DESTINATION cannot be reached with given MAX_TRANSFERs')
+            print('DESTINATION cannot be reached with given MAX_TRANSFERS')
         return -1, -1, -1
     else:
         rounds_inwhich_desti_reached.reverse()
@@ -137,7 +137,7 @@ def _print_Journey_legs(pareto_journeys):
     for _, journey in pareto_journeys:
         for leg in journey:
             if leg[0] == 'walking':
-                print(f'from {leg[1]} walk uptil  {leg[2]} for {leg[3]} minutes and reach at {leg[4].time()}')
+                print(f'from {leg[1]} walk till  {leg[2]} for {leg[3]} minutes and reach at {leg[4].time()}')
             else:
                 print(
                     f'from {leg[1]} board at {leg[0].time()} and get down on {leg[2]} at {leg[3].time()} along {leg[-1]}')
@@ -186,7 +186,7 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, OP
             rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
             if rounds_inwhich_desti_reached == []:
                 if PRINT_PARA == 1:
-                    print('DESTINATION cannot be reached with given MAX_TRANSFERs')
+                    print('DESTINATION cannot be reached with given MAX_TRANSFERS')
             else:
                 rounds_inwhich_desti_reached.reverse()
                 pareto_set = []
@@ -207,10 +207,10 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, OP
                             k = k - 1
                     journey.reverse()
                     pareto_set.append((transfer_needed, journey))
-                    if PRINT_PARA == 1:
-                        _print_Journey_legs(pareto_set)
                     for trip in trip_set:
                         final_routes.append(int(trip.split("_")[0]))
+                if PRINT_PARA == 1:
+                    _print_Journey_legs(pareto_set)
         return list(set(final_routes))
 
 
@@ -252,7 +252,7 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED)
         final_routes = []
         if rounds_inwhich_desti_reached == []:
             if PRINT_PARA == 1:
-                print('DESTINATION cannot be reached with given MAX_TRANSFERs')
+                print('DESTINATION cannot be reached with given MAX_TRANSFERS')
             return final_routes
         else:
             rounds_inwhich_desti_reached.reverse()
@@ -274,10 +274,10 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED)
                         k = k - 1
                 journey.reverse()
                 pareto_set.append((transfer_needed, journey))
-                if PRINT_PARA == 1:
-                    _print_Journey_legs(pareto_set)
                 for trip in trip_set:
                     final_routes.append(int(trip.split("_")[0]))
+            if PRINT_PARA == 1:
+                _print_Journey_legs(pareto_set)
         return final_routes
 
 
@@ -509,7 +509,7 @@ def post_processing_onetomany_rraptor_full(destination_list, pi_label, PRINT_PAR
 
         if rounds_inwhich_desti_reached == []:
             if PRINT_PARA == 1:
-                print('DESTINATION cannot be reached with given MAX_TRANSFERs')
+                print('DESTINATION cannot be reached with given MAX_TRANSFERS')
         else:
             rounds_inwhich_desti_reached.reverse()
             pareto_set = []
@@ -586,7 +586,7 @@ def post_processing_rraptor_full(DESTINATION, pi_label, PRINT_PARA, label, route
 
     if rounds_inwhich_desti_reached == []:
         if PRINT_PARA == 1:
-            print('DESTINATION cannot be reached with given MAX_TRANSFERs')
+            print('DESTINATION cannot be reached with given MAX_TRANSFERS')
         route_set = route_set.union(set())
     else:
         rounds_inwhich_desti_reached.reverse()
