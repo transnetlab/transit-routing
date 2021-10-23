@@ -5,7 +5,7 @@ Module contains RAPTOR implementation.
 from RAPTOR.raptor_functions import *
 
 
-def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
+def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_ITINERARY,
            routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
     '''
     Standard Raptor implementation
@@ -16,7 +16,7 @@ def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANG
         MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 indicates walking from SOURCE is allowed.
         CHANGE_TIME_SEC (int): change-time in seconds.
-        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
@@ -103,9 +103,9 @@ def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANG
                 continue
         # Main code End
         if marked_stop == deque([]):
-            if PRINT_PARA == 1:
+            if PRINT_ITINERARY == 1:
                 print('code ended with termination condition')
             break
-    _, _, rap_out = post_processing(DESTINATION, pi_label, PRINT_PARA, label)
+    _, _, rap_out = post_processing(DESTINATION, pi_label, PRINT_ITINERARY, label)
     out.append(rap_out)
     return out
