@@ -123,7 +123,7 @@ if __name__ == "__main__":
     PRINT_ITINERARY = 0
     OPTIMIZED = 1
     stop_out, route_groups, _, trip_groups = read_partitions_new(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2", partitioning_algorithm="kahypar")
-    nested_stop_out, nested_route_groups, _, _, nested_trip_groups  = read_nested_partitions(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2")
+    nested_stop_out, nested_route_groups, _, nested_trip_groups  = read_nested_partitions(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2")
 
     # main function
     d_time_groups = stop_times_file.groupby("stop_id")
