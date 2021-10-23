@@ -5,7 +5,7 @@ Module contains TBTR implementation
 from TBTR.TBTR_functions import *
 
 
-def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_PARA, routes_by_stop_dict, stops_dict,
+def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_ITINERARY, routes_by_stop_dict, stops_dict,
          stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set):
     """
     Standard TBTR implementation.
@@ -15,7 +15,7 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_P
         D_TIME (pandas.datetime): departure time.
         MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
-        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
@@ -59,7 +59,7 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_P
             except IndexError:
                 pass
         n = n + 1
-    TBTR_out = post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, PRINT_PARA, D_TIME,
+    TBTR_out = post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, PRINT_ITINERARY, D_TIME,
                             MAX_TRANSFER, idx_by_route_stop_dict)
     out.append(TBTR_out)
 
