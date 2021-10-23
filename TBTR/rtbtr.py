@@ -35,8 +35,7 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
         try:
             source_footpaths = footpath_dict[SOURCE]
             for connection in source_footpaths:
-                d_time_list.extend(d_time_groups.get_group(connection[0])[
-                                       ["trip_id", 'arrival_time', 'stop_sequence']].values.tolist())
+                d_time_list.extend(d_time_groups.get_group(connection[0])[["trip_id", 'arrival_time', 'stop_sequence']].values.tolist())
         except KeyError:
             pass
     d_time_list.sort(key=lambda x: x[1], reverse=True)
@@ -44,13 +43,13 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
     out = []
     J = initialize_tbtr()
     L = initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict, idx_by_route_stop_dict)
-    R_t = {x: defaultdict(lambda: 1000) for x in range(0, MAX_TRANSFER + 1)}
+    R_t = {x: defaultdict(lambda: 1000) for x in range(0, MAX_TRANSFER + 2)}
 
     for d_time in d_time_list:
         rounds_desti_reached = []
-        n = 0
-        Q = initialize_from_source_range(d_time, MAX_TRANSFER, stoptimes_dict, n, R_t)
-        while n < MAX_TRANSFER:
+        Q = initialize_from_source_range(d_time, MAX_TRANSFER, stoptimes_dict, R_t)
+        n = 1
+        while n <= MAX_TRANSFER:
             for trip_segment in Q[n]:
                 from_stop, tid, to_stop, trip_route, tid_idx = trip_segment[0: 5]
                 trip = stoptimes_dict[trip_route][tid_idx][from_stop:to_stop]
@@ -60,7 +59,7 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
                     for last_leg in L[trip_route]:
                         idx = [x[0] for x in enumerate(stop_list) if x[1] == last_leg[2]]
                         if idx and from_stop < last_leg[0] and trip[idx[0]][1] + last_leg[1] < J[n][0]:
-                            if last_leg[1] == pd.to_timedelta(0, unit="seconds"):  # TODO: Why not compare with 0?
+                            if last_leg[1] == pd.to_timedelta(0, unit="seconds"):
                                 walking = (0, 0)
                             else:
                                 walking = (1, stops_dict[trip_route][last_leg[0]])
@@ -70,8 +69,7 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
                     pass
                 try:
                     if tid in trip_set and trip[1][1] < J[n][0]:
-                        connection_list = [connection for from_stop_idx, transfer_stop_id in
-                                           enumerate(trip[1:], from_stop + 1)
+                        connection_list = [connection for from_stop_idx, transfer_stop_id in enumerate(trip[1:], from_stop + 1)
                                            for connection in trip_transfer_dict[tid][from_stop_idx]]
                         enqueue_range(connection_list, n + 1, (tid, 0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
                 except IndexError:
