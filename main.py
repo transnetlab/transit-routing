@@ -1,16 +1,15 @@
 """
 This is the Main module.
 """
-from collections import defaultdict
 
-from RAPTOR.std_raptor import raptor
-from RAPTOR.rraptor import rraptor
-from RAPTOR.one_to_many_rraptor import onetomany_rraptor
 from RAPTOR.hypraptor import hypraptor
-from TBTR.tbtr import tbtr
-from TBTR.rtbtr import rtbtr
-from TBTR.one_many_tbtr import onetomany_rtbtr
+from RAPTOR.one_to_many_rraptor import onetomany_rraptor
+from RAPTOR.rraptor import rraptor
+from RAPTOR.std_raptor import raptor
 from TBTR.hyptbtr import hyptbtr
+from TBTR.one_many_tbtr import onetomany_rtbtr
+from TBTR.rtbtr import rtbtr
+from TBTR.tbtr import tbtr
 from miscellaneous_func import *
 
 print_logo()
@@ -59,8 +58,7 @@ def main():
                 print(f"Routes required to cover optimal journeys are {output}")
         elif variant == 2:
             output = onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC,
-                                       PRINT_ITINERARY, OPTIMIZED,
-                                       routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
+                                       PRINT_ITINERARY, OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
             if OPTIMIZED == 1:
                 print(f"Trips required to cover optimal journeys are {output}")
             else:
@@ -87,7 +85,8 @@ def main():
                 print(f"Routes required to cover optimal journeys are {output}")
         elif variant == 2:
             output = onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_ITINERARY,
-                                     OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
+                                     OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict,
+                                     trip_set)
             if OPTIMIZED == 1:
                 print(f"Trips required to cover optimal journeys are {output}")
             else:
@@ -101,11 +100,13 @@ def main():
                              routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
             print(f"Optimal arrival times are: {output[0]}")
 
+
 if __name__ == "__main__":
     # Read network
     FOLDER = './swiss'
 
-    stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(FOLDER)
+    stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(
+        FOLDER)
 
     with open(f'./GTFS/{FOLDER}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
         trip_transfer_dict = pickle.load(file)
@@ -122,8 +123,8 @@ if __name__ == "__main__":
     CHANGE_TIME_SEC = 0
     PRINT_ITINERARY = 0
     OPTIMIZED = 1
-    stop_out, route_groups, _, trip_groups = read_partitions_new(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2", partitioning_algorithm="kahypar")
-    nested_stop_out, nested_route_groups, _, nested_trip_groups  = read_nested_partitions(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2")
+    stop_out, route_groups, _, trip_groups = read_partitions(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2", partitioning_algorithm="kahypar")
+    nested_stop_out, nested_route_groups, _, nested_trip_groups = read_nested_partitions(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2")
 
     # main function
     d_time_groups = stop_times_file.groupby("stop_id")
