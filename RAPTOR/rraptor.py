@@ -4,7 +4,7 @@ Module contains rRAPTOR implementation
 from RAPTOR.raptor_functions import *
 
 
-def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_PARA,
+def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_ITINERARY,
             OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
     '''
     Standard rRaptor implementation
@@ -15,7 +15,7 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
         MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
         CHANGE_TIME_SEC (int): change-time in seconds.
-        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
         OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
@@ -50,7 +50,7 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
         marked_stop.append(SOURCE)
         marked_stop_dict[SOURCE] = 1
         start_tid, d_time, s_idx = dep_details
-        if PRINT_PARA == 1:
+        if PRINT_ITINERARY == 1:
             print(f"SOURCE, DESTINATION, d_time: {SOURCE, DESTINATION, d_time}")
         # Initialization
         (label[0][SOURCE], star_label[SOURCE]) = (d_time, d_time)
@@ -112,10 +112,10 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
                     continue
             # Main code End
             if marked_stop == deque([]):
-                if PRINT_PARA == 1:
+                if PRINT_ITINERARY == 1:
                     print('code ended with termination condition')
                 break
-        out.extend(post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED))
-        if PRINT_PARA == 1:
+        out.extend(post_processing_rraptor(DESTINATION, pi_label, PRINT_ITINERARY, label, OPTIMIZED))
+        if PRINT_ITINERARY == 1:
             print('------------------------------------')
     return list(set(out))
