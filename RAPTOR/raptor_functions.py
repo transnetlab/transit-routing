@@ -77,7 +77,7 @@ def get_latest_trip_new(stoptimes_dict, route, arrival_time_at_pi, pi_index, cha
         return -1, -1  # No trip exsist for this route. in this case check tripid from trip file for this route and then look waybill.ID. Likely that trip is across days thats why it is rejected in stoptimes builder while checking
 
 
-def post_processing(DESTINATION, pi_label, PRINT_PARA, label):
+def post_processing(DESTINATION, pi_label, PRINT_ITINERARY, label):
     '''
     Post processing for std_RAPTOR. Currently supported functionality:
         1. Rounds in which DESTINATION is reached
@@ -86,7 +86,7 @@ def post_processing(DESTINATION, pi_label, PRINT_PARA, label):
     Args:
         DESTINATION (int): stop id of destination stop.
         pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
-        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
         label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
     Returns:
         rounds_inwhich_desti_reached (list): list of rounds in which DESTINATION is reached. Format - [int]
@@ -96,7 +96,7 @@ def post_processing(DESTINATION, pi_label, PRINT_PARA, label):
     rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
 
     if rounds_inwhich_desti_reached == []:
-        if PRINT_PARA == 1:
+        if PRINT_ITINERARY == 1:
             print('DESTINATION cannot be reached with given MAX_TRANSFERS')
         return -1, -1, -1
     else:
@@ -120,7 +120,7 @@ def post_processing(DESTINATION, pi_label, PRINT_PARA, label):
             journey.reverse()
             pareto_set.append((transfer_needed, journey))
 
-        if PRINT_PARA == 1:
+        if PRINT_ITINERARY == 1:
             _print_Journey_legs(pareto_set)
         #        _save_routesExplored(save_routes, routes_exp)
         return rounds_inwhich_desti_reached, trip_set, rap_out
@@ -144,7 +144,7 @@ def _print_Journey_legs(pareto_journeys):
         print("####################################")
 
 
-def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, OPTIMIZED):
+def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERARY, OPTIMIZED):
     '''
     post processing for Ont-To-Many rRAPTOR. Currently supported functionality:
         1. Print the output
@@ -153,7 +153,7 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, OP
     Args:
         DESTINATION_LIST (list): list of stop ids of destination stop.
         pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
-        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
         OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
     Returns:
         if OPTIMIZED==1:
@@ -185,7 +185,7 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, OP
         for DESTINATION in DESTINATION_LIST:
             rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
             if rounds_inwhich_desti_reached == []:
-                if PRINT_PARA == 1:
+                if PRINT_ITINERARY == 1:
                     print('DESTINATION cannot be reached with given MAX_TRANSFERS')
             else:
                 rounds_inwhich_desti_reached.reverse()
@@ -209,12 +209,12 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_PARA, OP
                     pareto_set.append((transfer_needed, journey))
                     for trip in trip_set:
                         final_routes.append(int(trip.split("_")[0]))
-                if PRINT_PARA == 1:
+                if PRINT_ITINERARY == 1:
                     _print_Journey_legs(pareto_set)
         return list(set(final_routes))
 
 
-def post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED):
+def post_processing_rraptor(DESTINATION, pi_label, PRINT_ITINERARY, label, OPTIMIZED):
     '''
     Full post processing for rRAPTOR. Currently supported functionality:
         1. Print the output
@@ -223,7 +223,7 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED)
     Args:
         DESTINATION (int): stop id of destination stop.
         pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
-        PRINT_PARA (int): 1 or 0. 1 means print complete path.
+        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
         label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
         OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
     Returns:
@@ -251,7 +251,7 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED)
     else:
         final_routes = []
         if rounds_inwhich_desti_reached == []:
-            if PRINT_PARA == 1:
+            if PRINT_ITINERARY == 1:
                 print('DESTINATION cannot be reached with given MAX_TRANSFERS')
             return final_routes
         else:
@@ -276,7 +276,7 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_PARA, label, OPTIMIZED)
                 pareto_set.append((transfer_needed, journey))
                 for trip in trip_set:
                     final_routes.append(int(trip.split("_")[0]))
-            if PRINT_PARA == 1:
+            if PRINT_ITINERARY == 1:
                 _print_Journey_legs(pareto_set)
         return final_routes
 
@@ -486,7 +486,7 @@ def post_processing_onetomany_rraptor_partial(destination_list, pi_label):
 
 
 
-def post_processing_onetomany_rraptor_full(destination_list, pi_label, PRINT_PARA):
+def post_processing_onetomany_rraptor_full(destination_list, pi_label, PRINT_ITINERARY):
     '''
     Full post processing for rRAPTOR. Currently supported functionality:
         1. Print the output
@@ -495,7 +495,7 @@ def post_processing_onetomany_rraptor_full(destination_list, pi_label, PRINT_PAR
     Args:
         DESTINATION: DESTINATION stop id (int)
         pi_label: Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id format- {round : {stop_id: pointer_label}}
-        PRINT_PARA: 1 or 0. 1 means print complete path (int)
+        PRINT_ITINERARY: 1 or 0. 1 means print complete path (int)
         label: Nested dict to maintain label {round : {stop_id: pandas.datetime}}
         route_set: Set to store routes required for covering pareto-optimal label.
 
@@ -508,7 +508,7 @@ def post_processing_onetomany_rraptor_full(destination_list, pi_label, PRINT_PAR
         rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
 
         if rounds_inwhich_desti_reached == []:
-            if PRINT_PARA == 1:
+            if PRINT_ITINERARY == 1:
                 print('DESTINATION cannot be reached with given MAX_TRANSFERS')
         else:
             rounds_inwhich_desti_reached.reverse()
@@ -530,7 +530,7 @@ def post_processing_onetomany_rraptor_full(destination_list, pi_label, PRINT_PAR
                         k = k - 1
                 journey.reverse()
                 pareto_set.append((transfer_needed, journey))
-                if PRINT_PARA == 1:
+                if PRINT_ITINERARY == 1:
                     _print_Journey_legs(pareto_set)
                 for trip in trip_set:
                     final_routes.append(int(trip.split("_")[0]))
@@ -565,7 +565,7 @@ def post_processing_rraptor_partial(DESTINATION, pi_label):
         return trip_set
 
 
-def post_processing_rraptor_full(DESTINATION, pi_label, PRINT_PARA, label, route_set):
+def post_processing_rraptor_full(DESTINATION, pi_label, PRINT_ITINERARY, label, route_set):
     '''
     Full post processing for rRAPTOR. Currently supported functionality:
         1. Print the output
@@ -574,7 +574,7 @@ def post_processing_rraptor_full(DESTINATION, pi_label, PRINT_PARA, label, route
     Args:
         DESTINATION: DESTINATION stop id (int)
         pi_label: Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id format- {round : {stop_id: pointer_label}}
-        PRINT_PARA: 1 or 0. 1 means print complete path (int)
+        PRINT_ITINERARY: 1 or 0. 1 means print complete path (int)
         label: Nested dict to maintain label {round : {stop_id: pandas.datetime}}
         route_set: Set to store routes required for covering pareto-optimal label.
 
@@ -585,7 +585,7 @@ def post_processing_rraptor_full(DESTINATION, pi_label, PRINT_PARA, label, route
     rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
 
     if rounds_inwhich_desti_reached == []:
-        if PRINT_PARA == 1:
+        if PRINT_ITINERARY == 1:
             print('DESTINATION cannot be reached with given MAX_TRANSFERS')
         route_set = route_set.union(set())
     else:
@@ -608,7 +608,7 @@ def post_processing_rraptor_full(DESTINATION, pi_label, PRINT_PARA, label, route
                     k = k - 1
             journey.reverse()
             pareto_set.append((transfer_needed, journey))
-            if PRINT_PARA == 1:
+            if PRINT_ITINERARY == 1:
                 _print_Journey_legs(pareto_set)
             for trip in trip_set:
                 route_set = route_set.union({int(trip.split("_")[0])})
