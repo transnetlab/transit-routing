@@ -98,7 +98,7 @@ def post_processing(DESTINATION, pi_label, PRINT_ITINERARY, label):
     if rounds_inwhich_desti_reached == []:
         if PRINT_ITINERARY == 1:
             print('DESTINATION cannot be reached with given MAX_TRANSFERS')
-        return -1, -1, -1
+        return None, None, None
     else:
         rounds_inwhich_desti_reached.reverse()
         pareto_set = []
@@ -137,7 +137,8 @@ def _print_Journey_legs(pareto_journeys):
     for _, journey in pareto_journeys:
         for leg in journey:
             if leg[0] == 'walking':
-                print(f'from {leg[1]} walk till  {leg[2]} for {leg[3]} minutes and reach at {leg[4].time()}')
+                print(f'from {leg[1]} walk till  {leg[2]} for {leg[3].total_seconds()} seconds')
+#                print(f'from {leg[1]} walk till  {leg[2]} for {leg[3]} minutes and reach at {leg[4].time()}')
             else:
                 print(
                     f'from {leg[1]} board at {leg[0].time()} and get down on {leg[2]} at {leg[3].time()} along {leg[-1]}')
