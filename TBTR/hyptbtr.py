@@ -56,15 +56,13 @@ def hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRIN
                 pass
             try:
                 if tid in trip_set and trip[1][1] < J[n][0]:
-                    connection_list = [connection for from_stop_idx, transfer_stop_id in
-                                       enumerate(trip[1:], from_stop + 1)
-                                       for connection in trip_transfer_dict[tid][from_stop_idx] if
-                                       connection[0] in final_trips]
+                    connection_list = [connection for from_stop_idx, transfer_stop_id in enumerate(trip[1:], from_stop + 1)
+                                       for connection in trip_transfer_dict[tid][from_stop_idx] if connection[0] in final_trips]
                     enqueue(connection_list, n + 1, (tid, 0, 0), R_t, Q, stoptimes_dict)
             except IndexError:
                 pass
         n = n + 1
     tbtr_out = post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, PRINT_ITINERARY,
-                            D_TIME, MAX_TRANSFER, idx_by_route_stop_dict)
+                            D_TIME, MAX_TRANSFER, trip_transfer_dict)
     out.append(tbtr_out)
     return out
