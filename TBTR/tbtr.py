@@ -1,6 +1,5 @@
 """
 Module contains TBTR implementation
-#TODO: Add backtracking label system
 """
 from TBTR.TBTR_functions import *
 
@@ -60,7 +59,6 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_I
                 pass
         n = n + 1
     TBTR_out = post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, PRINT_ITINERARY, D_TIME,
-                            MAX_TRANSFER, idx_by_route_stop_dict)
+                            MAX_TRANSFER, trip_transfer_dict)
     out.append(TBTR_out)
-
     return out
