@@ -126,9 +126,8 @@ def read_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_scheme,
         stop_out = pd.read_csv(f'./partitions/{FOLDER}/cutstops_{weighting_scheme}_{no_of_partitions}.csv', usecols=['stop_id', 'g_id'])
         fill_ins = pd.read_csv(f'./partitions/{FOLDER}/fill_ins_{weighting_scheme}_{no_of_partitions}.csv')
     elif partitioning_algorithm == "kahypar":
-        route_out = pd.read_csv(f'./kpartitions/{FOLDER}/routeout_{weighting_scheme}_{no_of_partitions}.csv',
-                                usecols=['path_id', 'group']).groupby('group')
-        stop_out = pd.read_csv(f'./kpartitions/{FOLDER}/cutstops_{weighting_scheme}_{no_of_partitions}.csv', usecols=['stop_id', 'g_id'])
+        route_out = pd.read_csv(f'./kpartitions/{FOLDER}/routeout_{weighting_scheme}_{no_of_partitions}.csv', usecols=['path_id', 'group']).groupby('group')
+        stop_out = pd.read_csv(f'./kpartitions/{FOLDER}/cutstops_{weighting_scheme}_{no_of_partitions}.csv', usecols=['stop_id', 'g_id']).astype(int)
         fill_ins = pd.read_csv(f'./kpartitions/{FOLDER}/fill_ins_{weighting_scheme}_{no_of_partitions}.csv')
 
     fill_ins.fillna(-1, inplace=True)
