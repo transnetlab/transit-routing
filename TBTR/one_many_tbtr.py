@@ -1,6 +1,5 @@
 """
 Module contains One-To-Many rTBTR implementation
-#TODO: Add backtracking label
 """
 from TBTR.TBTR_functions import *
 
