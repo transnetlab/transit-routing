@@ -38,7 +38,7 @@ def hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRIN
 
     n = 1
     while n <= MAX_TRANSFER:
-        for trip_segment in Q[n]:
+        for counter, trip_segment in enumerate(Q[n]):
             from_stop, tid, to_stop, trip_route, tid_idx = trip_segment[0: 5]
             trip = stoptimes_dict[trip_route][tid_idx][from_stop:to_stop]
             try:
@@ -51,14 +51,14 @@ def hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRIN
                             walking = (0, 0)
                         else:
                             walking = (1, stops_dict[trip_route][last_leg[0]])
-                        J = update_label(trip[idx[0]][1] + last_leg[1], n, (tid, walking), J, MAX_TRANSFER)
+                        J = update_label(trip[idx[0]][1] + last_leg[1], n, (tid, walking, counter), J, MAX_TRANSFER)
             except KeyError:
                 pass
             try:
                 if tid in trip_set and trip[1][1] < J[n][0]:
                     connection_list = [connection for from_stop_idx, transfer_stop_id in enumerate(trip[1:], from_stop + 1)
                                        for connection in trip_transfer_dict[tid][from_stop_idx] if connection[0] in final_trips]
-                    enqueue(connection_list, n + 1, (tid, 0, 0), R_t, Q, stoptimes_dict)
+                    enqueue(connection_list, n + 1, (tid, counter, 0), R_t, Q, stoptimes_dict)
             except IndexError:
                 pass
         n = n + 1
