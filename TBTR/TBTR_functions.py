@@ -306,7 +306,7 @@ def post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes
     rounds_desti_reached = [roundno for roundno in range(1, MAX_TRANSFER+1) if J[roundno][1] != 0]
     if rounds_desti_reached == []:
         if PRINT_ITINERARY == 1:
-            print('DESTINATION cannot be reached with given transfers')
+            print('DESTINATION cannot be reached with given MAX_TRANSFERS')
 #        return -1
     else:
         if PRINT_ITINERARY == 1:
