@@ -431,6 +431,10 @@ def post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes
                             if c+1!=len(journey_final_copy)-1:
                                 [trip_route, numb], fromstopidx = [int(x) for x in leg[2].split("_")], leg[3]
                                 journey_final.append([leg[2], stoptimes_dict[trip_route][numb][fromstopidx], stoptimes_dict[trip_route][numb][journey_final_copy[c+1][1]]])
+                        elif from_stop==to_stop:
+                            if c+1!=len(journey_final_copy)-1:
+                                [trip_route, numb], fromstopidx = [int(x) for x in leg[2].split("_")], leg[3]
+                                journey_final.append([leg[2], stoptimes_dict[trip_route][numb][fromstopidx], stoptimes_dict[trip_route][numb][journey_final_copy[c+1][1]]])
                 for leg in journey_final:
                     if leg[0]=="walk":
                         print(f"from {leg[1]} walk till  {leg[2]} for {leg[3].total_seconds()} seconds")
