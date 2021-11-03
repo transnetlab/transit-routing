@@ -12,6 +12,7 @@
 - [Copyright and license](#Copyright-and-license)
 
 ### Introduction <img align="right" alt="GIF" height="100px" src="https://media.giphy.com/media/U4FkC2VqpeNRHjTDQ5/giphy.gif" />
+![plot](docs/location.png)
 
 
 ### List of Algorihtms
