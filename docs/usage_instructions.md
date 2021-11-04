@@ -17,7 +17,7 @@
 	algorithm  -> 0 or 1
 	variant	   -> 0 or 1 or 2 or 3
 	test_case  -> 0
-To run algorithms on a different GTFS set, enter the network details in [main.py](main.py). 
+To run algorithms on a different GTFS set, enter the network details in [main.py](https://github.com/transnetlab/transit-routing/blob/main/main.py). 
 
 ## Dataset generation
 Due to inconsistencies in the GTFS set available online, a GTFS set cannot be used directly here. 
