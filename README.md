@@ -13,7 +13,7 @@
 
 ### Introduction 
 This repository provides various efficient algorithms to solve bicriteria shortest path problems in public transit routing.
-We mainly focus on two popular approaches- Round-Based Public Transit Routing (RAPTOR) and Trip-Based public
+We mainly focus on two popular approaches: Round-Based Public Transit Routing (RAPTOR) and Trip-Based public
 Transit Routing (TBTR) working on arrival time and number of transfers as the two optimization criteria.
 Apart from the already published HypRAPTOR, we also include our variant of HypTBTR. Furthermore, both HypRAPTOR and HypTBTR have been extended using multilevel nested partitioning (NhypTBTR and NhypRAPTOR).
 
