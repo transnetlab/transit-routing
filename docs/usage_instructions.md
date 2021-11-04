@@ -5,7 +5,7 @@
 ****************************************************************************************
 
 ## Requirements:
-- A 64-bit operating system. Linux, Mac OS X and Windows are currently supported.
+- A 64-bit operating system. Linux, MacOS and Windows are currently supported.
 - Python version 3.7 or higher
 - Python Modules: tqdm, pandas, numpy, pickle, collections, random, networkx
 
@@ -22,8 +22,8 @@ To run algorithms on a different GTFS set, enter the network details in [main.py
 Due to inconsistencies in the GTFS set available online, a GTFS set cannot be used directly here. 
 Moreover, a significant amount of preprocessing (e.g. transitively closed footpaths,
 non-overtaking trips etc.) is required. See for details.
-The Switzerland test network  is generated in accordance with these. [switzerland_wrapper.py](Switzerland_wrapper.py) contains the code for the same.
+The Switzerland test network  is generated in accordance with these.
 See [switzerland_wrapper.md](/docs/switzerland_wrapper.py) for documentation on the same. 
 
-## Special cases
-[switzerland_wrapper.md](/docs/switzerland_wrapper.py)
+## Notes
+See [speical_cases.md](/docs/special_cases.py) for details.
