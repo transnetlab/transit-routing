@@ -114,9 +114,9 @@ if __name__ == "__main__":
     print_network_details(transfers_file, trips_file, stops_file)
 
     # Query parameters
-    SOURCE = 9865
-    DESTINATION = 12683
-    DESTINATION_LIST = [12683]
+    SOURCE = 20775
+    DESTINATION = 1482
+    DESTINATION_LIST = [1482]
     D_TIME = stop_times_file.arrival_time.sort_values().iloc[0]
     MAX_TRANSFER = 4
     WALKING_FROM_SOURCE = 1
