@@ -115,6 +115,7 @@ def initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dic
         Q (list): list of trips segments
     '''
     Q = [[] for x in range(MAX_TRANSFER + 2)]
+#    R_t = {f"{r}_{tid}": 1000 for r, r_trips in stoptimes_dict.items() for tid in range(len(r_trips))}
     R_t = defaultdict(lambda: 1000) # assuming maximum route length is 1000
     connection_list = []
     if WALKING_FROM_SOURCE == 1:
@@ -161,7 +162,7 @@ def enqueue(connection_list, nextround, predecessor_label, R_t, Q, stoptimes_dic
         if to_trip_id_stop < R_t[to_trip_id]:
             route, tid = [int(x) for x in to_trip_id.split("_")]
             Q[nextround].append((to_trip_id_stop, to_trip_id, R_t[to_trip_id], route, tid, predecessor_label))
-            for x in range(tid, len(stoptimes_dict[route]) + 1):  # TODO: Should we look at all subsequent trips? Can we not prune this?
+            for x in range(tid, len(stoptimes_dict[route])):
                 new_tid = f"{route}_{x}"
                 # R_t[new_tid] = min(R_t[new_tid], to_trip_id_stop)
                 if R_t[new_tid] > to_trip_id_stop:
