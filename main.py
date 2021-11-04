@@ -25,14 +25,15 @@ def take_inputs():
                                                  1 for range version,
                                                  2 for One-To-Many version,
                                                  3 for Hyper version
+                                                 3 for Nested Hyper version
     """
     algorithm = int(input("Press 0 for RAPTOR \nPress 1 for TBTR \n"))
     print("***************")
     if algorithm == 0:
         variant = int(input(
-            "Press 0 for RAPTOR \nPress 1 for rRAPTOR \nPress 2 for One-To-Many rRAPTOR \nPress 3 for HypRAPTOR \n"))
+            "Press 0 for RAPTOR \nPress 1 for rRAPTOR \nPress 2 for One-To-Many rRAPTOR \nPress 3 for HypRAPTOR\nPress 4 for Nested-HypRAPTOR \n"))
     elif algorithm == 1:
-        variant = int(input("Press 0: TBTR \nPress 1: rTBTR \nPress 2: One-To-Many rTBTR \nPress 3: HypTBTR \n"))
+        variant = int(input("Press 0: TBTR \nPress 1: rTBTR \nPress 2: One-To-Many rTBTR \nPress 3: HypTBTR \nPress 4 for Nested-HypTBTR \n"))
     print("***************")
     return algorithm, variant
 
@@ -121,8 +122,8 @@ if __name__ == "__main__":
     MAX_TRANSFER = 4
     WALKING_FROM_SOURCE = 1
     CHANGE_TIME_SEC = 0
-    PRINT_ITINERARY = 0
-    OPTIMIZED = 1
+    PRINT_ITINERARY = 1
+    OPTIMIZED = 0
     stop_out, route_groups, _, trip_groups = read_partitions(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2", partitioning_algorithm="kahypar")
     nested_stop_out, nested_route_groups, _, nested_trip_groups = read_nested_partitions(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2")
 
