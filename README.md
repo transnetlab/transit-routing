@@ -12,16 +12,15 @@
 - [Copyright and license](#Copyright-and-license)
 
 ### Introduction 
-This repository provides various efficient algorithms to solve bicriteria shortest path problem in public transit routing. 
+This repository provides various efficient algorithms to solve bicriteria shortest path problems in public transit routing.
 We mainly focus on two popular approaches- Round-Based Public Transit Routing (RAPTOR) and Trip-Based public
 Transit Routing (TBTR) working on arrival time and number of transfers as the two optimization criteria.
-Apart from the already published HypRAPTOR, we also include our variant of HypTBTR. Furthermore, both HypRAPTOR and HypTBTR have been extended to multilevel 
-nested partitioning scheme (NhypTBTR and NhypRAPTOR).
+Apart from the already published HypRAPTOR, we also include our variant of HypTBTR. Furthermore, both HypRAPTOR and HypTBTR have been extended using multilevel nested partitioning (NhypTBTR and NhypRAPTOR).
 
 Additionally, to make the RAPTOR and TBTR approach more practical, we also include One-To-Many rTBTR and One-To-Many rRAPTOR. These not only reduce the preprocessing times of the partitioning variants but also significantly
 outperform the existing approach for location-based queries (as a location can have multiple stops near it)
 
-Switzerland's public transit network has been provided as test case. Figure below shows the transit stop location (left) and 4-way partitioning using [KaHyPar](https://github.com/kahypar/kahypar) (right).
+Switzerland's public transit network has been provided as a test case. The figure below shows the transit stop location (left) and 4-way partitioning using [KaHyPar](https://github.com/kahypar/kahypar) (right).
 ![plot](docs/location.png)
 ### List of Algorihtms
 Algorithm | SOURCE |  Status | Comments |
@@ -59,5 +58,5 @@ We welcome all suggestions from the community. If you wish to contribute or repo
 - [Witt, S., 2015. Trip-based public transit routing. In Algorithms-ESA 2015 (pp. 1025-1036). Springer, Berlin, Heidelberg.](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85)
 
 ### Copyright and license
-The content of this repository is bound by MIT License. For more information see
+The content of this repository is bounded by MIT License. For more information see
 [COPYING file](https://github.com/transnetlab/transit-routing/blob/main/LICENSE)
