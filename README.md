@@ -11,7 +11,7 @@
 - [References](#References)
 - [Copyright and license](#Copyright-and-license)
 
-### Introduction <img align="right" alt="GIF" height="100px" src="https://media.giphy.com/media/U4FkC2VqpeNRHjTDQ5/giphy.gif" />
+### Introduction 
 This repository provides various efficient algorithms to solve bicriteria shortest path problem in public transit routing. 
 We mainly focus on two popular approaches- Round-Based Public Transit Routing (RAPTOR) and Trip-Based public
 Transit Routing (TBTR) working on arrival time and number of transfers as the two optimization criteria.
@@ -21,7 +21,7 @@ nested partitioning scheme (NhypTBTR and NhypRAPTOR).
 Additionally, to make the RAPTOR and TBTR approach more practical, we also include One-To-Many rTBTR and One-To-Many rRAPTOR. These not only reduce the preprocessing times of the partitioning variants but also significantly
 outperform the existing approach for location-based queries (as a location can have multiple stops near it)
 
-Switzerland's public transit network has been provided as test case. Figure below shows the transit stop location (left) and 4-way partitioning using KaHyPar (right).
+Switzerland's public transit network has been provided as test case. Figure below shows the transit stop location (left) and 4-way partitioning using [KaHyPar](https://github.com/kahypar/kahypar) (right).
 ![plot](docs/location.png)
 ### List of Algorihtms
 Algorithm | SOURCE |  Status | Comments |
@@ -30,19 +30,19 @@ Algorithm | SOURCE |  Status | Comments |
 | TBTR | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) |Complete|
 | rRAPTOR | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) |Complete|
 | rTBTR| [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) |Complete|
-| One-To-Many rRAPTOR | Archive |Complete|
-| One-To-Many rTBTR | Archive |Complete|
+| One-To-Many rRAPTOR | To be updated soon |Complete|
+| One-To-Many rTBTR | To be updated soon |Complete|
 | HypRAPTOR | [link](https://drops.dagstuhl.de/opus/volltexte/2017/7896/) |Complete|
-| HypTBTR |  Archive |Complete|
-| NHypTBTR | Archive |Complete|
-| NHypTBTR | Archive |Complete|
+| HypTBTR |  To be updated soon |Complete|
+| NHypTBTR | To be updated soon |Complete|
+| NHypTBTR | To be updated soon |Complete|
 
 ### Usage Instructions
-See [Usage Instructions](/docs/Usage Instructions.md) for details on the usage instructions. 
+See [Usage Instructions](./docs/usage_instructions.md) for details on the usage instructions. 
 
 
 ### Contributing
-We welcome all suggestions from the community. If you wish to contribute or report any bug please contact the creaters or create an issue on [issue tracking system](https://github.com/tarunrambha/transit-routing/issues).
+We welcome all suggestions from the community. If you wish to contribute or report any bug please contact the creaters or create an issue on [issue tracking system](https://github.com/transnetlab/transit-routing/issues).
 ### Creators
 - **Prateek Agarwal**
     - Ph.D. at Indian Institute of Science (IISc) Bengaluru, India.
@@ -59,5 +59,5 @@ We welcome all suggestions from the community. If you wish to contribute or repo
 - [Witt, S., 2015. Trip-based public transit routing. In Algorithms-ESA 2015 (pp. 1025-1036). Springer, Berlin, Heidelberg.](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85)
 
 ### Copyright and license
-The content of this repository is bound by the following licenses:
-
+The content of this repository is bound by MIT License. For more information see
+[COPYING file](https://github.com/transnetlab/transit-routing/blob/main/LICENSE)
