@@ -113,7 +113,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
             if marked_stop == deque([]):
                 # print('code ended with termination condition')
                 break
-        output.extend(post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERARY, OPTIMIZED))
+        output.extend(post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERARY, label, OPTIMIZED))
         if PRINT_ITINERARY == 1:
             print('------------------------------------')
     return list(set(output))
