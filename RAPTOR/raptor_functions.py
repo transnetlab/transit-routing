@@ -145,7 +145,7 @@ def _print_Journey_legs(pareto_journeys):
         print("####################################")
 
 
-def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERARY, OPTIMIZED):
+def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERARY, label, OPTIMIZED):
     '''
     post processing for Ont-To-Many rRAPTOR. Currently supported functionality:
         1. Print the output
@@ -155,6 +155,7 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERAR
         DESTINATION_LIST (list): list of stop ids of destination stop.
         pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
         PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
+        label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
         OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
     Returns:
         if OPTIMIZED==1:
@@ -192,7 +193,7 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERAR
                 rounds_inwhich_desti_reached.reverse()
                 pareto_set = []
                 trip_set = []
-                #            rap_out = [label[k][DESTINATION] for k in rounds_inwhich_desti_reached]
+                # rap_out = [label[k][DESTINATION] for k in rounds_inwhich_desti_reached]
                 for k in rounds_inwhich_desti_reached:
                     transfer_needed = k - 1
                     journey = []
@@ -259,7 +260,7 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_ITINERARY, label, OPTIM
             rounds_inwhich_desti_reached.reverse()
             pareto_set = []
             trip_set = []
-            rap_out = [label[k][DESTINATION] for k in rounds_inwhich_desti_reached]
+            #rap_out = [label[k][DESTINATION] for k in rounds_inwhich_desti_reached]
             for k in rounds_inwhich_desti_reached:
                 transfer_needed = k - 1
                 journey = []
