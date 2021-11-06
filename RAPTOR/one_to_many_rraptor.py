@@ -48,11 +48,21 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
         pi_label = {x: {stop: -1 for stop in routes_by_stop_dict.keys()} for x in range(0, MAX_TRANSFER + 1)}
         marked_stop = deque()
         marked_stop_dict = {stop: 0 for stop in routes_by_stop_dict.keys()}
-        marked_stop.append(SOURCE)
-        marked_stop_dict[SOURCE] = 1
         start_tid, d_time, s_idx = dep_details
-        # if PRINT_ITINERARY == 1: print(SOURCE, d_time)
-        (label[0][SOURCE], star_label[SOURCE]) = (d_time, d_time)
+        first_stop = stops_dict[int(start_tid.split("_")[0])][s_idx]
+        if first_stop!=SOURCE:
+            marked_stop.append(first_stop)
+            marked_stop_dict[first_stop] = 1
+            to_pdash_time = [foot_connect[1] for foot_connect in footpath_dict[SOURCE] if foot_connect[0]==first_stop][0]
+            label[0][first_stop] = d_time - change_time
+            star_label[first_stop] = d_time - change_time
+            pi_label[0][first_stop] = ('walking', SOURCE, first_stop, to_pdash_time, d_time - change_time)
+        else:
+            marked_stop.append(SOURCE)
+            marked_stop_dict[SOURCE] = 1
+            (label[0][SOURCE], star_label[SOURCE]) = (d_time, d_time)
+        if PRINT_ITINERARY == 1:
+            print(SOURCE, d_time)
         Q = {}
         # Main code part 1
         for k in range(1, MAX_TRANSFER + 1):
