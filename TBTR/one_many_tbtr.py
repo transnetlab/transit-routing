@@ -45,14 +45,14 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
     L = initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_LIST, footpath_dict, idx_by_route_stop_dict)
     R_t = {x: defaultdict(lambda: 1000) for x in range(0, MAX_TRANSFER + 2)}  # assuming maximum route length is 1000
 
-    for d_time in d_time_list:
+    for dep_details in d_time_list:
         rounds_desti_reached = {x: [] for x in DESTINATION_LIST}
         n = 1
-        Q = initialize_from_source_range(d_time, MAX_TRANSFER, stoptimes_dict, R_t)
+        Q = initialize_from_source_range(dep_details, MAX_TRANSFER, stoptimes_dict, R_t)
         dest_list_prime = DESTINATION_LIST.copy()
         while n <= MAX_TRANSFER:
             scope = []
-            for trip_segment in Q[n]:
+            for counter, trip_segment in enumerate(Q[n]):
                 from_stop, tid, to_stop, trip_route, tid_idx = trip_segment[0: 5]
                 trip = stoptimes_dict[trip_route][tid_idx][from_stop:to_stop]
                 connection_list = []
@@ -67,7 +67,7 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
                                     walking = (0, 0)
                                 else:
                                     walking = (1, stops_dict[trip_route][last_leg[0]])
-                                J[desti] = update_label(trip[idx[0]][1] + last_leg[1], n, (tid, walking), J[desti], MAX_TRANSFER)
+                                J[desti] = update_label(trip[idx[0]][1] + last_leg[1], n, (tid, walking, counter), J[desti], MAX_TRANSFER)
                                 rounds_desti_reached[desti].append(n)
                     except KeyError:
                         pass
@@ -78,12 +78,12 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
                                  for connection in trip_transfer_dict[tid][from_stop_idx]])
                     except IndexError:
                         pass
-                enqueue_range(connection_list, n + 1, (tid, 0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
+                enqueue_range(connection_list, n + 1, (tid, counter, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
             dest_list_prime = set(scope)
             n = n + 1
         for desti in DESTINATION_LIST:
             if rounds_desti_reached[desti]:
-                out.extend(post_process_range_onemany(J, Q, rounds_desti_reached[desti], desti))
+                out.extend(post_process_range_onemany(J, Q, rounds_desti_reached[desti], PRINT_ITINERARY, desti, SOURCE, footpath_dict, stops_dict, stoptimes_dict, dep_details[1], MAX_TRANSFER, trip_transfer_dict))
     if OPTIMIZED == 0:
         out = [int(trip.split("_")[0]) for trip in out]
     return list(set(out))
