@@ -45,12 +45,14 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
     L = initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict, idx_by_route_stop_dict)
     R_t = {x: defaultdict(lambda: 1000) for x in range(0, MAX_TRANSFER + 2)}
 
-    for d_time in d_time_list:
+    for dep_details in d_time_list:
+        if PRINT_ITINERARY == 1:
+            print(f"SOURCE, DESTINATION, d_time: {SOURCE, DESTINATION, dep_details[1]}")
         rounds_desti_reached = []
-        Q = initialize_from_source_range(d_time, MAX_TRANSFER, stoptimes_dict, R_t)
+        Q = initialize_from_source_range(dep_details, MAX_TRANSFER, stoptimes_dict, R_t)
         n = 1
         while n <= MAX_TRANSFER:
-            for trip_segment in Q[n]:
+            for counter, trip_segment in enumerate(Q[n]):
                 from_stop, tid, to_stop, trip_route, tid_idx = trip_segment[0: 5]
                 trip = stoptimes_dict[trip_route][tid_idx][from_stop:to_stop]
                 try:
@@ -63,7 +65,7 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
                                 walking = (0, 0)
                             else:
                                 walking = (1, stops_dict[trip_route][last_leg[0]])
-                            J = update_label(trip[idx[0]][1] + last_leg[1], n, (tid, walking), J, MAX_TRANSFER)
+                            J = update_label(trip[idx[0]][1] + last_leg[1], n, (tid, walking, counter), J, MAX_TRANSFER)
                             rounds_desti_reached.append(n)
                 except KeyError:
                     pass
@@ -71,12 +73,16 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
                     if tid in trip_set and trip[1][1] < J[n][0]:
                         connection_list = [connection for from_stop_idx, transfer_stop_id in enumerate(trip[1:], from_stop + 1)
                                            for connection in trip_transfer_dict[tid][from_stop_idx]]
-                        enqueue_range(connection_list, n + 1, (tid, 0, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
+                        enqueue_range(connection_list, n + 1, (tid, counter, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
                 except IndexError:
                     pass
             n = n + 1
         if rounds_desti_reached:
-            out.extend(list(post_process_range(J, Q, rounds_desti_reached)))
+            out.extend(list(post_process_range(J, Q, rounds_desti_reached, PRINT_ITINERARY, DESTINATION,
+                                               SOURCE, footpath_dict, stops_dict, stoptimes_dict, dep_details[1],
+                                               MAX_TRANSFER, trip_transfer_dict)))
     if OPTIMIZED == 0:
         out = [int(trip.split("_")[0]) for trip in out]
+        if PRINT_ITINERARY == 1:
+            print('------------------------------------')
     return list(set(out))
