@@ -31,9 +31,9 @@ def take_inputs():
     print("***************")
     if algorithm == 0:
         variant = int(input(
-            "Press 0 for RAPTOR \nPress 1 for rRAPTOR \nPress 2 for One-To-Many rRAPTOR \nPress 3 for HypRAPTOR\nPress 4 for Nested-HypRAPTOR \n"))
+            "Press 0 for RAPTOR \nPress 1 for rRAPTOR \nPress 2 for One-To-Many rRAPTOR \nPress 3 for HypRAPTOR\nPress 4 for Multilevel-HypRAPTOR \n"))
     elif algorithm == 1:
-        variant = int(input("Press 0: TBTR \nPress 1: rTBTR \nPress 2: One-To-Many rTBTR \nPress 3: HypTBTR \nPress 4 for Nested-HypTBTR \n"))
+        variant = int(input("Press 0: TBTR \nPress 1: rTBTR \nPress 2: One-To-Many rTBTR \nPress 3: HypTBTR \nPress 4 for Multilevel-HypTBTR \n"))
     print("***************")
     return algorithm, variant
 
