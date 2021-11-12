@@ -130,3 +130,5 @@ if __name__ == "__main__":
     # main function
     d_time_groups = stop_times_file.groupby("stop_id")
     main()
+
+=IF(AND(D2=0,F2=0),1,IF(AND(D2=0,F2=1),2, IF(AND(D2=0,F2=-1),-1,IF(AND(D2=1,F2=0),3,IF(AND(D2=1,F2=1),4,IF(AND(D2=1,F2=-1),-1,IF(D2=-1,-1,22)))))))

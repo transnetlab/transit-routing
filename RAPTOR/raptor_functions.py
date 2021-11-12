@@ -167,6 +167,7 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERAR
         final_trips = []
         for DESTINATION in DESTINATION_LIST:
             rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
+            return [label[x][DESTINATION] for x in rounds_inwhich_desti_reached]
             if rounds_inwhich_desti_reached:
                 rounds_inwhich_desti_reached.reverse()
                 trip_set = []
@@ -235,6 +236,7 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_ITINERARY, label, OPTIM
             final_routes (list): List of routes required to cover all pareto-optimal journeys. Format - [route_id]
     '''
     rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
+    return [label[x][DESTINATION] for x in rounds_inwhich_desti_reached]
     if OPTIMIZED == 1:
         final_trip = []
         if rounds_inwhich_desti_reached:
