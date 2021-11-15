@@ -30,11 +30,11 @@ Algorithm | SOURCE |  Status | Comments |
 | rRAPTOR | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) |Complete|
 | rTBTR| [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) |Complete|
 | One-To-Many rRAPTOR | To be updated soon |Complete|
-| One-To-Many rTBTR | To be updated soon |Complete|
+| One-To-Many rTBTR | [link](https://arxiv.org/abs/2111.06654) |Complete|
 | HypRAPTOR | [link](https://drops.dagstuhl.de/opus/volltexte/2017/7896/) |Complete|
-| HypTBTR |  To be updated soon |Complete|
-| MHypTBTR | To be updated soon |Complete|
-| MHypTBTR | To be updated soon |Complete|
+| HypTBTR |  [link](https://arxiv.org/abs/2111.06654) |Complete|
+| MHypTBTR | [link](https://arxiv.org/abs/2111.06654) |Complete|
+| MHypTBTR | [link](https://arxiv.org/abs/2111.06654) |Complete|
 
 ### Usage Instructions
 See [Usage Instructions](./docs/usage_instructions.md) for details on the usage instructions. 
