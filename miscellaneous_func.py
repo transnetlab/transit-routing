@@ -232,7 +232,9 @@ def read_nested_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_
 
 def check_nonoverlap(stoptimes_dict, stops_dict):
     '''
-    Check for non overlapping trips in stoptimes_dict
+    Check for non overlapping trips in stoptimes_dict. If found, it reduces the timestamp of the earlier trip by 1 second.
+    This process is repeated untill overlapping trips=null. Note 1 second is taken so as to avoid creation of new overlapping trips
+    due to timestamp correction.
     Args:
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
     Returns:
@@ -241,7 +243,7 @@ def check_nonoverlap(stoptimes_dict, stops_dict):
     for x in stops_dict.items():
         if len(x[1]) != len(set(x[1])):
             print(f'duplicates stops in a route {x}')
-    overlap = set()
+    overlap = set()     #Collect routes with non-overlapping trips
     for r_idx, route_trips in stoptimes_dict.items():
         for x in range(len(route_trips) - 1):
             first_trip = route_trips[x]
@@ -251,16 +253,15 @@ def check_nonoverlap(stoptimes_dict, stops_dict):
     if overlap:
         print(f"{len(overlap)} have overlapping trips")
         while overlap:
-            for r_idx in overlap:
+            for r_idx in overlap:       #Correct routes with non-overlapping trips
                 route_trips = stoptimes_dict[r_idx].copy()
                 for x in range(len(route_trips) - 1):
                     first_trip = route_trips[x]
                     second_trip = route_trips[x + 1]
                     for idx, _ in enumerate(first_trip):
                         if second_trip[idx][1] <= first_trip[idx][1]:
-                            stoptimes_dict[r_idx][x][idx] = (
-                                second_trip[idx][0], second_trip[idx][1] - pd.to_timedelta(1, unit="seconds"))
-                overlap = set()
+                            stoptimes_dict[r_idx][x][idx] = (second_trip[idx][0], second_trip[idx][1] - pd.to_timedelta(1, unit="seconds"))
+            overlap = set()             #Collect (again) routes with non-overlapping trips
             for r_idx, route_trips in stoptimes_dict.items():
                 for x in range(len(route_trips) - 1):
                     first_trip = route_trips[x]
