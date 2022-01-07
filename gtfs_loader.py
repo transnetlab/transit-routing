@@ -44,6 +44,7 @@ def load_all_db(FOLDER):
     trips_file = pd.read_csv(f'{path}/trips.txt', sep=',')
     stop_times_file = pd.read_csv(f'{path}/stop_times.txt', sep=',')
     stop_times_file.arrival_time = pd.to_datetime(stop_times_file.arrival_time)
-    stop_times_file = pd.merge(stop_times_file, trips_file, on='trip_id')
+    if "route_id" not in stop_times_file.columns:
+        stop_times_file = pd.merge(stop_times_file, trips_file, on='trip_id')
     transfers_file = pd.read_csv(f'{path}/transfers.txt', sep=',')
     return stops_file, trips_file, stop_times_file, transfers_file
