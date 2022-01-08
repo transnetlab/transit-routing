@@ -183,7 +183,8 @@ def update_label(label, no_of_transfer, predecessor_label, J, MAX_TRANSFER):
     '''
     J[no_of_transfer][1] = predecessor_label
     for x in range(no_of_transfer, MAX_TRANSFER+1):
-        J[x][0] = label
+        if J[x][0] > label:
+            J[x][0] = label
     return J
 
 
