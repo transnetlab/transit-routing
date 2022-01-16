@@ -127,4 +127,4 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
         out.extend(post_processing_rraptor(DESTINATION, pi_label, PRINT_ITINERARY, label, OPTIMIZED))
         if PRINT_ITINERARY == 1:
             print('------------------------------------')
-    return list(set(out))
+    return list(set(out)), label
