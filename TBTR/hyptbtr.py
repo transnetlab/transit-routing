@@ -31,7 +31,7 @@ def hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRIN
     """
     out = []
     final_trips = trip_groups[tuple(sorted((stop_out[SOURCE], stop_out[DESTINATION])))]
-    J = initialize_tbtr()
+    J = initialize_tbtr(MAX_TRANSFER)
     L = initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict, idx_by_route_stop_dict)
     R_t, Q = initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict,
                                         D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, idx_by_route_stop_dict)
