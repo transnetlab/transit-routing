@@ -41,7 +41,7 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
     d_time_list.sort(key=lambda x: x[1], reverse=True)
 
     out = []
-    J = initialize_tbtr()
+    J = initialize_tbtr(MAX_TRANSFER)
     L = initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict, idx_by_route_stop_dict)
     R_t = {x: defaultdict(lambda: 1000) for x in range(0, MAX_TRANSFER + 2)}
 
