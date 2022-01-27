@@ -6,15 +6,16 @@ from collections import defaultdict
 import pandas as pd
 
 
-def initialize_tbtr():
+def initialize_tbtr(MAX_TRANSFER):
     '''
     initialize values for TBTR.
     Returns:
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time. 
         inf_time (pandas.datetime): Variable indicating infinite time.
     '''
-    inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day") 
-    J = defaultdict(lambda: [inf_time, 0])
+    inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day")
+#    inf_time = pd.to_datetime("2023-01-26 20:00:00")
+    J = {x: [inf_time, 0] for x in range(MAX_TRANSFER + 1)}
     return J
 
 
@@ -28,7 +29,8 @@ def initialize_onemany(MAX_TRANSFER, DESTINATION_LIST):
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time.
         inf_time (pandas.datetime): Variable indicating infinite time.
     '''
-    inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day") 
+    inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day")
+#    inf_time = pd.to_datetime("2023-01-26 20:00:00")
     J = {desti: {x: [inf_time, 0] for x in range(MAX_TRANSFER+1)} for desti in DESTINATION_LIST}
     return J, inf_time
 
@@ -276,7 +278,7 @@ def post_process_range_onemany(J, Q, rounds_desti_reached, PRINT_ITINERARY, dest
     '''
     rounds_desti_reached = list(set(rounds_desti_reached))
     if PRINT_ITINERARY==1:
-        _print_tbtr_journey(J, Q, desti, SOURCE, footpath_dict, stops_dict, stoptimes_dict, d_time, MAX_TRANSFER, trip_transfer_dict, rounds_desti_reached)
+        _print_tbtr_journey_otm(J, Q, desti, SOURCE, footpath_dict, stops_dict, stoptimes_dict, d_time, MAX_TRANSFER, trip_transfer_dict, rounds_desti_reached)
     TBTR_out = []
     for transfer_needed in reversed(rounds_desti_reached):
         no_of_transfer = transfer_needed
@@ -392,6 +394,140 @@ def _print_tbtr_journey(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, st
             except AttributeError:
                 if len(journey_final)==1:
                     final_route =int(J[x][1][0].split("_")[0])
+                    boarded_from = stops_dict[final_route].index(journey_final[0][2])
+                    desti_index = stops_dict[final_route].index(DESTINATION)
+                    journey_final.insert(0, ("trip", J[x][1][0], boarded_from, desti_index)) #walking_pointer, from_trip, from_stop, to_stop
+        if journey_final==[]:
+            tid = [int(x) for x in journey[0][1].split("_")]
+            tostop_det = stops_dict[tid[0]].index(DESTINATION)
+            journey_final.append((journey[0][1], stoptimes_dict[tid[0]][tid[1]][journey[0][2]], stoptimes_dict[tid[0]][tid[1]][tostop_det]))
+        journey_final.reverse()
+        journey_final_copy = journey_final.copy()
+        journey_final.clear()
+        for c, leg in enumerate(journey_final_copy):
+            if c==0:
+                if leg[0]=="trip":
+                    [trip_route, numb], fromstopidx = [int(x) for x in leg[2].split("_")], leg[3]
+                    try:
+                        journey_final.append([leg[2], stoptimes_dict[trip_route][numb][fromstopidx], stoptimes_dict[trip_route][numb][journey_final_copy[c+1][1]]])
+                    except TypeError:
+                        try:
+                            journey_final.append([leg[2], stoptimes_dict[trip_route][numb][fromstopidx], stoptimes_dict[trip_route][numb][stops_dict[trip_route].index(DESTINATION)]])
+                            break
+                        except ValueError:
+                            journey_final.append([leg[2], stoptimes_dict[trip_route][numb][fromstopidx], stoptimes_dict[trip_route][numb][journey_final_copy[c+1][3]]])
+                elif leg[0]=="walk":
+                    journey_final.append(("walk", leg[1], leg[2], [time for stop, time in footpath_dict[leg[1]] if stop==leg[2]][0]))
+            elif c==len(journey_final_copy)-1:
+                if leg[0]=="trip":
+                    [trip_route, numb], fromstopidx, tostopidx = [int(x) for x in leg[1].split("_")], leg[2], leg[3]
+                    journey_final.append([leg[1], stoptimes_dict[trip_route][numb][fromstopidx], stoptimes_dict[trip_route][numb][tostopidx]])
+                elif leg[0]=="walk":
+                    from_trip = [int(x) for x in leg[1].split("_")]
+                    journey_final.append((leg[1], stoptimes_dict[from_trip[0]][from_trip[1]][leg[2]], stoptimes_dict[from_trip[0]][from_trip[1]][leg[3]]))
+                    foot_connect = stoptimes_dict[from_trip[0]][from_trip[1]][leg[3]]
+                    last_foot_tme = [time for stop, time in footpath_dict[foot_connect[0]] if stop==DESTINATION][0]
+                    journey_final.append(("walk", foot_connect[0], DESTINATION, last_foot_tme, stoptimes_dict[from_trip[0]][from_trip[1]][leg[3]][1] + last_foot_tme))
+            else:
+                if c==1:
+                    if journey_final_copy[c-1][0]=="walk":
+                        [trip_route, numb], tostopidx = [int(x) for x in leg[0].split("_")], leg[1]
+                        fromstopidx = stops_dict[trip_route].index(journey_final_copy[c-1][2])
+                        journey_final.append([leg[0], stoptimes_dict[trip_route][numb][fromstopidx], stoptimes_dict[trip_route][numb][tostopidx]])
+                    elif journey_final_copy[c-1][0]=="trip":
+                        [trip_route, numb], tostopidx = [int(x) for x in leg[0].split("_")], leg[1]
+                        fromstopidx = stops_dict[trip_route].index(SOURCE)
+                        if [leg[0], stoptimes_dict[trip_route][numb][fromstopidx], stoptimes_dict[trip_route][numb][tostopidx]] not in journey_final:
+                            journey_final.append([leg[0], stoptimes_dict[trip_route][numb][fromstopidx], stoptimes_dict[trip_route][numb][tostopidx]])
+                from_stop = stops_dict[int(journey_final_copy[c][0].split("_")[0])][int(journey_final_copy[c][1])]
+                to_stop = stops_dict[int(journey_final_copy[c][2].split("_")[0])][int(journey_final_copy[c][3])]
+                if from_stop!=to_stop:
+                    time_needed = [x[1] for x in footpath_dict[from_stop] if x[0]==to_stop][0]
+                    journey_final.append(("walk", from_stop, to_stop, time_needed))
+                    if c+1!=len(journey_final_copy)-1:
+                        [trip_route, numb], fromstopidx = [int(x) for x in leg[2].split("_")], leg[3]
+                        journey_final.append([leg[2], stoptimes_dict[trip_route][numb][fromstopidx], stoptimes_dict[trip_route][numb][journey_final_copy[c+1][1]]])
+                elif from_stop==to_stop:
+                    if c+1!=len(journey_final_copy)-1:
+                        [trip_route, numb], fromstopidx = [int(x) for x in leg[2].split("_")], leg[3]
+                        journey_final.append([leg[2], stoptimes_dict[trip_route][numb][fromstopidx], stoptimes_dict[trip_route][numb][journey_final_copy[c+1][1]]])
+        for leg in journey_final:
+            if leg[0]=="walk":
+                print(f"from {leg[1]} walk till  {leg[2]} for {leg[3].total_seconds()} seconds")
+            else:
+                print(f"from {leg[1][0]} board at {leg[1][1].time()} and get down on {leg[2][0]} at {leg[2][1].time()} along {leg[0]}")
+        print("####################################")
+
+
+def _print_tbtr_journey_otm(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, D_TIME, MAX_TRANSFER, trip_transfer_dict, rounds_desti_reached):
+    for x in reversed(rounds_desti_reached):
+        round_no = x
+        journey = []
+        trip_segement_counter = J[DESTINATION][x][1][2]
+        while round_no>0:
+            pred = Q[round_no][trip_segement_counter]
+            journey.append((pred[5][0], pred[1], pred[0]))
+            trip_segement_counter = pred[5][1]
+            round_no = round_no - 1
+        from_stop_list = []
+        for id, t_transfer in enumerate(journey[:-1]):
+            from_Stop_onwards = journey[id+1][2]
+            for from_stop, trasnsfer_list in trip_transfer_dict[t_transfer[0]].items():
+                if from_stop<from_Stop_onwards:
+                    continue
+                else:
+                    if (t_transfer[1], t_transfer[2]) in trasnsfer_list:
+                        from_stop_list.append(from_stop)
+        journey_final = [(journey[counter][0], x, journey[counter][1], journey[counter][2]) for counter, x in enumerate(from_stop_list)]
+        # from source
+        from_trip, from_stop_idxx= journey[-1][1], journey[-1][2]
+        fromstopid = stops_dict[int(from_trip.split("_")[0])][from_stop_idxx]
+        if fromstopid==SOURCE:
+            journey_final.append(("trip",0, from_trip, from_stop_idxx))
+        else:
+            for to_stop, to_time in footpath_dict[fromstopid]:
+                if to_stop== SOURCE:
+                    journey_final.append(("walk", SOURCE, fromstopid, to_time+D_TIME))
+                    break
+        #Add final lag. Destination can either be along the route or at a walking distance from it.
+        if J[DESTINATION][x][1][1] != (0, 0):    #Add here if the destination is at walking distance from final route
+            try:
+                final_route, boarded_from = int(journey_final[0][2].split("_")[0]), journey_final[0][3]
+                found = 0
+                for walking_from_stop_idx, stop_id in enumerate(stops_dict[final_route]):
+                    if walking_from_stop_idx<boarded_from:continue
+                    try:
+                        for to_stop, to_stop_time in footpath_dict[stop_id]:
+                            if to_stop==DESTINATION:
+                                found = 1
+                                journey_final.insert(0, ("walk", journey_final[0][2], boarded_from, walking_from_stop_idx, to_stop_time)) #walking_pointer, from_trip, from_stop, to_stop
+                                break
+                    except KeyError:continue
+                    if found==1:break
+            except AttributeError:
+                if len(journey_final)==1:
+                    final_route =int(J[DESTINATION][x][1][0].split("_")[0])
+                    boarded_from = stops_dict[final_route].index(journey_final[0][2])
+                    found = 0
+                    for walking_from_stop_idx, stop_id in enumerate(stops_dict[final_route]):
+                        if walking_from_stop_idx<boarded_from:continue
+                        try:
+                            for to_stop, to_stop_time in footpath_dict[stop_id]:
+                                if to_stop==DESTINATION:
+                                    found = 1
+                                    journey_final.insert(0, ("walk", J[DESTINATION][x][1][0], boarded_from, walking_from_stop_idx, to_stop_time)) #walking_pointer, from_trip, from_stop, to_stop
+                                    break
+                        except KeyError:continue
+                        if found==1:break
+                else:raise NameError
+        else:   #Destination is along the route.
+            try:
+                final_route, boarded_from = int(journey_final[0][2].split("_")[0]), journey_final[0][3]
+                desti_index = stops_dict[final_route].index(DESTINATION)
+                journey_final.insert(0, ("trip", journey_final[0][2], boarded_from, desti_index)) #walking_pointer, from_trip, from_stop, to_stop
+            except AttributeError:
+                if len(journey_final)==1:
+                    final_route =int(J[DESTINATION][x][1][0].split("_")[0])
                     boarded_from = stops_dict[final_route].index(journey_final[0][2])
                     desti_index = stops_dict[final_route].index(DESTINATION)
                     journey_final.insert(0, ("trip", J[x][1][0], boarded_from, desti_index)) #walking_pointer, from_trip, from_stop, to_stop
