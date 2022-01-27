@@ -51,6 +51,7 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
         Q = initialize_from_source_range(dep_details, MAX_TRANSFER, stoptimes_dict, R_t)
         dest_list_prime = DESTINATION_LIST.copy()
         while n <= MAX_TRANSFER:
+            stop_mark_dict = {stop: 0 for stop in dest_list_prime}
             scope = []
             for counter, trip_segment in enumerate(Q[n]):
                 from_stop, tid, to_stop, trip_route, tid_idx = trip_segment[0: 5]
@@ -73,13 +74,16 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
                         pass
                     try:
                         if tid in trip_set and trip[1][1] < J[desti][n][0]:
-                            scope.append(desti)
+                            if stop_mark_dict[desti]==0:
+                                scope.append(desti)
+                                stop_mark_dict[desti]=1
                             connection_list.extend([connection for from_stop_idx, transfer_stop_id in enumerate(trip[1:], from_stop + 1)
                                  for connection in trip_transfer_dict[tid][from_stop_idx]])
                     except IndexError:
                         pass
+                connection_list = list(set(connection_list))
                 enqueue_range(connection_list, n + 1, (tid, counter, 0), R_t, Q, stoptimes_dict, MAX_TRANSFER)
-            dest_list_prime = set(scope)
+            dest_list_prime = [*scope]
             n = n + 1
         for desti in DESTINATION_LIST:
             if rounds_desti_reached[desti]:
