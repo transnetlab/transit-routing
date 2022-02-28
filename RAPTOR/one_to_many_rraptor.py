@@ -45,6 +45,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
     change_time = pd.to_timedelta(CHANGE_TIME_SEC, unit='seconds')
     output = []
     for dep_details in d_time_list:
+        dest_list_prime = [*DESTINATION_LIST]
         pi_label = {x: {stop: -1 for stop in routes_by_stop_dict.keys()} for x in range(0, MAX_TRANSFER + 1)}
         marked_stop = deque()
         marked_stop_dict = {stop: 0 for stop in routes_by_stop_dict.keys()}
@@ -66,6 +67,8 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
         Q = {}
         # Main code part 1
         for k in range(1, MAX_TRANSFER + 1):
+            dest_list_prime = set([d for d in dest_list_prime if star_label[d]>=min([star_label[x] for x in marked_stop])])
+            tqu_starr = max([star_label[DESTINATION] for DESTINATION in dest_list_prime])
             Q.clear()  # Format of Q is {route:stop}
             while marked_stop:
                 p = marked_stop.pop()
@@ -88,10 +91,12 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
                 current_trip_t = -1
                 for p_i in stops_dict[route][current_stopindex_by_route:]:
                     if current_trip_t != -1 and current_trip_t[current_stopindex_by_route][1] < star_label[p_i] and \
-                            current_trip_t[current_stopindex_by_route][1] < max([star_label[DESTINATION] for DESTINATION in DESTINATION_LIST]):
+                            current_trip_t[current_stopindex_by_route][1] < tqu_starr:
                         arr_by_t_at_pi = current_trip_t[current_stopindex_by_route][1]
                         label[k][p_i], star_label[p_i] = arr_by_t_at_pi, arr_by_t_at_pi
                         pi_label[k][p_i] = (boarding_time, boarding_point, p_i, arr_by_t_at_pi, tid)
+                        if p_i in dest_list_prime:
+                            tqu_starr = max([star_label[DESTINATION] for DESTINATION in dest_list_prime])
                         if marked_stop_dict[p_i] == 0:
                             marked_stop.append(p_i)
                             marked_stop_dict[p_i] = 1
@@ -111,9 +116,11 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
                     for i in trans_info:
                         (p_dash, to_pdash_time) = i
                         new_p_dash_time = label[k][p] + to_pdash_time
-                        if new_p_dash_time < min(label[k][p_dash], star_label[p_dash], max([star_label[destination] for destination in DESTINATION_LIST])):
+                        if new_p_dash_time < min(label[k][p_dash], star_label[p_dash], tqu_starr):
                             label[k][p_dash], star_label[p_dash] = new_p_dash_time, new_p_dash_time
                             pi_label[k][p_dash] = ('walking', p, p_dash, to_pdash_time, new_p_dash_time)
+                            if p_dash in dest_list_prime:
+                                tqu_starr = max([star_label[DESTINATION] for DESTINATION in dest_list_prime])
                             if marked_stop_dict[p_dash] == 0:
                                 marked_stop.append(p_dash)
                                 marked_stop_dict[p_dash] = 1
@@ -126,4 +133,4 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
         output.extend(post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERARY, label, OPTIMIZED))
         if PRINT_ITINERARY == 1:
             print('------------------------------------')
-    return list(set(output)), label
+    return output
