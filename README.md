@@ -29,7 +29,7 @@ Algorithm | SOURCE |  Status | Comments |
 | TBTR | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) |Complete|
 | rRAPTOR | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) |Complete|
 | rTBTR| [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) |Complete|
-| One-To-Many rRAPTOR | To be updated soon |Complete|
+| One-To-Many rRAPTOR | [link](https://arxiv.org/abs/2111.06654) |Complete|
 | One-To-Many rTBTR | [link](https://arxiv.org/abs/2111.06654) |Complete|
 | HypRAPTOR | [link](https://drops.dagstuhl.de/opus/volltexte/2017/7896/) |Complete|
 | HypTBTR |  [link](https://arxiv.org/abs/2111.06654) |Complete|
@@ -56,7 +56,7 @@ We welcome all suggestions from the community. If you wish to contribute or repo
 - [Delling, D., Pajor, T. and Werneck, R.F., 2015. Round-based public transit routing. Transportation Science, 49(3), pp.591-604.](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) 
 - [Delling, D., Dibbelt, J., Pajor, T. and Zündorf, T., 2017. Faster transit routing by hyper partitioning. In 17th Workshop on Algorithmic Approaches for Transportation Modelling, Optimization, and Systems (ATMOS 2017). Schloss Dagstuhl-Leibniz-Zentrum fuer Informatik.](https://drops.dagstuhl.de/opus/volltexte/2017/7896/)
 - [Witt, S., 2015. Trip-based public transit routing. In Algorithms-ESA 2015 (pp. 1025-1036). Springer, Berlin, Heidelberg.](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85)
-
+- [Agarwal, P., & Rambha, T. (2021d). Scalable Algorithms for Bicriterion Trip-Based Transit Routing (_Under Review_).](https://arxiv.org/abs/2111.06654)
 ### Copyright and license
 The content of this repository is bounded by MIT License. For more information see
 [COPYING file](https://github.com/transnetlab/transit-routing/blob/main/LICENSE)
