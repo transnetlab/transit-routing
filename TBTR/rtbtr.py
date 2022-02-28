@@ -85,4 +85,4 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
         out = [int(trip.split("_")[0]) for trip in out]
         if PRINT_ITINERARY == 1:
             print('------------------------------------')
-    return list(set(out))
+    return out

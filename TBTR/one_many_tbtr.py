@@ -90,4 +90,4 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
                 out.extend(post_process_range_onemany(J, Q, rounds_desti_reached[desti], PRINT_ITINERARY, desti, SOURCE, footpath_dict, stops_dict, stoptimes_dict, dep_details[1], MAX_TRANSFER, trip_transfer_dict))
     if OPTIMIZED == 0:
         out = [int(trip.split("_")[0]) for trip in out]
-    return list(set(out))
+    return out

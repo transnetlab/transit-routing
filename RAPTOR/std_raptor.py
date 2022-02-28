@@ -108,4 +108,4 @@ def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANG
             break
     _, _, rap_out = post_processing(DESTINATION, pi_label, PRINT_ITINERARY, label)
     out.append(rap_out)
-    return out,label
+    return out
