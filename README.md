@@ -4,7 +4,7 @@
 ## Table of Contents
 
 - [Introduction](#Introduction)
-- [List of Algorihtms](#List-of-Algorihtms)
+- [List of Algorithms](#List-of-Algorihtms)
 - [Usage Instructions](#usage-instructions)
 - [Contributing](#contributing)
 - [Creators](#Creators)
@@ -23,7 +23,7 @@ outperform the existing approach for location-based queries (as a location can h
 Switzerland's public transit network has been provided as a test case. The figure below shows the transit stop location (left) and 4-way partitioning using [KaHyPar](https://github.com/kahypar/kahypar) (right).
 ![plot](docs/location.png)
 ### List of Algorithms
- Algorithm                  | SOURCE | Status             | Comments |
+|  Algorithm                 | SOURCE | Status             | Comments |
 |----------------------------|---|--------------------|---|
 | RAPTOR                     | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) | Complete           |
 | TBTR                       | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) | Complete           |
