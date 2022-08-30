@@ -20,11 +20,11 @@
 To run algorithms on a different GTFS set, enter the network details in [main.py](https://github.com/transnetlab/transit-routing/blob/main/main.py). 
 
 ## Dataset generation
-Due to inconsistencies in the GTFS set available online, a GTFS set cannot be used directly here. 
-Moreover, a significant amount of preprocessing (e.g. transitively closed footpaths,
-non-overtaking trips etc.) is required. See for details.
-The Switzerland test network  is generated in accordance with these.
-See [switzerland_wrapper.md](./switzerland_wrapper.md) for documentation on the same. 
+Due to inconsistencies in the GTFS sets available online, they cannot be used directly. 
+Moreover, a significant amount of preprocessing (e.g., transitively closed footpaths,
+non-overtaking trips, continuous stop sequence) is required. The Switzerland test network
+is generated in accordance with these.  See [switzerland_wrapper.md](./switzerland_wrapper.md) 
+for documentation on the same. 
 
 ## Additional notes
 - To print complete itinerary, set PRINT_ITINERARY = 1 and OPTIMIZED = 0.
