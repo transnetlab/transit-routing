@@ -7,11 +7,11 @@ import numpy as np
 import networkx as nx
 
 # Specify paths
-path = './swiss'    # Path to unzipped GTFS set
-save_path = f'./GTFS/{path.split("/")[1]}'
+READ_PATH = './swiss'    # Path to unzipped GTFS set
+SAVE_PATH = f'./GTFS/{READ_PATH.split("/")[1]}'
 
 # Remove unwanted route categories
-route = pd.read_csv(f'{path}/gtfs_o/routes.txt')
+route = pd.read_csv(f'{READ_PATH}/gtfs_o/routes.txt')
 valid_route_types = list(set(route.route_type))
 route.route_type.value_counts()
 unwanted_route = [2, 401, 1501, 1300, 900, 1000, 7, 1300]
@@ -21,19 +21,19 @@ valid_routes = set(route.route_id)
 
 # Filter trips and routes based on Calendar dates
 date = 20190610
-calendar_dates = pd.read_csv(f'{path}/gtfs_o/calendar_dates.txt')
+calendar_dates = pd.read_csv(f'{READ_PATH}/gtfs_o/calendar_dates.txt')
 calendar_dates.sort_values(by='date', inplace=True)
 calendar_dates[(calendar_dates.exception_type == 1)].groupby('date').count().sort_values('service_id')
 valid_service_id = set(
     calendar_dates[(calendar_dates.date == date) & (calendar_dates.exception_type == 1)]['service_id'])
-trips = pd.read_csv(f'{path}/gtfs_o/trips.txt')
+trips = pd.read_csv(f'{READ_PATH}/gtfs_o/trips.txt')
 trips = trips[trips.service_id.isin(valid_service_id) & trips.route_id.isin(valid_routes)]
 valid_trips = set(trips.trip_id)
 valid_route = set(trips.route_id)
 print(len(valid_trips), len(valid_route))
 
 # Filter stoptimes file
-stop_times = pd.read_csv(f'{path}/gtfs_o/stop_times.txt')
+stop_times = pd.read_csv(f'{READ_PATH}/gtfs_o/stop_times.txt')
 stop_times.stop_sequence = stop_times.stop_sequence - 1
 stop_times.stop_id = stop_times.stop_id.astype(str)
 stop_times = stop_times[
@@ -54,7 +54,7 @@ date_list = [
 stop_times.arrival_time = date_list
 
 # Filter Stops file
-stops = pd.read_csv(f'{path}/gtfs_o/stops.txt')
+stops = pd.read_csv(f'{READ_PATH}/gtfs_o/stops.txt')
 stops.stop_id = stops.stop_id.astype(str)
 stops = pd.merge(stops, stops_map, on='stop_id').drop(columns=['location_type', 'stop_id', 'parent_station']).rename(
     columns={'new_stop_id': 'stop_id'})
@@ -161,8 +161,8 @@ trips = trips.drop(columns=['trip_id', 'tid']).rename(columns={'new_trip_id': 't
 
 #########################################################################################################################
 # Build transfers file
-transfers = np.load(f'./GTFS/{path}/{path}_dist_mat.npy')
-# transfers is numpy array of distance between stops. This can be obtained using OpenStreetMap.
+transfers = np.load(f'./GTFS/{READ_PATH}/{READ_PATH}_dist_mat.npy')
+# transfers is a numpy array of distance between stops. Its dimension should be stops x stops. This can be obtained using OpenStreetMap.
 if len(transfers) != len(stops):
     print(f'Error: Length mismatch for distance matrix & stops')
 stops = stops.sort_values(by='stop_id').reset_index(drop=True)
@@ -190,19 +190,19 @@ transfers.rename(columns={0: "from_stop_id", 1: "to_stop_id", 2: "min_transfer_t
 transfers.sort_values(by=['min_transfer_time', 'from_stop_id', 'to_stop_id']).reset_index(drop=True)
 #########################################################################################################################
 # Save the files to read location
-transfers.to_csv(f'{path}/GTFS/stops.csv', index=False)
-trips.to_csv(f'{path}/GTFS/trips.txt', index=False)
-stop_times.to_csv(f'{path}/GTFS/stop_times.txt', index=False)
-stop_times.to_csv(f'{path}/GTFS/stop_times.csv', index=False)
-stops.to_csv(f'{path}/GTFS/stops.txt', index=False)
-stops.to_csv(f'{path}/GTFS/stops.csv', index=False)
+transfers.to_csv(f'{READ_PATH}/GTFS/stops.csv', index=False)
+trips.to_csv(f'{READ_PATH}/GTFS/trips.txt', index=False)
+stop_times.to_csv(f'{READ_PATH}/GTFS/stop_times.txt', index=False)
+stop_times.to_csv(f'{READ_PATH}/GTFS/stop_times.csv', index=False)
+stops.to_csv(f'{READ_PATH}/GTFS/stops.txt', index=False)
+stops.to_csv(f'{READ_PATH}/GTFS/stops.csv', index=False)
 #########################################################################################################################
 # Save the files to save location
-transfers.to_csv(f'{save_path}/transfers.txt', index=False)
-stop_times.to_csv(f'{save_path}/stop_times.csv', index=False)
-stops.to_csv(f'{save_path}/stops.txt', index=False)
-stops.to_csv(f'{save_path}/stops.csv', index=False)
-trips.to_csv(f'{save_path}/trips.txt', index=False)
+transfers.to_csv(f'{SAVE_PATH}/transfers.txt', index=False)
+stop_times.to_csv(f'{SAVE_PATH}/stop_times.csv', index=False)
+stops.to_csv(f'{SAVE_PATH}/stops.txt', index=False)
+stops.to_csv(f'{SAVE_PATH}/stops.csv', index=False)
+trips.to_csv(f'{SAVE_PATH}/trips.txt', index=False)
 #########################################################################################################################
 # Print final statistics
 print(f'Final stops count    : {len(stops)}')
