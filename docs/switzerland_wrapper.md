@@ -16,6 +16,7 @@
     - Disjoint routes (i.e., routes which cannot be reached from any other route in the network) are removed. These generally include waterways, airways.
     - Transfers file in the GTFS set is prepared externally using [OpenStreetMaps](https://www.openstreetmap.org/). Additionally, footpaths are also required to be transitively closed. See References for details.
     - The timetable provided is for a day. All the timestamps are converted into pandas.datetime format.
+  
   For implementation details, see [Switzerland_wrapper.py](https://github.com/transnetlab/transit-routing/blob/main/Switzerland_wrapper.py) .
 
 - For faster lookup, the GTFS set is post-processed into several dictionaries and provided as pickle files. 
