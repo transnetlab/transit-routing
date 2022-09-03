@@ -9,6 +9,7 @@ def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANG
            routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
     '''
     Standard Raptor implementation
+
     Args:
         SOURCE (int): stop id of source stop.
         DESTINATION (int): stop id of destination stop.
@@ -22,6 +23,7 @@ def raptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANG
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
         idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
+
     Returns:
         out (list): list of pareto-optimal arrival timestamps.
     '''

@@ -8,6 +8,7 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_I
          stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set):
     """
     Standard TBTR implementation.
+
     Args:
         SOURCE (int): stop id of source stop.
         DESTINATION (int): stop id of destination stop.
@@ -23,6 +24,7 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_I
         trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
         of form (id of trip we are transferring to, stop number)}
         trip_set (set): set of trip ids from which trip-transfers are available.
+
     Returns:
         out (list): List of pareto-optimal arrival Timestamps
     """

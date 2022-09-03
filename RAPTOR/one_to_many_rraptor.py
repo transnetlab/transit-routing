@@ -7,6 +7,7 @@ from RAPTOR.raptor_functions import *
 def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC,
                       PRINT_ITINERARY, OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
     """
+
     Args:
         SOURCE (int): stop id of source stop.
         DESTINATION_LIST (list): list of stop ids of destination stop.
@@ -21,6 +22,7 @@ def onetomany_rraptor(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WAL
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
         idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
+
     Returns:
         if OPTIMIZED==1:
             out (list):  list of trips required to cover all optimal journeys Format: [trip_id]

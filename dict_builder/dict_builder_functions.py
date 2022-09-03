@@ -10,9 +10,11 @@ from tqdm import tqdm
 def build_save_route_by_stop(stop_times_file, FOLDER):
     """
     This function saves a dictionary to provide easy access to all the routes passing through a stop_id.
+
     Args:
         stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.
         FOLDER (str): path to network folder.
+
     Returns:
         route_by_stop_dict_new (dict): keys: stop_id, values: list of routes passing through the stop_id. Format-> dict[stop_id] = [route_id]
     """
@@ -30,10 +32,12 @@ def build_save_route_by_stop(stop_times_file, FOLDER):
 def build_save_stops_dict(stop_times_file, trips_file, FOLDER):
     """
     This function saves a dictionary to provide easy access to all the stops in the route.
+
     Args:
         stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.
         trips_file (pandas.dataframe): trips.txt file in GTFS.
         FOLDER (str): path to network folder.
+
     Returns:
         stops_dict (dict): keys: route_id, values: list of stop id in the route_id. Format-> dict[route_id] = [stop_id]
     """
@@ -59,10 +63,12 @@ def build_save_stopstimes_dict(stop_times_file, trips_file, FOLDER):
     """
     This function saves a dictionary to provide easy access to all the trips passing along a route id. Trips are sorted
     in the increasing order of departure time. A trip is list of tuple of form (stop id, arrival time)
+
     Args:
         stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.
         trips_file (pandas.dataframe): dataframe with transfers (footpath) details.
         FOLDER (str): path to network folder.
+
     Returns:
         stoptimes_dict (dict): keys: route ID, values: list of trips in the increasing order of start time. Format-> dict[route_ID] = [trip_1, trip_2] where trip_1 = [(stop id, arrival time), (stop id, arrival time)]
     """
@@ -87,9 +93,11 @@ def build_save_stopstimes_dict(stop_times_file, trips_file, FOLDER):
 def build_save_footpath_dict(transfers_file, FOLDER):
     """
     This function saves a dictionary to provide easy access to all the footpaths through a stop id.
+
     Args:
         transfers_file (pandas.dataframe): dataframe with transfers (footpath) details.
         FOLDER (str): path to network folder.
+
     Returns:
         footpath_dict (dict): keys: from stop_id, values: list of tuples of form (to stop id, footpath duration). Format-> dict[stop_id]=[(stop_id, footpath_duration)]
     """
@@ -110,9 +118,11 @@ def build_save_footpath_dict(transfers_file, FOLDER):
 def stop_idx_in_route(stop_times_file, FOLDER):
     """
     This function saves a dictionary to provide easy access to index of a stop in a route.
+
     Args:
         stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.
         FOLDER (str): path to network folder.
+
     Returns:
         idx_by_route_stop_dict (dict): Keys: (route id, stop id), value: stop index. Format {(route id, stop id): stop index in route}.
     """

@@ -11,10 +11,12 @@ import pandas as pd
 def initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
     '''
     Initialize values for RAPTOR.
+
     Args:
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         SOURCE (int): stop id of source stop.
         MAX_TRANSFER (int): maximum transfer limit.
+
     Returns:
         marked_stop (deque): deque to store marked stop.
         marked_stop_dict (dict): Binary variable indicating if a stop is marked. Keys: stop Id, value: 0 or 1.
@@ -41,10 +43,12 @@ def initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
 def check_stop_validity(stops, SOURCE, DESTINATION):
     '''
     Check if the entered SOURCE and DESTINATION stop id are present in stop list or not.
+
     Args:
         stops: GTFS stops.txt
         SOURCE (int): stop id of source stop.
         DESTINATION (int): stop id of destination stop.
+
     Returns:
         None
     '''
@@ -57,12 +61,14 @@ def check_stop_validity(stops, SOURCE, DESTINATION):
 def get_latest_trip_new(stoptimes_dict, route, arrival_time_at_pi, pi_index, change_time):
     '''
     Get latest trip after a certain timestamp from the given stop of a route.
+
     Args:
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         route (int): id of route.
         arrival_time_at_pi (pandas.datetime): arrival time at stop pi.
         pi_index (int): index of the stop from which route was boarded.
         change_time (pandas.datetime): change time at stop (set to 0).
+
     Returns:
         If a trip exists:
             trip index, trip
@@ -84,11 +90,13 @@ def post_processing(DESTINATION, pi_label, PRINT_ITINERARY, label):
         1. Rounds in which DESTINATION is reached
         2. Trips for covering pareto optimal set
         3. Pareto optimal timestamps.
+
     Args:
         DESTINATION (int): stop id of destination stop.
         pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
         PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
         label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
+
     Returns:
         rounds_inwhich_desti_reached (list): list of rounds in which DESTINATION is reached. Format - [int]
         trip_set (list): list of trips ids required to cover optimal journeys. Format - [char]
@@ -130,8 +138,10 @@ def post_processing(DESTINATION, pi_label, PRINT_ITINERARY, label):
 def _print_Journey_legs(pareto_journeys):
     '''
     Prints journey in correct format. Parent Function: post_processing
+
     Args:
         pareto_journeys (list): pareto optimal set.
+
     Returns:
         None
     '''
@@ -152,12 +162,14 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERAR
         1. Print the output
         2. Routes required for covering pareto-optimal set.
         3. Trips required for covering pareto-optimal set.
+
     Args:
         DESTINATION_LIST (list): list of stop ids of destination stop.
         pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
         PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
         label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
         OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
+
     Returns:
         if OPTIMIZED==1:
             final_trips (list): list of trips required to cover all pareto-optimal journeys. format - [trip_id]
@@ -223,12 +235,14 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_ITINERARY, label, OPTIM
         1. Print the output
         2. Routes required for covering pareto-optimal journeys.
         3. Trips required for covering pareto-optimal journeys.
+
     Args:
         DESTINATION (int): stop id of destination stop.
         pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}
         PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
         label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
         OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
+
     Returns:
         if OPTIMIZED==1:
             final_trips (list): List of trips required to cover all pareto-optimal journeys. Format - [trip_id]

@@ -8,6 +8,7 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
                     routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set):
     """
     One to many rTBTR implementation
+
     Args:
         SOURCE (int): stop id of source stop.
         DESTINATION_LIST (list): list of stop ids of destination stop.
@@ -24,6 +25,7 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
         trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
         of form (id of trip we are transferring to, stop number)}
         trip_set (set): set of trip ids from which trip-transfers are available.
+
     Returns:
         if OPTIMIZED==1:
             out (list):  list of trips required to cover all optimal journeys Format: [trip_id]

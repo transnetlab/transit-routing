@@ -7,6 +7,7 @@ def load_all_dict(FOLDER):
     """
     Args:
         FOLDER (str): network folder.
+
     Returns:
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         stoptimes_dict (dict): keys: route ID, values: list of trips in the increasing order of start time. Format-> dict[route_ID] = [trip_1, trip_2] where trip_1 = [(stop id, arrival time), (stop id, arrival time)]
@@ -32,6 +33,7 @@ def load_all_db(FOLDER):
     """
     Args:
         FOLDER (str): path to network folder.
+
     Returns:
         stops_file (pandas.dataframe): dataframe with stop details.
         trips_file (pandas.dataframe): dataframe with trip details.

@@ -24,6 +24,7 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
         trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
         of form (id of trip we are transferring to, stop number)}
         trip_set (set): set of trip ids from which trip-transfers are available.
+
     Returns:
         if OPTIMIZED==1:
             out (list):  list of trips required to cover all optimal journeys Format: [trip_id]

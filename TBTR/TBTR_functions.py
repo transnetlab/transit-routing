@@ -8,7 +8,8 @@ import pandas as pd
 
 def initialize_tbtr(MAX_TRANSFER):
     '''
-    initialize values for TBTR.
+    Initialize values for TBTR.
+
     Returns:
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time. 
         inf_time (pandas.datetime): Variable indicating infinite time.
@@ -22,9 +23,11 @@ def initialize_tbtr(MAX_TRANSFER):
 def initialize_onemany(MAX_TRANSFER, DESTINATION_LIST):
     '''
     initialize values for one-to-many TBTR.
+
     Args:
         MAX_TRANSFER (int): maximum transfer limit.
         DESTINATION_LIST (list): list of stop ids of destination stop.
+
     Returns:
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time.
         inf_time (pandas.datetime): Variable indicating infinite time.
@@ -37,13 +40,15 @@ def initialize_onemany(MAX_TRANSFER, DESTINATION_LIST):
 
 def initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict, idx_by_route_stop_dict):
     '''
-    initialize routes/footpath to leading to destination stop.
+    Initialize routes/footpath to leading to destination stop.
+
     Args:
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         DESTINATION (int): stop id of destination stop.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
         idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
+
     Returns:
         L (dict): A dict to track routes/leading to destination stop. Format {route_id: (from_stop_idx, travel time, stop id)}
     '''
@@ -67,13 +72,15 @@ def initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath
 
 def initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_LIST, footpath_dict, idx_by_route_stop_dict):
     '''
-    initialize routes/footpath to leading to destination stop in case of one-to-many rTBTR
+    Initialize routes/footpath to leading to destination stop in case of one-to-many rTBTR
+
     Args:
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         DESTINATION_LIST (list): list of stop ids of destination stop.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
         idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
+
     Returns:
         L (nested dict): A dict to track routes/leading to destination stops. Key: route_id, value: {destination_stop_id: [(from_stop_idx, travel time, stop id)]}
     '''
@@ -102,6 +109,7 @@ def initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dic
                                MAX_TRANSFER, WALKING_FROM_SOURCE, idx_by_route_stop_dict):
     '''
     Initialize trips segments from source stop.
+
     Args:
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
         SOURCE (int): stop id of source stop.
@@ -112,6 +120,7 @@ def initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dic
         MAX_TRANSFER (int): maximum transfer limit.
         WALKING_FROM_SOURCE (int): 1 or 0. 1 means walking from SOURCE is allowed.
         idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
+
     Returns:
         R_t (dict): dict to store first reached stop of every trip. Format {trip_id: first reached stop}
         Q (list): list of trips segments
@@ -150,6 +159,7 @@ def initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dic
 def enqueue(connection_list, nextround, predecessor_label, R_t, Q, stoptimes_dict):
     '''
     Main enqueue function used in TBTR to add trips segments to next round and update first reached stop of each trip.
+
     Args:
         connection_list (list): list of connections to be added. Format: [(to_trip_id, to_trip_id_stop_index)].
         nextround (int): next round/transfer number to which trip-segments are added.
@@ -157,6 +167,7 @@ def enqueue(connection_list, nextround, predecessor_label, R_t, Q, stoptimes_dic
         R_t (dict): dict with keys as trip id. Format {trip_id : first reached stop}.
         Q (list): list of trips segments.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+
     Returns:
         None
     '''
@@ -174,12 +185,14 @@ def enqueue(connection_list, nextround, predecessor_label, R_t, Q, stoptimes_dic
 def update_label(label, no_of_transfer, predecessor_label, J, MAX_TRANSFER):
     '''
     Updates and returns destination pareto set.
+
     Args:
         label (pandas.datetime): optimal arrival time .
         no_of_transfer (int): number of transfer.
         predecessor_label (tuple): predecessor_label for backtracking (To be developed)
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
         MAX_TRANSFER (int): maximum transfer limit.
+
     Returns:
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
     '''
@@ -195,10 +208,12 @@ def post_process_range(J, Q, rounds_desti_reached, PRINT_ITINERARY, DESTINATION,
     Contains all the post-processing features for rTBTR.
     Currently supported functionality:
         Collect list of trips needed to cover pareto-optimal journeys.
+
     Args:
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
         Q (list): list of trips segments.
         rounds_desti_reached (list): Rounds in which DESTINATION is reached.
+
     Returns:
         necessory_trips (set): trips needed to cover pareto-optimal journeys.
     '''
@@ -221,11 +236,13 @@ def post_process_range(J, Q, rounds_desti_reached, PRINT_ITINERARY, DESTINATION,
 def initialize_from_source_range(dep_details, MAX_TRANSFER, stoptimes_dict, R_t):
     '''
     Initialize trips segments from source in rTBTR
+
     Args:
         dep_details (list): list of format [trip id, departure time, source index]
         MAX_TRANSFER (int): maximum transfer limit.
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         R_t (nested dict): Nested_Dict with primary keys as trip id and secondary keys as number of transfers. Format {trip_id: {[round]: first reached stop}}
+
     Returns:
         Q (list): list of trips segments
     '''
@@ -240,7 +257,8 @@ def initialize_from_source_range(dep_details, MAX_TRANSFER, stoptimes_dict, R_t)
 
 def enqueue_range(connection_list, nextround, predecessor_label, R_t, Q, stoptimes_dict, MAX_TRANSFER):
     '''
-    adds trips-segments to next round round and update R_t. Used in range queries
+    Adds trips-segments to next round and update R_t. Used in range queries
+
     Args:
         connection_list (list): list of connections to be added. Format: [(to_trip_id, to_trip_id_stop_index)].
         nextround (int): next round/transfer number to which trip-segments are added
@@ -249,6 +267,7 @@ def enqueue_range(connection_list, nextround, predecessor_label, R_t, Q, stoptim
         Q (list): list of trips segments
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         MAX_TRANSFER (int): maximum transfer limit.
+
     Returns: None
     '''
     for to_trip_id, to_trip_id_stop in connection_list:
@@ -268,11 +287,13 @@ def post_process_range_onemany(J, Q, rounds_desti_reached, PRINT_ITINERARY, dest
     Contains all the post-processing features for One-To-Many rTBTR.
     Currently supported functionality:
         Collect list of trips needed to cover pareto-optimal journeys.
+
     Args:
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
         Q (list): list of trips segments.
         rounds_desti_reached (list): Rounds in which DESTINATION is reached.
         desti (int): destination stop id.
+
     Returns:
         TBTR_out (set): Trips needed to cover pareto-optimal journeys.
     '''
@@ -297,6 +318,7 @@ def post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes
     Contains post-processing features for TBTR.
     Currently supported functionality:
         Collect pareto-optimal arrival timestamps.
+
     Args:
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
         Q (list): list of trips segments.
@@ -309,6 +331,7 @@ def post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes
         D_TIME (pandas.datetime): departure time.
         MAX_TRANSFER (int): maximum transfer limit.
         trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
+
     Returns:
         TBTR_out (list): pareto-optimal arrival timestamps.
     '''

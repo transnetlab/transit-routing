@@ -11,6 +11,7 @@ import pandas as pd
 def read_testcase(FOLDER):
     """
     Reads the GTFS network and preprocessed dict. If the dicts are not present, dict_builder_functions are called to construct them.
+
     Returns:
         stops_file (pandas.dataframe):  stops.txt file in GTFS.
         trips_file (pandas.dataframe): trips.txt file in GTFS.
@@ -39,6 +40,12 @@ def read_testcase(FOLDER):
 def print_logo():
     """
     Prints the logo
+    Args:
+        None
+
+    Returns:
+        None
+
     """
     print("""
 ****************************************************************************************
@@ -53,11 +60,14 @@ def print_logo():
 def print_network_details(transfers_file, trips_file, stops_file):
     """
     Prints the network details like number of routes, trips, stops, footpath
+
     Args:
         transfers_file (pandas.dataframe):
         trips_file (pandas.dataframe):
         stops_file (pandas.dataframe):
-    Returns: None
+
+    Returns:
+        None
     """
     print("___________________________Network Details__________________________")
     print("| No. of Routes |  No. of Trips | No. of Stops | No. of Footapths  |")
@@ -71,6 +81,7 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FR
                            weighting_scheme=None, partitioning_algorithm=None):
     """
     Prints the input parameters related to the shortest path query
+
     Args:
         SOURCE (int): stop-id DESTINATION stop
         DESTINATION (int/list): stop-id SOURCE stop. For Onetomany algorithms, this is a list.
@@ -84,7 +95,9 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FR
         no_of_partitions: number of partitions network has been divided into
         weighting_scheme: which weighing scheme has been used to generate partitions.
         partitioning_algorithm: which algorithm has been used to generate partitions.
-    Returns: None
+
+    Returns:
+        None
     """
     print("___________________Query Parameters__________________")
     print("Network: Switzerland")
@@ -107,12 +120,14 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FR
 def read_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_scheme, partitioning_algorithm):
     """
     Reads the fill-in information.
+
     Args:
         stop_times_file (pandas.dataframe): dataframe with stoptimes details
         FOLDER (str): path to network folder.
         no_of_partitions (int): number of partitions network has been divided into.
         weighting_scheme (str): which weighing scheme has been used to generate partitions.
         partitioning_algorithm (str):which algorithm has been used to generate partitions. Currently supported arguments are hmetis or kahypar.
+
     Returns:
         stop_out (dict) : key: stop-id (int), value: stop-cell id (int). Note: if stop-cell id of -1 denotes cut stop.
         route_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of route ids belonging to the stop cell combination
@@ -167,11 +182,13 @@ def read_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_scheme,
 def read_nested_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_scheme):
     """
     Read fill-ins in case of nested partitioning.
+
     Args:
         stop_times_file (pandas.dataframe): dataframe with stoptimes details
         FOLDER (str): path to network folder.
         no_of_partitions (int): number of partitions network has been divided into.
         weighting_scheme (str): which weighing scheme has been used to generate partitions.
+
     Returns:
         stop_out (dict) : key: stop-id (int), value: stop-cell id (int). Note: if stop-cell id of -1 denotes cut stop.
         route_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of route ids belonging to the stop cell combination
@@ -233,10 +250,12 @@ def read_nested_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_
 def check_nonoverlap(stoptimes_dict, stops_dict):
     '''
     Check for non overlapping trips in stoptimes_dict. If found, it reduces the timestamp of the earlier trip by 1 second.
-    This process is repeated untill overlapping trips=null. Note 1 second is taken so as to avoid creation of new overlapping trips
+    This process is repeated until overlapping trips=null. Note 1 second is taken so as to avoid creation of new overlapping trips
     due to timestamp correction.
+
     Args:
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+
     Returns:
         overlap (set): set of routes with overlapping trips.
     '''
@@ -276,10 +295,12 @@ def check_nonoverlap(stoptimes_dict, stops_dict):
 def get_full_trans(FOLDER, time_limit):
     '''
     Make the footpath graph transitively close and saves it in the form of transfer_dict
+    Note: time_limit="full" means consider all footpaths
+
     Args:
         FOLDER (str): Network FOLDER
         time_limit (str/int): maximum footpath duration to be considered (before footpath graph is made transitively closed)
-        Note: time_limit="full" means consider all footpaths
+
     Returns:
         None
     '''
@@ -324,9 +345,12 @@ def get_full_trans(FOLDER, time_limit):
 def check_footpath(footpath_dict):
     '''
     Check if the footpaths are transitively close. Prints error if not.
+
     Args:
         footpath_dict: Pre-processed dict- format {from_stop_id: [(to_stop_id, footpath_time)]}
-    Returns: None
+
+    Returns:
+        None
     '''
     edges = []
     for from_s, to_s in footpath_dict.items():
@@ -348,10 +372,13 @@ def check_footpath(footpath_dict):
 def get_random_od(routes_by_stop_dict, FOLDER):
     """
     Generate Random OD pairs.
+
     Args:
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         FOLDER (str): Network FOLDER
-    Returns: None
+
+    Returns:
+        None
     """
     random_od_db = pd.DataFrame(columns=["SOURCE", "DESTINATION"])
     desired_len = 100000
