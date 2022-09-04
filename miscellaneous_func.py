@@ -5,12 +5,16 @@ import pickle
 from random import sample
 
 import networkx as nx
+import pandas
 import pandas as pd
 
 
-def read_testcase(FOLDER):
+def read_testcase(FOLDER: str) -> tuple:
     """
     Reads the GTFS network and preprocessed dict. If the dicts are not present, dict_builder_functions are called to construct them.
+
+    Args:
+        FOLDER (str): GTFS path
 
     Returns:
         stops_file (pandas.dataframe):  stops.txt file in GTFS.
@@ -22,6 +26,10 @@ def read_testcase(FOLDER):
         footpath_dict (dict): keys: from stop_id, values: list of tuples of form (to stop id, footpath duration). Format-> dict[stop_id]=[(stop_id, footpath_duration)]
         route_by_stop_dict_new (dict): keys: stop_id, values: list of routes passing through the stop_id. Format-> dict[stop_id] = [route_id]
         idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
+
+    Examples:
+        >>> FOLDER = './swiss'
+        >>> read_testcase('FOLDER')
     """
     import gtfs_loader
     from dict_builder import dict_builder_functions
@@ -37,9 +45,10 @@ def read_testcase(FOLDER):
     return stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict
 
 
-def print_logo():
+def print_logo() -> None:
     """
     Prints the logo
+
     Args:
         None
 
@@ -57,7 +66,7 @@ def print_logo():
     return None
 
 
-def print_network_details(transfers_file, trips_file, stops_file):
+def print_network_details(transfers_file, trips_file, stops_file) -> None:
     """
     Prints the network details like number of routes, trips, stops, footpath
 
@@ -77,8 +86,8 @@ def print_network_details(transfers_file, trips_file, stops_file):
     return None
 
 
-def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, variant, no_of_partitions=None,
-                           weighting_scheme=None, partitioning_algorithm=None):
+def print_query_parameters(SOURCE: int, DESTINATION, D_TIME, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, variant: int,
+                           no_of_partitions=None, weighting_scheme=None, partitioning_algorithm=None) -> None:
     """
     Prints the input parameters related to the shortest path query
 
@@ -92,9 +101,9 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FR
                                                  1 for range version,
                                                  2 for One-To-Many version,
                                                  3 for Hyper version
-        no_of_partitions: number of partitions network has been divided into
-        weighting_scheme: which weighing scheme has been used to generate partitions.
-        partitioning_algorithm: which algorithm has been used to generate partitions.
+        no_of_partitions (int): number of partitions network has been divided into
+        weighting_scheme (str): which weighing scheme has been used to generate partitions.
+        partitioning_algorithm (str): which algorithm has been used to generate partitions.
 
     Returns:
         None
@@ -117,7 +126,7 @@ def print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FR
     return None
 
 
-def read_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_scheme, partitioning_algorithm):
+def read_partitions(stop_times_file, FOLDER: str, no_of_partitions: int, weighting_scheme: str, partitioning_algorithm: str) -> tuple:
     """
     Reads the fill-in information.
 
@@ -179,7 +188,7 @@ def read_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_scheme,
     return stop_out, route_groups, cut_trips, trip_groups
 
 
-def read_nested_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_scheme):
+def read_nested_partitions(stop_times_file, FOLDER: str, no_of_partitions: int, weighting_scheme: str) -> tuple:
     """
     Read fill-ins in case of nested partitioning.
 
@@ -242,19 +251,18 @@ def read_nested_partitions(stop_times_file, FOLDER, no_of_partitions, weighting_
         route_groups[(x, x)] = route_partitions[x].union(route_partitions[-1])
 
     cut_trips = set(fill_ins['trips'])
-    #    print(f"{len(cut_trips)} ({round(len(cut_trips) / len(set(stop_times_file.trip_id)) * 100, 2)}%) are cut trips")
-    #    print(f'{len(set(fill_ins.routes)) - 1} ({round((len(set(fill_ins.routes)) - 1) / len(set(stop_times_file.route_id)) * 100, 2)})% are cut routes')
     return stop_out, route_groups, cut_trips, trip_groups
 
 
-def check_nonoverlap(stoptimes_dict, stops_dict):
+def check_nonoverlap(stoptimes_dict: dict, stops_dict: dict) -> set:
     '''
     Check for non overlapping trips in stoptimes_dict. If found, it reduces the timestamp of the earlier trip by 1 second.
-    This process is repeated until overlapping trips=null. Note 1 second is taken so as to avoid creation of new overlapping trips
+    This process is repeated until overlapping trips=null. Note 1 second is taken to avoid creation of new overlapping trips
     due to timestamp correction.
 
     Args:
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+        stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
 
     Returns:
         overlap (set): set of routes with overlapping trips.
@@ -292,7 +300,7 @@ def check_nonoverlap(stoptimes_dict, stops_dict):
     return overlap
 
 
-def get_full_trans(FOLDER, time_limit):
+def get_full_trans(FOLDER: str, time_limit) -> None:
     '''
     Make the footpath graph transitively close and saves it in the form of transfer_dict
     Note: time_limit="full" means consider all footpaths
@@ -342,7 +350,7 @@ def get_full_trans(FOLDER, time_limit):
     return None
 
 
-def check_footpath(footpath_dict):
+def check_footpath(footpath_dict: dict) -> None:
     '''
     Check if the footpaths are transitively close. Prints error if not.
 
@@ -369,7 +377,7 @@ def check_footpath(footpath_dict):
     return None
 
 
-def get_random_od(routes_by_stop_dict, FOLDER):
+def get_random_od(routes_by_stop_dict: dict, FOLDER: str)-> None:
     """
     Generate Random OD pairs.
 

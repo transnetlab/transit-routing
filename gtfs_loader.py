@@ -3,7 +3,7 @@ Module contains functions to load the GTFS data.
 """
 
 
-def load_all_dict(FOLDER):
+def load_all_dict(FOLDER: str):
     """
     Args:
         FOLDER (str): network folder.
@@ -29,7 +29,7 @@ def load_all_dict(FOLDER):
     return stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict
 
 
-def load_all_db(FOLDER):
+def load_all_db(FOLDER: str):
     """
     Args:
         FOLDER (str): path to network folder.

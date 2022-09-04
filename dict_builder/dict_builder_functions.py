@@ -7,7 +7,7 @@ import pickle
 import pandas as pd
 from tqdm import tqdm
 
-def build_save_route_by_stop(stop_times_file, FOLDER):
+def build_save_route_by_stop(stop_times_file, FOLDER: str) -> dict:
     """
     This function saves a dictionary to provide easy access to all the routes passing through a stop_id.
 
@@ -29,7 +29,7 @@ def build_save_route_by_stop(stop_times_file, FOLDER):
     return route_by_stop_dict_new
 
 
-def build_save_stops_dict(stop_times_file, trips_file, FOLDER):
+def build_save_stops_dict(stop_times_file, trips_file, FOLDER: str)-> dict:
     """
     This function saves a dictionary to provide easy access to all the stops in the route.
 
@@ -59,7 +59,7 @@ def build_save_stops_dict(stop_times_file, trips_file, FOLDER):
     return stops_dict
 
 
-def build_save_stopstimes_dict(stop_times_file, trips_file, FOLDER):
+def build_save_stopstimes_dict(stop_times_file, trips_file, FOLDER: str) -> dict:
     """
     This function saves a dictionary to provide easy access to all the trips passing along a route id. Trips are sorted
     in the increasing order of departure time. A trip is list of tuple of form (stop id, arrival time)
@@ -90,7 +90,7 @@ def build_save_stopstimes_dict(stop_times_file, trips_file, FOLDER):
     return stoptimes_dict
 
 
-def build_save_footpath_dict(transfers_file, FOLDER):
+def build_save_footpath_dict(transfers_file, FOLDER: str)-> dict:
     """
     This function saves a dictionary to provide easy access to all the footpaths through a stop id.
 
@@ -115,7 +115,7 @@ def build_save_footpath_dict(transfers_file, FOLDER):
     print("transfers_dict done")
     return footpath_dict
 
-def stop_idx_in_route(stop_times_file, FOLDER):
+def stop_idx_in_route(stop_times_file, FOLDER: str)-> dict:
     """
     This function saves a dictionary to provide easy access to index of a stop in a route.
 

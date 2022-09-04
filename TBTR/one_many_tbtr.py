@@ -4,8 +4,9 @@ Module contains One-To-Many rTBTR implementation
 from TBTR.TBTR_functions import *
 
 
-def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_ITINERARY, OPTIMIZED,
-                    routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set):
+def onetomany_rtbtr(SOURCE: int, DESTINATION_LIST: list, d_time_groups, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int,
+                    PRINT_ITINERARY: int, OPTIMIZED: int, routes_by_stop_dict: dict, stops_dict: dict, stoptimes_dict: dict,
+                    footpath_dict: dict, idx_by_route_stop_dict: dict, trip_transfer_dict: dict, trip_set: set) -> list:
     """
     One to many rTBTR implementation
 
@@ -31,6 +32,13 @@ def onetomany_rtbtr(SOURCE, DESTINATION_LIST, d_time_groups, MAX_TRANSFER, WALKI
             out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
         elif OPTIMIZED==0:
             out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
+
+    Examples:
+        >>> output = onetomany_rtbtr(20775, [1482], d_time_groups, 4, 1, 1, 0, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
+        >>> print(output)
+
+    See Also:
+        HypTBTR, One-To-Many rRAPTOR
     """
     d_time_list = d_time_groups.get_group(SOURCE)[["trip_id", 'arrival_time', 'stop_sequence']].values.tolist()
     if WALKING_FROM_SOURCE == 1:

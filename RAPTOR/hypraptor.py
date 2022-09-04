@@ -4,8 +4,9 @@ Module contains HypRAPTOR implementation
 from RAPTOR.raptor_functions import *
 
 
-def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_ITINERARY, stop_out,
-              route_groups, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
+def hypraptor(SOURCE: int, DESTINATION: int, D_TIME, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, CHANGE_TIME_SEC: int,
+              PRINT_ITINERARY: int, stop_out: dict, route_groups: dict, routes_by_stop_dict: dict, stops_dict: dict, stoptimes_dict: dict,
+              footpath_dict: dict, idx_by_route_stop_dict: dict) -> list:
     """
     Standard HypRaptor implementation
 
@@ -27,6 +28,12 @@ def hypraptor(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, CH
 
     Returns:
         out (list): list of pareto-optimal arrival Timestamps.
+
+    Examples:
+        >>> output = hypraptor(20775, 1482, pd.to_datetime('2019-06-10 00:00:00'), 4, 1, 0, 1, stop_out, route_groups, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
+
+    See Also:
+        HypTBTR, RAPTOR
     """
     out = []
     # Initialization

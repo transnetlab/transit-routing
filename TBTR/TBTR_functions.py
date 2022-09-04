@@ -5,14 +5,17 @@ from collections import defaultdict
 
 import pandas as pd
 
-
-def initialize_tbtr(MAX_TRANSFER):
+def initialize_tbtr(MAX_TRANSFER: int)-> dict:
     '''
     Initialize values for TBTR.
 
     Returns:
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time. 
         inf_time (pandas.datetime): Variable indicating infinite time.
+
+    Examples:
+        >>> output = initialize_tbtr(4)
+        >>> print(output)
     '''
     inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day")
 #    inf_time = pd.to_datetime("2023-01-26 20:00:00")
@@ -20,9 +23,9 @@ def initialize_tbtr(MAX_TRANSFER):
     return J
 
 
-def initialize_onemany(MAX_TRANSFER, DESTINATION_LIST):
+def initialize_onemany(MAX_TRANSFER: int, DESTINATION_LIST: list) -> tuple:
     '''
-    initialize values for one-to-many TBTR.
+    Initialize values for one-to-many TBTR.
 
     Args:
         MAX_TRANSFER (int): maximum transfer limit.
@@ -31,6 +34,10 @@ def initialize_onemany(MAX_TRANSFER, DESTINATION_LIST):
     Returns:
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time.
         inf_time (pandas.datetime): Variable indicating infinite time.
+
+    Examples:
+        >>> output = initialize_onemany(4, [1482])
+        >>> print(output)
     '''
     inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day")
 #    inf_time = pd.to_datetime("2023-01-26 20:00:00")
@@ -38,7 +45,7 @@ def initialize_onemany(MAX_TRANSFER, DESTINATION_LIST):
     return J, inf_time
 
 
-def initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath_dict, idx_by_route_stop_dict):
+def initialize_from_desti(routes_by_stop_dict: dict, stops_dict: dict, DESTINATION: int, footpath_dict: dict, idx_by_route_stop_dict: dict) -> dict:
     '''
     Initialize routes/footpath to leading to destination stop.
 
@@ -51,6 +58,10 @@ def initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath
 
     Returns:
         L (dict): A dict to track routes/leading to destination stop. Format {route_id: (from_stop_idx, travel time, stop id)}
+
+    Examples:
+        >>> output = initialize_from_desti(routes_by_stop_dict, stops_dict, 1482, footpath_dict, idx_by_route_stop_dict)
+        >>> print(output)
     '''
     L_dict = defaultdict(lambda: [])
     try:
@@ -70,7 +81,8 @@ def initialize_from_desti(routes_by_stop_dict, stops_dict, DESTINATION, footpath
     return dict(L_dict)
 
 
-def initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_LIST, footpath_dict, idx_by_route_stop_dict):
+def initialize_from_desti_onemany(routes_by_stop_dict: dict, stops_dict: dict, DESTINATION_LIST: list, footpath_dict: dict,
+                                  idx_by_route_stop_dict: dict) -> dict:
     '''
     Initialize routes/footpath to leading to destination stop in case of one-to-many rTBTR
 
@@ -83,6 +95,10 @@ def initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_L
 
     Returns:
         L (nested dict): A dict to track routes/leading to destination stops. Key: route_id, value: {destination_stop_id: [(from_stop_idx, travel time, stop id)]}
+
+    Examples:
+        >>> output = initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, [1482], footpath_dict, idx_by_route_stop_dict)
+        >>> print(output)
     '''
     L_dict_final = {}
     for destination in DESTINATION_LIST:
@@ -105,8 +121,8 @@ def initialize_from_desti_onemany(routes_by_stop_dict, stops_dict, DESTINATION_L
     return L_dict_final
 
 
-def initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dict, stoptimes_dict, D_TIME,
-                               MAX_TRANSFER, WALKING_FROM_SOURCE, idx_by_route_stop_dict):
+def initialize_from_source(footpath_dict: dict, SOURCE: int, routes_by_stop_dict: dict, stops_dict: dict, stoptimes_dict: dict,
+                           D_TIME, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, idx_by_route_stop_dict: dict) -> tuple:
     '''
     Initialize trips segments from source stop.
 
@@ -124,6 +140,10 @@ def initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dic
     Returns:
         R_t (dict): dict to store first reached stop of every trip. Format {trip_id: first reached stop}
         Q (list): list of trips segments
+
+    Examples:
+        >>> output = initialize_from_source(footpath_dict, 20775, routes_by_stop_dict, stops_dict, stoptimes_dict, pd.to_datetime('2019-06-10 00:00:00'), 4, 1, idx_by_route_stop_dict)
+        >>> print(output)
     '''
     Q = [[] for x in range(MAX_TRANSFER + 2)]
 #    R_t = {f"{r}_{tid}": 1000 for r, r_trips in stoptimes_dict.items() for tid in range(len(r_trips))}
@@ -156,7 +176,7 @@ def initialize_from_source(footpath_dict, SOURCE, routes_by_stop_dict, stops_dic
     return R_t, Q
 
 
-def enqueue(connection_list, nextround, predecessor_label, R_t, Q, stoptimes_dict):
+def enqueue(connection_list: list, nextround: int, predecessor_label: tuple, R_t: dict, Q: list, stoptimes_dict: dict) -> None:
     '''
     Main enqueue function used in TBTR to add trips segments to next round and update first reached stop of each trip.
 
@@ -182,7 +202,7 @@ def enqueue(connection_list, nextround, predecessor_label, R_t, Q, stoptimes_dic
                     R_t[new_tid] = to_trip_id_stop
 
 
-def update_label(label, no_of_transfer, predecessor_label, J, MAX_TRANSFER):
+def update_label(label, no_of_transfer: int, predecessor_label: tuple, J: dict, MAX_TRANSFER: int) -> dict:
     '''
     Updates and returns destination pareto set.
 
@@ -203,7 +223,8 @@ def update_label(label, no_of_transfer, predecessor_label, J, MAX_TRANSFER):
     return J
 
 
-def post_process_range(J, Q, rounds_desti_reached, PRINT_ITINERARY, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, d_time, MAX_TRANSFER, trip_transfer_dict):
+def post_process_range(J: dict, Q: list, rounds_desti_reached: list, PRINT_ITINERARY: int, DESTINATION: int, SOURCE: int,
+                       footpath_dict: dict, stops_dict: dict, stoptimes_dict: dict, d_time, MAX_TRANSFER: int, trip_transfer_dict: dict) -> set:
     '''
     Contains all the post-processing features for rTBTR.
     Currently supported functionality:
@@ -213,6 +234,15 @@ def post_process_range(J, Q, rounds_desti_reached, PRINT_ITINERARY, DESTINATION,
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
         Q (list): list of trips segments.
         rounds_desti_reached (list): Rounds in which DESTINATION is reached.
+        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
+        DESTINATION (int): stop id of destination stop.
+        SOURCE (int): stop id of source stop.
+        footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+        stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
+        stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+        D_TIME (pandas.datetime): departure time.
+        MAX_TRANSFER (int): maximum transfer limit.
+        trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
 
     Returns:
         necessory_trips (set): trips needed to cover pareto-optimal journeys.
@@ -233,7 +263,7 @@ def post_process_range(J, Q, rounds_desti_reached, PRINT_ITINERARY, DESTINATION,
     return set(necessory_trips)
 
 
-def initialize_from_source_range(dep_details, MAX_TRANSFER, stoptimes_dict, R_t):
+def initialize_from_source_range(dep_details: list, MAX_TRANSFER: int, stoptimes_dict: dict, R_t: dict) -> list:
     '''
     Initialize trips segments from source in rTBTR
 
@@ -255,7 +285,8 @@ def initialize_from_source_range(dep_details, MAX_TRANSFER, stoptimes_dict, R_t)
     return Q
 
 
-def enqueue_range(connection_list, nextround, predecessor_label, R_t, Q, stoptimes_dict, MAX_TRANSFER):
+def enqueue_range(connection_list: list, nextround: int, predecessor_label: tuple, R_t: dict, Q: list,
+                  stoptimes_dict: dict, MAX_TRANSFER: int) -> None:
     '''
     Adds trips-segments to next round and update R_t. Used in range queries
 
@@ -281,8 +312,9 @@ def enqueue_range(connection_list, nextround, predecessor_label, R_t, Q, stoptim
                         R_t[r][new_tid] = to_trip_id_stop
 
 
-def post_process_range_onemany(J, Q, rounds_desti_reached, PRINT_ITINERARY, desti, SOURCE, footpath_dict,
-                               stops_dict, stoptimes_dict, d_time, MAX_TRANSFER, trip_transfer_dict):
+def post_process_range_onemany(J: dict, Q: list, rounds_desti_reached: list, PRINT_ITINERARY: int, desti: int,
+                               SOURCE: int, footpath_dict: dict, stops_dict: dict, stoptimes_dict: dict, d_time,
+                               MAX_TRANSFER: int, trip_transfer_dict: dict) -> set:
     '''
     Contains all the post-processing features for One-To-Many rTBTR.
     Currently supported functionality:
@@ -292,10 +324,19 @@ def post_process_range_onemany(J, Q, rounds_desti_reached, PRINT_ITINERARY, dest
         J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
         Q (list): list of trips segments.
         rounds_desti_reached (list): Rounds in which DESTINATION is reached.
-        desti (int): destination stop id.
+        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
+        desti (int): stop id of destination stop.
+        SOURCE (int): stop id of source stop.
+        footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+        stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
+        stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+        d_time (pandas.datetime): departure time.
+        MAX_TRANSFER (int): maximum transfer limit.
+        trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
 
     Returns:
         TBTR_out (set): Trips needed to cover pareto-optimal journeys.
+
     '''
     rounds_desti_reached = list(set(rounds_desti_reached))
     if PRINT_ITINERARY==1:
@@ -313,7 +354,8 @@ def post_process_range_onemany(J, Q, rounds_desti_reached, PRINT_ITINERARY, dest
     return set(TBTR_out)
 
 
-def post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, PRINT_ITINERARY, D_TIME, MAX_TRANSFER, trip_transfer_dict):
+def post_process(J: dict, Q: list, DESTINATION: int, SOURCE: int, footpath_dict: dict, stops_dict: dict, stoptimes_dict: dict,
+                 PRINT_ITINERARY: int, D_TIME, MAX_TRANSFER: int, trip_transfer_dict: dict) -> list:
     '''
     Contains post-processing features for TBTR.
     Currently supported functionality:
@@ -348,7 +390,33 @@ def post_process(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes
             TBTR_out.append(J[x][0])
         return TBTR_out
 
-def _print_tbtr_journey(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, D_TIME, MAX_TRANSFER, trip_transfer_dict, rounds_desti_reached):
+def _print_tbtr_journey(J: dict, Q: list, DESTINATION: int, SOURCE: int, footpath_dict: dict, stops_dict: dict, stoptimes_dict: dict,
+                        D_TIME, MAX_TRANSFER: int, trip_transfer_dict: dict, rounds_desti_reached: list) -> None:
+    """
+    Prints the output of TBTR
+
+    Args:
+        J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
+        Q (list): list of trips segments.
+        DESTINATION (int): stop id of destination stop.
+        SOURCE (int): stop id of source stop.
+        footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+        stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
+        stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+        D_TIME (pandas.datetime): departure time.
+        MAX_TRANSFER (int): maximum transfer limit.
+        trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
+        rounds_desti_reached (list): Rounds in which DESTINATION is reached.
+
+    Returns:
+        None
+
+    Examples:
+        >>> _print_tbtr_journey(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, D_TIME, MAX_TRANSFER, trip_transfer_dict, rounds_desti_reached)
+
+    TODO:
+        Build a better backtracking system for TBTR
+    """
     for x in reversed(rounds_desti_reached):
         round_no = x
         journey = []
@@ -480,9 +548,35 @@ def _print_tbtr_journey(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, st
             else:
                 print(f"from {leg[1][0]} board at {leg[1][1].time()} and get down on {leg[2][0]} at {leg[2][1].time()} along {leg[0]}")
         print("####################################")
+    return None
 
+def _print_tbtr_journey_otm(J: dict, Q: list, DESTINATION: int, SOURCE: int, footpath_dict: dict, stops_dict: dict, stoptimes_dict: dict,
+                            D_TIME, MAX_TRANSFER: int, trip_transfer_dict: dict, rounds_desti_reached: list) -> None:
+    """
+    Prints the output of TBTR
 
-def _print_tbtr_journey_otm(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, D_TIME, MAX_TRANSFER, trip_transfer_dict, rounds_desti_reached):
+    Args:
+        J (dict): dict to store arrival timestamps. Keys: number of transfer, Values: arrival time
+        Q (list): list of trips segments.
+        DESTINATION (int): stop id of destination stop.
+        SOURCE (int): stop id of source stop.
+        footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
+        stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
+        stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
+        D_TIME (pandas.datetime): departure time.
+        MAX_TRANSFER (int): maximum transfer limit.
+        trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
+        rounds_desti_reached (list): Rounds in which DESTINATION is reached.
+
+    Returns:
+        None
+
+    Examples:
+        >>> _print_tbtr_journey(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict, stoptimes_dict, D_TIME, MAX_TRANSFER, trip_transfer_dict, rounds_desti_reached)
+
+    TODO:
+        Build a better backtracking system for TBTR
+    """
     for x in reversed(rounds_desti_reached):
         round_no = x
         journey = []
@@ -614,3 +708,4 @@ def _print_tbtr_journey_otm(J, Q, DESTINATION, SOURCE, footpath_dict, stops_dict
             else:
                 print(f"from {leg[1][0]} board at {leg[1][1].time()} and get down on {leg[2][0]} at {leg[2][1].time()} along {leg[0]}")
         print("####################################")
+    return None

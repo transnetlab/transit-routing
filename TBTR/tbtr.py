@@ -4,8 +4,9 @@ Module contains TBTR implementation
 from TBTR.TBTR_functions import *
 
 
-def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_ITINERARY, routes_by_stop_dict, stops_dict,
-         stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set):
+def tbtr(SOURCE: int, DESTINATION: int, D_TIME, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, PRINT_ITINERARY: int,
+         routes_by_stop_dict: dict, stops_dict: dict, stoptimes_dict: dict, footpath_dict: dict, idx_by_route_stop_dict: dict,
+         trip_transfer_dict: dict, trip_set: set) -> list:
     """
     Standard TBTR implementation.
 
@@ -27,6 +28,14 @@ def tbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_I
 
     Returns:
         out (list): List of pareto-optimal arrival Timestamps
+
+    Examples:
+        >>> output = tbtr(20775, 1482, pd.to_datetime('2019-06-10 00:00:00'), 4, 1, 1, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
+        >>> print(output)
+
+    See Also:
+        RAPTOR, HypTBTR
+
     """
     out = []
     J = initialize_tbtr(MAX_TRANSFER)

@@ -6,9 +6,7 @@ from collections import deque as deque
 import pandas as pd
 
 
-################################################################################################################################################################################################
-
-def initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
+def initialize_raptor(routes_by_stop_dict: dict, SOURCE: int, MAX_TRANSFER: int) -> tuple:
     '''
     Initialize values for RAPTOR.
 
@@ -25,6 +23,9 @@ def initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
         if stop is reached by walking, pointer_label= ('walking', from stop id, to stop id, time, arrival time)}} else pointer_label= (trip boarding time, boarding_point, stop id, arr_by_trip, trip id)
         star_label (dict): dict to maintain best arrival label {stop id: pandas.datetime}.
         inf_time (pd.timestamp): Variable indicating infinite time (pandas.datetime).
+
+    Examples:
+        >>> output = initialize_raptor(routes_by_stop_dict, 20775, 4)
     '''
     inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day")
 #    inf_time = pd.to_datetime('2022-01-15 19:00:00')
@@ -40,7 +41,7 @@ def initialize_raptor(routes_by_stop_dict, SOURCE, MAX_TRANSFER):
     return marked_stop, marked_stop_dict, label, pi_label, star_label, inf_time
 
 
-def check_stop_validity(stops, SOURCE, DESTINATION):
+def check_stop_validity(stops, SOURCE: int, DESTINATION: int) -> None:
     '''
     Check if the entered SOURCE and DESTINATION stop id are present in stop list or not.
 
@@ -51,14 +52,17 @@ def check_stop_validity(stops, SOURCE, DESTINATION):
 
     Returns:
         None
+
+    Examples:
+        >>> output = check_stop_validity(stops, 20775, 1482)
     '''
     if SOURCE in stops.stop_id and DESTINATION in stops.stop_id:
         print('correct inputs')
     else:
         print("incorrect inputs")
+    return None
 
-
-def get_latest_trip_new(stoptimes_dict, route, arrival_time_at_pi, pi_index, change_time):
+def get_latest_trip_new(stoptimes_dict: dict, route: int, arrival_time_at_pi, pi_index: int, change_time) -> tuple:
     '''
     Get latest trip after a certain timestamp from the given stop of a route.
 
@@ -74,6 +78,9 @@ def get_latest_trip_new(stoptimes_dict, route, arrival_time_at_pi, pi_index, cha
             trip index, trip
         else:
             -1,-1   (e.g. when there is no trip after the given timestamp)
+
+    Examples:
+        >>> output = get_latest_trip_new(stoptimes_dict, 1000, pd.to_datetime('2019-06-10 17:40:00'), 0, pd.to_timedelta(0, unit='seconds'))
     '''
     try:
         for trip_idx, trip in enumerate(stoptimes_dict[route]):
@@ -84,7 +91,7 @@ def get_latest_trip_new(stoptimes_dict, route, arrival_time_at_pi, pi_index, cha
         return -1, -1  # No trip exsist for this route. in this case check tripid from trip file for this route and then look waybill.ID. Likely that trip is across days thats why it is rejected in stoptimes builder while checking
 
 
-def post_processing(DESTINATION, pi_label, PRINT_ITINERARY, label):
+def post_processing(DESTINATION: int, pi_label: dict, PRINT_ITINERARY: int, label: dict) -> tuple:
     '''
     Post processing for std_RAPTOR. Currently supported functionality:
         1. Rounds in which DESTINATION is reached
@@ -101,6 +108,9 @@ def post_processing(DESTINATION, pi_label, PRINT_ITINERARY, label):
         rounds_inwhich_desti_reached (list): list of rounds in which DESTINATION is reached. Format - [int]
         trip_set (list): list of trips ids required to cover optimal journeys. Format - [char]
         rap_out (list): list of pareto-optimal arrival timestamps. Format = [(pandas.datetime)]
+
+    Examples:
+        >>> output = post_processing(1482, pi_label, 1, label)
     '''
     rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
 
@@ -135,7 +145,7 @@ def post_processing(DESTINATION, pi_label, PRINT_ITINERARY, label):
         return rounds_inwhich_desti_reached, trip_set, rap_out
 
 
-def _print_Journey_legs(pareto_journeys):
+def _print_Journey_legs(pareto_journeys: list) -> None:
     '''
     Prints journey in correct format. Parent Function: post_processing
 
@@ -144,6 +154,9 @@ def _print_Journey_legs(pareto_journeys):
 
     Returns:
         None
+
+    Examples:
+        >>> output = _print_Journey_legs(pareto_journeys)
     '''
     for _, journey in pareto_journeys:
         for leg in journey:
@@ -154,9 +167,9 @@ def _print_Journey_legs(pareto_journeys):
                 print(
                     f'from {leg[1]} board at {leg[0].time()} and get down on {leg[2]} at {leg[3].time()} along {leg[-1]}')
         print("####################################")
+    return None
 
-
-def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERARY, label, OPTIMIZED):
+def post_processing_onetomany_rraptor(DESTINATION_LIST: list, pi_label: dict, PRINT_ITINERARY: int, label: dict, OPTIMIZED: int) -> list:
     '''
     post processing for Ont-To-Many rRAPTOR. Currently supported functionality:
         1. Print the output
@@ -175,6 +188,10 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERAR
             final_trips (list): list of trips required to cover all pareto-optimal journeys. format - [trip_id]
         elif OPTIMIZED==0:
             final_routes (list): list of routes required to cover all pareto-optimal journeys. format - [route_id]
+
+
+    Examples:
+        >>> output = post_processing_onetomany_rraptor([1482], pi_label, 1, label, 0)
     '''
     if OPTIMIZED == 1:
         final_trips = []
@@ -229,7 +246,7 @@ def post_processing_onetomany_rraptor(DESTINATION_LIST, pi_label, PRINT_ITINERAR
         return list(set(final_routes))
 
 
-def post_processing_rraptor(DESTINATION, pi_label, PRINT_ITINERARY, label, OPTIMIZED):
+def post_processing_rraptor(DESTINATION: int, pi_label: dict, PRINT_ITINERARY: int, label: dict, OPTIMIZED: int) -> list:
     '''
     Full post processing for rRAPTOR. Currently supported functionality:
         1. Print the output
@@ -248,6 +265,9 @@ def post_processing_rraptor(DESTINATION, pi_label, PRINT_ITINERARY, label, OPTIM
             final_trips (list): List of trips required to cover all pareto-optimal journeys. Format - [trip_id]
         elif OPTIMIZED==0:
             final_routes (list): List of routes required to cover all pareto-optimal journeys. Format - [route_id]
+
+    Examples:
+        >>> output = post_processing_onetomany_rraptor([1482], pi_label, 1, label, 0)
     '''
     rounds_inwhich_desti_reached = [x for x in pi_label.keys() if pi_label[x][DESTINATION] != -1]
     if OPTIMIZED == 1:

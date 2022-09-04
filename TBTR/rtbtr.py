@@ -4,9 +4,9 @@ Module contains rTBTR implementation
 from TBTR.TBTR_functions import *
 
 
-def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_ITINERARY, OPTIMIZED,
-          routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set):
-    ################################################################################################################
+def rtbtr(SOURCE: int, DESTINATION: int, d_time_groups, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, PRINT_ITINERARY: int, OPTIMIZED: int,
+          routes_by_stop_dict: dict, stops_dict: dict, stoptimes_dict: dict, footpath_dict: dict, idx_by_route_stop_dict: dict,
+          trip_transfer_dict: dict, trip_set: set) -> list:
     """
     Args:
         SOURCE (int): stop id of source stop.
@@ -30,6 +30,13 @@ def rtbtr(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE,
             out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
         elif OPTIMIZED==0:
             out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
+
+    Examples:
+        >>> output = rtbtr(20775, 1482, d_time_groups, 4, 1, 1, 0, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
+        >>> print(output)
+
+    See Also:
+        One-To-Many rTBTR
     """
     d_time_list = d_time_groups.get_group(SOURCE)[["trip_id", 'arrival_time', 'stop_sequence']].values.tolist()
     if WALKING_FROM_SOURCE == 1:

@@ -4,8 +4,9 @@ Module contains HypTBTR implementation.
 from TBTR.TBTR_functions import *
 
 
-def hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_ITINERARY, stop_out, trip_groups,
-            routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set):
+def hyptbtr(SOURCE: int, DESTINATION: int, D_TIME, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, PRINT_ITINERARY: int, stop_out: dict,
+            trip_groups: dict, routes_by_stop_dict: dict, stops_dict: dict, stoptimes_dict: dict, footpath_dict: dict,
+            idx_by_route_stop_dict: dict, trip_transfer_dict: dict, trip_set: set) -> list:
     """
     Hyptbtr implementation.
 
@@ -30,6 +31,13 @@ def hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRIN
 
     Returns:
         out (list): List of pareto-optimal arrival Timestamps
+
+    Examples:
+        >>> output = hyptbtr(20775, 1482, pd.to_datetime('2019-06-10 00:00:00'), 4, 1, 1, stop_out, trip_groups, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
+        >>> print(output)
+
+    See Also:
+        HypRAPTORz
     """
     out = []
     final_trips = trip_groups[tuple(sorted((stop_out[SOURCE], stop_out[DESTINATION])))]

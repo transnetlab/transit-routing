@@ -4,8 +4,8 @@ Module contains rRAPTOR implementation
 from RAPTOR.raptor_functions import *
 
 
-def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC, PRINT_ITINERARY,
-            OPTIMIZED, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict):
+def rraptor(SOURCE: int, DESTINATION: int, d_time_groups, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, CHANGE_TIME_SEC: int, PRINT_ITINERARY: int,
+            OPTIMIZED: int, routes_by_stop_dict: dict, stops_dict: dict, stoptimes_dict: dict, footpath_dict: dict, idx_by_route_stop_dict: dict) -> list:
     '''
     Standard rRaptor implementation
 
@@ -29,6 +29,14 @@ def rraptor(SOURCE, DESTINATION, d_time_groups, MAX_TRANSFER, WALKING_FROM_SOURC
             out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
         elif OPTIMIZED==0:
             out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
+
+    Examples:
+        >>> output = rraptor(20775, 1482, d_time_groups, 4, 1, 0, 1, 0, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
+        >>> print(f"Optimal arrival time are: {output}")
+
+    See Also:
+        One-To-Many rRAPTOR
+
     '''
     out = []
 
