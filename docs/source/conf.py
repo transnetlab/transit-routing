@@ -21,7 +21,7 @@ import sys
 # installed_packages_list = sorted(["%s==%s" % (i.key, i.version)
 #    for i in installed_packages])
 # print(installed_packages_list)
-# sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('../../'))
 
 
 # -- Project information -----------------------------------------------------
