@@ -1,0 +1,50 @@
+Quickstart
+====================
+
+.. toctree::
+   :maxdepth: 1
+
+   quickstart
+
+GTFS Preprocessing 
+====================
+
+.. toctree::
+   :maxdepth: 1
+
+
+   GTFS_preprocessing
+
+RAPTOR and its varients
+==============================
+
+.. toctree::
+   :maxdepth: 2
+
+
+   RAPTOR/index
+
+TBTR and its varients
+=========================
+
+.. toctree::
+   :maxdepth: 2
+
+#   raptor
+
+Transfer Patterns and its varients
+===================================
+
+.. toctree::
+   :maxdepth: 2
+
+#   raptor
+
+
+Miscellaneous functions
+=========================
+
+.. toctree::
+   :maxdepth: 2
+
+#   raptor
