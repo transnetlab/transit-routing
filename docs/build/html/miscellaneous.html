@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Miscellaneous Functions &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Transfer Patterns" href="Transfer_patterns/index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Transfer_patterns/index.html" title="Transfer Patterns"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Transit-routing Pending documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Miscellaneous Functions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="miscellaneous-functions">
+<h1>Miscellaneous Functions<a class="headerlink" href="#miscellaneous-functions" title="Permalink to this headline">¶</a></h1>
+<p>RAPTOR  computes  Pareto-optimal  journeys  byincreasing the number of allowable transfers in each round.  It works directly on a timetable and does not requireany  preprocessing. Currently supported varients of RAPTOR are:</p>
+<span class="target" id="module-miscellaneous_func"></span><p>Module contains miscellaneous functions used for reading data, printing logo etc.</p>
+<dl class="py function">
+<dt id="miscellaneous_func.check_footpath">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">check_footpath</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">footpath_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/miscellaneous_func.html#check_footpath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.check_footpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the footpaths are transitively close. Prints error if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>footpath_dict</strong> – Pre-processed dict- format {from_stop_id: [(to_stop_id, footpath_time)]}</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.check_nonoverlap">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">check_nonoverlap</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">set</span><a class="reference internal" href="_modules/miscellaneous_func.html#check_nonoverlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.check_nonoverlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for non overlapping trips in stoptimes_dict. If found, it reduces the timestamp of the earlier trip by 1 second.
+This process is repeated until overlapping trips=null. Note 1 second is taken to avoid creation of new overlapping trips
+due to timestamp correction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+<li><p><strong>stops_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [ids of stops in the route]}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>set of routes with overlapping trips.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>overlap (set)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.get_full_trans">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">get_full_trans</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FOLDER</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_limit</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/miscellaneous_func.html#get_full_trans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.get_full_trans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the footpath graph transitively close and saves it in the form of transfer_dict
+Note: time_limit=”full” means consider all footpaths</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>FOLDER</strong> (<em>str</em>) – Network FOLDER</p></li>
+<li><p><strong>time_limit</strong> (<em>str/int</em>) – maximum footpath duration to be considered (before footpath graph is made transitively closed)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.get_random_od">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">get_random_od</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routes_by_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FOLDER</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/miscellaneous_func.html#get_random_od"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.get_random_od" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate Random OD pairs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routes_by_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {stop_id: [id of routes passing through stop]}.</p></li>
+<li><p><strong>FOLDER</strong> (<em>str</em>) – Network FOLDER</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.print_logo">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">print_logo</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/miscellaneous_func.html#print_logo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.print_logo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the logo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.print_network_details">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">print_network_details</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transfers_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trips_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops_file</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/miscellaneous_func.html#print_network_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.print_network_details" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the network details like number of routes, trips, stops, footpath</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transfers_file</strong> (<em>pandas.dataframe</em>) – </p></li>
+<li><p><strong>trips_file</strong> (<em>pandas.dataframe</em>) – </p></li>
+<li><p><strong>stops_file</strong> (<em>pandas.dataframe</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.print_query_parameters">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">print_query_parameters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_TIME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TRANSFER</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WALKING_FROM_SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variant</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_of_partitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weighting_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partitioning_algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/miscellaneous_func.html#print_query_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.print_query_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the input parameters related to the shortest path query</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop-id DESTINATION stop</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int/list</em>) – stop-id SOURCE stop. For Onetomany algorithms, this is a list.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – Departure time</p></li>
+<li><p><strong>MAX_TRANSFER</strong> (<em>int</em>) – Max transfer limit</p></li>
+<li><p><strong>WALKING_FROM_SOURCE</strong> (<em>int</em>) – 1 or 0. 1 means walking from SOURCE is allowed.</p></li>
+<li><p><strong>variant</strong> (<em>int</em>) – variant of the algorithm. 0 for normal version,
+1 for range version,
+2 for One-To-Many version,
+3 for Hyper version</p></li>
+<li><p><strong>no_of_partitions</strong> (<em>int</em>) – number of partitions network has been divided into</p></li>
+<li><p><strong>weighting_scheme</strong> (<em>str</em>) – which weighing scheme has been used to generate partitions.</p></li>
+<li><p><strong>partitioning_algorithm</strong> (<em>str</em>) – which algorithm has been used to generate partitions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.read_nested_partitions">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">read_nested_partitions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FOLDER</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_of_partitions</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weighting_scheme</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="_modules/miscellaneous_func.html#read_nested_partitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.read_nested_partitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read fill-ins in case of nested partitioning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – dataframe with stoptimes details</p></li>
+<li><p><strong>FOLDER</strong> (<em>str</em>) – path to network folder.</p></li>
+<li><p><strong>no_of_partitions</strong> (<em>int</em>) – number of partitions network has been divided into.</p></li>
+<li><p><strong>weighting_scheme</strong> (<em>str</em>) – which weighing scheme has been used to generate partitions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>key: stop-id (int), value: stop-cell id (int). Note: if stop-cell id of -1 denotes cut stop.
+route_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of route ids belonging to the stop cell combination
+cut_trips (set): set of trip ids that are part of fill-in.
+trip_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of trip ids belonging to the stop cell combination</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>stop_out (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.read_partitions">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">read_partitions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FOLDER</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_of_partitions</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weighting_scheme</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partitioning_algorithm</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="_modules/miscellaneous_func.html#read_partitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.read_partitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the fill-in information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – dataframe with stoptimes details</p></li>
+<li><p><strong>FOLDER</strong> (<em>str</em>) – path to network folder.</p></li>
+<li><p><strong>no_of_partitions</strong> (<em>int</em>) – number of partitions network has been divided into.</p></li>
+<li><p><strong>weighting_scheme</strong> (<em>str</em>) – which weighing scheme has been used to generate partitions.</p></li>
+<li><p><strong>partitioning_algorithm</strong> (<em>str</em>) – which algorithm has been used to generate partitions. Currently supported arguments are hmetis or kahypar.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>key: stop-id (int), value: stop-cell id (int). Note: if stop-cell id of -1 denotes cut stop.
+route_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of route ids belonging to the stop cell combination
+cut_trips (set): set of trip ids that are part of fill-in.
+trip_groups (dict): key: tuple of all possible combinations of stop cell id, value: set of trip ids belonging to the stop cell combination</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>stop_out (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.read_testcase">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">read_testcase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FOLDER</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="_modules/miscellaneous_func.html#read_testcase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.read_testcase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the GTFS network and preprocessed dict. If the dicts are not present, dict_builder_functions are called to construct them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>FOLDER</strong> (<em>str</em>) – GTFS path</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>stops.txt file in GTFS.
+trips_file (pandas.dataframe): trips.txt file in GTFS.
+stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.
+transfers_file (pandas.dataframe): dataframe with transfers (footpath) details.
+stops_dict (dict): keys: route_id, values: list of stop id in the route_id. Format-&gt; dict[route_id] = [stop_id]
+stoptimes_dict (dict): keys: route ID, values: list of trips in the increasing order of start time. Format-&gt; dict[route_ID] = [trip_1, trip_2] where trip_1 = [(stop id, arrival time), (stop id, arrival time)]
+footpath_dict (dict): keys: from stop_id, values: list of tuples of form (to stop id, footpath duration). Format-&gt; dict[stop_id]=[(stop_id, footpath_duration)]
+route_by_stop_dict_new (dict): keys: stop_id, values: list of routes passing through the stop_id. Format-&gt; dict[stop_id] = [route_id]
+idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>stops_file (pandas.dataframe)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">FOLDER</span> <span class="o">=</span> <span class="s1">&#39;./swiss&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">read_testcase</span><span class="p">(</span><span class="s1">&#39;FOLDER&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Transfer_patterns/index.html"
+                        title="previous chapter">Transfer Patterns</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/miscellaneous.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Transfer_patterns/index.html" title="Transfer Patterns"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Transit-routing Pending documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Miscellaneous Functions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

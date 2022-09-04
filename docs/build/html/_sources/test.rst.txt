@@ -1,0 +1,5 @@
+TEST
+============
+
+.. automodule:: std_raptor
+   :members:
