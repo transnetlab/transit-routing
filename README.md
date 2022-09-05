@@ -24,7 +24,7 @@ Additionally, to make the RAPTOR and TBTR approach more practical, we also inclu
 outperform the existing approach for location-based queries (as a location can have multiple stops near it)
 
 Switzerland's public transit network has been provided as a test case. The figure below shows the transit stop location (left) and 4-way partitioning using [KaHyPar](https://github.com/kahypar/kahypar) (right).
-![plot](docs/location.png)
+![plot](documentation/location.png)
 ### List of Algorithms
 |  Algorithm                 | SOURCE | Status             | Comments |
 |----------------------------|---|--------------------|---|
@@ -42,7 +42,7 @@ Switzerland's public transit network has been provided as a test case. The figur
 | Scalable Transfer Patterns | [link](https://epubs.siam.org/doi/abs/10.1137/1.9781611974317.2) | To be updated soon           |
 
 ### Usage Instructions
-See [Usage Instructions](./docs/usage_instructions.md) for details on the usage instructions. 
+See [Usage Instructions](./documentation/usage_instructions.md) for details on the usage instructions. 
 
 
 ### Contributing
