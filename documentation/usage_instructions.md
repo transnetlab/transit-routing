@@ -11,8 +11,11 @@
 - Python Modules: tqdm, pandas, numpy, pickle, collections, random, networkx
 
 ## Running Test cases:
-#### 1. Clone the repository using following command: `gh repo clone transnetlab/transit-routing`
-#### 2. Run main.py
+#### 1. Clone the repository using following command:
+
+`gh repo clone transnetlab/transit-routing`
+
+#### 2. Run [main.py](https://github.com/transnetlab/transit-routing/blob/main/main.py).
 #### 2. Select following options when prompted:
 	algorithm  -> 0 or 1
 	variant	   -> 0 or 1 or 2 or 3
