@@ -59,6 +59,7 @@ def remove_unwanted_route(unwanted_route: list, route) -> tuple:
     Returns:
         Filters route file and a set containing all routes ids.
     """
+    print("removing unwanted routes")
     valid_route_types = list(set(route.route_type))
     print(f"Total routes: {len(route)}")
     print(f"Total route types: {route.route_type.value_counts()}")
@@ -82,17 +83,23 @@ def filter_trips_routes_ondates(valid_routes_set: set, calendar_dates, trips, da
     Returns:
         Filtered trips file and a set of valid trips and routes.
     """
-    calendar_dates.sort_values(by='date', inplace=True)
-    calendar_dates[(calendar_dates.exception_type == 1)].groupby('date').count().sort_values('service_id')
-    valid_service_id = set(
-        calendar_dates[(calendar_dates.date == date) & (calendar_dates.exception_type == 1)]['service_id'])
-    trips = trips[trips.service_id.isin(valid_service_id) & trips.route_id.isin(valid_routes_set)]
-    valid_trips = set(trips.trip_id)
-    valid_route = set(trips.route_id)
-    print(f"After Filtering on date {date}")
-    print(f"Valid trips:  {len(valid_trips)}")
-    print(f"Valid routes:  {len(valid_route)}")
-    return trips, valid_trips, valid_route
+    print("filtering trips based on date")
+    if type(calendar_dates)==int:
+        valid_trips = set(trips.trip_id)
+        valid_route = set(trips.route_id)
+        return trips, valid_trips, valid_route
+    else:
+        calendar_dates.sort_values(by='date', inplace=True)
+        calendar_dates[(calendar_dates.exception_type == 1)].groupby('date').count().sort_values('service_id')
+        valid_service_id = set(
+            calendar_dates[(calendar_dates.date == date) & (calendar_dates.exception_type == 1)]['service_id'])
+        trips = trips[trips.service_id.isin(valid_service_id) & trips.route_id.isin(valid_routes_set)]
+        valid_trips = set(trips.trip_id)
+        valid_route = set(trips.route_id)
+        print(f"After Filtering on date {date}")
+        print(f"Valid trips:  {len(valid_trips)}")
+        print(f"Valid routes:  {len(valid_route)}")
+        return trips, valid_trips, valid_route
 
 
 def filter_stoptimes(valid_trips: set, trips, date: int, stop_times) -> tuple:
@@ -108,10 +115,10 @@ def filter_stoptimes(valid_trips: set, trips, date: int, stop_times) -> tuple:
     Returns:
         Filtered stops mapping and stoptimes file
     """
+    print("filtering stop_times.txt")
     stop_times.stop_sequence = stop_times.stop_sequence - 1
     stop_times.stop_id = stop_times.stop_id.astype(str)
-    stop_times = stop_times[
-        (stop_times.trip_id.isin(valid_trips)) & (stop_times.pickup_type == 0) & (stop_times.drop_off_type == 0)]
+    stop_times = stop_times[stop_times.trip_id.isin(valid_trips)]
     stop_times['stop_sequence'] = stop_times.groupby("trip_id")["stop_sequence"].rank(method="first",
                                                                                       ascending=True).astype(int) - 1
     stop_times = pd.merge(stop_times, trips, on='trip_id')
@@ -137,6 +144,7 @@ def filter_stopsfile(stops_map, stops):
     Returns:
         Filtered stops file
     """
+    print("filtering stops.txt")
     stops.stop_id = stops.stop_id.astype(str)
     stops = pd.merge(stops, stops_map, on='stop_id').drop(columns=['stop_id']).rename(columns={'new_stop_id': 'stop_id'})
     print(f"Stops in stoptimes file = {len(stops)}")
@@ -154,7 +162,7 @@ def rename_route(stop_times, trips) -> tuple:
     Returns:
         Route Id mapping, filtered stoptimes and trip file
     """
-
+    print("renaming routes")
     trip_groups = stop_times.groupby("trip_id")
     stops_dict_rev = {}
     route_map = {}
@@ -186,6 +194,7 @@ def remove_overlapping_trips(stop_times):
     Returns:
         Filtered stoptimes file
     """
+    print("checking overlapping trips")
     overlap = set()
     route_groups = stop_times.groupby("route_id")
     for r_idx, route_trips in tqdm(route_groups):
@@ -218,6 +227,7 @@ def build_transfers_file(READ_PATH: str, stops, walking_limit: int):
     Returns:
         GTFS transfer.txt file
     """
+    print("building transfers file")
     # Build transfers file
     transfers = np.load(f'./GTFS/{READ_PATH}/{READ_PATH}_dist_mat.npy')
     # transfers is a numpy array of distance between stops. Its dimension should be stops x stops. This can be obtained using OpenStreetMap.
@@ -261,6 +271,7 @@ def filter_trips(trips, stop_times, stops):
     Returns:
         Filtered trips, stoptimes and stops file
     """
+    print("applying final trips filter")
     # Rename all trip_id with following format: Routeid_trip_count.
     # E.g., 502_4 is 4th trip (sorted according to departure time) on route 502.
     trips = trips[trips.trip_id.isin(stop_times.trip_id)].drop(columns=['service_id'])
@@ -289,6 +300,7 @@ def stoptimes_filter(stop_times):
     Returns:
         Filtered stoptimes.txt GTFS file
     """
+    print("applying final stoptimes filter")
     stops_group = stop_times[['stop_id', "route_id"]].groupby('stop_id')
     routes_group = stop_times.groupby('route_id')
     solo_routes = set()
@@ -326,6 +338,7 @@ def rename_trips(stop_times, trips):
     Returns:
         Filtered stoptimes.txt and trips.txt file
     """
+    print("renaming trips")
     trip_map = {}
     route_groups = stop_times.groupby("route_id")
     if len(trips) != len(stop_times[stop_times.stop_sequence == 0]):
@@ -354,6 +367,7 @@ def check_trip_len(stop_times) -> None:
     Returns:
         None
     """
+    print("checking trips length")
     trip_group = stop_times.groupby('trip_id')
     for x, trip_details in tqdm(trip_group):
         if len(trip_group) < 2:
@@ -372,15 +386,32 @@ def read_gtfs(READ_PATH: str):
     Returns:
         GTFS files
     """
+    print("reading GTFS data")
     stop_times_column = ['arrival_time', 'stop_sequence', 'stop_id', 'trip_id']
     stops_column = ['stop_lat', 'stop_lon', 'stop_id']
     trips_column = ['route_id', 'trip_id', 'service_id']
-    route = pd.read_csv(f'{READ_PATH}/gtfs_o/routes.txt')
-    calendar_dates = pd.read_csv(f'{READ_PATH}/gtfs_o/calendar_dates.txt')
-    trips = pd.read_csv(f'{READ_PATH}/gtfs_o/trips.txt', usecols=trips_column)
-    stop_times = pd.read_csv(f'{READ_PATH}/gtfs_o/stop_times.txt', usecols=stop_times_column)
-    stops = pd.read_csv(f'{READ_PATH}/gtfs_o/stops.txt', usecols=stops_column)
-    return route, calendar_dates, trips, stop_times, stops
+    calendar_dates = -1
+    try:
+        calendar_dates = pd.read_csv(f'{READ_PATH}/gtfs_o/calendar_dates.txt')
+    except FileNotFoundError:
+        print("calender_dates.txt missing")
+    try:
+        route = pd.read_csv(f'{READ_PATH}/gtfs_o/routes.txt')
+    except FileNotFoundError:
+        raise FileNotFoundError("routes.txt missing")
+    try:
+        trips = pd.read_csv(f'{READ_PATH}/gtfs_o/trips.txt', usecols=trips_column)
+    except FileNotFoundError:
+        raise FileNotFoundError("trips.txt missing")
+    try:
+        stop_times = pd.read_csv(f'{READ_PATH}/gtfs_o/stop_times.txt', usecols=stop_times_column)
+    except FileNotFoundError:
+        raise FileNotFoundError("stop_times.txt missing")
+    try:
+        stops = pd.read_csv(f'{READ_PATH}/gtfs_o/stops.txt', usecols=stops_column)
+    except FileNotFoundError:
+        raise FileNotFoundError("stops.txt missing")
+    return calendar_dates, route , trips, stop_times, stops
 
 
 def main(READ_PATH: str, SAVE_PATH: str, date: int, walking_limit: int, build_transfers: int) -> None:
@@ -397,7 +428,7 @@ def main(READ_PATH: str, SAVE_PATH: str, date: int, walking_limit: int, build_tr
     Returns:
         None
     """
-    route, calendar_dates, trips, stop_times, stops = read_gtfs(READ_PATH)
+    calendar_dates, route,  trips, stop_times, stops = read_gtfs(READ_PATH)
     valid_routes, route = remove_unwanted_route(unwanted_route, route)
     trips, valid_trips, valid_route = filter_trips_routes_ondates(valid_routes, calendar_dates, trips, date)
     stops_map, stop_times = filter_stoptimes(valid_trips, trips, date, stop_times)
