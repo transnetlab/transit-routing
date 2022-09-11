@@ -49,40 +49,44 @@
 <ul class="simple">
 <li><p>A 64-bit operating system. Linux, MacOS and Windows are currently supported.</p></li>
 <li><p>Python version 3.7 or higher</p></li>
-<li><p>Python Modules: tqdm, pandas, numpy, pickle, collections, random, networkx</p></li>
+<li><p>Python Modules: tqdm, pandas, numpy, pickle, networkx</p></li>
 </ul>
 </div>
 <div class="section" id="running-test-cases">
 <h2>Running Test cases<a class="headerlink" href="#running-test-cases" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><ol class="arabic simple">
-<li><p>Clone the repository using following command: <cite>gh repo clone transnetlab/transit-routing</cite></p></li>
+<div><ol class="arabic">
+<li><p>Clone the repository using following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gh repo clone transnetlab/transit-routing
+</pre></div>
+</div>
+</li>
+<li><p>Run <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a></p></li>
+<li><p>Select following options when prompted:</p></li>
 </ol>
-<p>2. Run main.py
-2. Select following options when prompted:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">algorithm</span>&#160; <span class="pre">-&gt;</span> <span class="pre">0</span> <span class="pre">or</span> <span class="pre">1</span></code></p>
 <p><code class="docutils literal notranslate"><span class="pre">variant</span>&#160;&#160;&#160;&#160; <span class="pre">-&gt;</span> <span class="pre">0</span> <span class="pre">or</span> <span class="pre">1</span> <span class="pre">or</span> <span class="pre">2</span> <span class="pre">or</span> <span class="pre">3</span></code></p>
 <p><code class="docutils literal notranslate"><span class="pre">test_case</span>&#160; <span class="pre">-&gt;</span> <span class="pre">0</span></code></p>
 </div></blockquote>
 </div></blockquote>
-<p>To run algorithms on a different GTFS set, enter the network details in [main.py](<a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">https://github.com/transnetlab/transit-routing/blob/main/main.py</a>).</p>
+<p>To run algorithms on a different GTFS set, enter the network details in <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a>.</p>
 </div>
 <div class="section" id="dataset-generation">
 <h2>Dataset generation<a class="headerlink" href="#dataset-generation" title="Permalink to this headline">¶</a></h2>
 <p>Due to inconsistencies in the GTFS sets available online, they cannot be used directly.
 Moreover, a significant amount of preprocessing (e.g., transitively closed footpaths,
 non-overtaking trips, continuous stop sequence) is required. The Switzerland test network
-is generated in accordance with these.  See [switzerland_wrapper.md](./switzerland_wrapper.md)
+is generated in accordance with these.  See GTFS preprocessing
 for documentation on the same.</p>
 </div>
 <div class="section" id="additional-notes">
 <h2>Additional notes<a class="headerlink" href="#additional-notes" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>To print complete itinerary, set PRINT_ITINERARY = 1 and OPTIMIZED = 0.</p></li>
+<li><p>To print complete itinerary, set <strong>PRINT_ITINERARY</strong> = 1 and <strong>OPTIMIZED</strong> = 0.</p></li>
 <li><p>Additional target pruning is applied in the footpath phase of all RAPTOR related algorithms.</p></li>
-<li><p>To compare the output of RAPTOR and TBTR, WALKING_FROM_SOURCE must be set to 1.</p></li>
-<li><p>Post processing in rRAPTOR and rTBTR gives the set of optimal trips (or routes id OPTIMIZED=0) required to cover all optimal journeys. However, the output set by rRAPTOR and rTBTR might not match. To understand this, imagine two different journeys with the same arrival times and number of transfers. Since, all algorithms are coded using strict dominance, only one of the two will be detected. While the rRAPTOR might include the first journey, rTBTR can include second. In such cases, algorithm’s correctness can be checked by comparing the optimal arrival times (which should be same).</p></li>
+<li><p>To compare the output of RAPTOR and TBTR, <strong>WALKING_FROM_SOURCE</strong> must be set to 1.</p></li>
+<li><p>Post processing in rRAPTOR and rTBTR gives the set of optimal trips (or routes id <a href="#id2"><span class="problematic" id="id3">**</span></a>OPTIMIZED**=0) required to cover all optimal journeys. However, the output set by rRAPTOR and rTBTR might not match. To understand this, imagine two different journeys with the same arrival times and number of transfers. Since, all algorithms are coded using strict dominance, only one of the two will be detected. While the rRAPTOR might include the first journey, rTBTR can include second. In such cases, algorithm’s correctness can be checked by comparing the optimal arrival times (which should be same).</p></li>
 </ul>
 </div>
 </div>

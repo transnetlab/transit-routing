@@ -8,7 +8,7 @@
 ## Requirements:
 - A 64-bit operating system. Linux, MacOS and Windows are currently supported.
 - Python version 3.7 or higher
-- Python Modules: tqdm, pandas, numpy, pickle, collections, random, networkx
+- Python Modules: tqdm, pandas, numpy, pickle, networkx
 
 ## Running Test cases:
 #### 1. Clone the repository using following command:
