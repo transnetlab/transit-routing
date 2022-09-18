@@ -42,6 +42,10 @@ def build_save_stops_dict(stop_times_file, trips_file, FOLDER: str)-> dict:
         stops_dict (dict): keys: route_id, values: list of stop id in the route_id. Format-> dict[route_id] = [stop_id]
     """
     print("building stops dict")
+    import os
+    path = f'./dict_builder/{FOLDER}/'
+    if not os.path.exists(f'./dict_builder/{FOLDER}/'):
+        os.makedirs(path)
 
     trips_group = stop_times_file.groupby("trip_id")  # This drops all trips for which timestamps are not sorted
 
