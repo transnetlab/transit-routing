@@ -104,12 +104,12 @@ def main():
 
 if __name__ == "__main__":
     # Read network
-    FOLDER = './swiss'
+    network_name = './swiss'
 
     stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(
-        FOLDER)
+        network_name)
 
-    with open(f'./GTFS/{FOLDER}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
+    with open(f'./GTFS/{network_name}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
         trip_transfer_dict = pickle.load(file)
     trip_set = set(trip_transfer_dict.keys())
     print_network_details(transfers_file, trips_file, stops_file)
@@ -124,8 +124,8 @@ if __name__ == "__main__":
     CHANGE_TIME_SEC = 0
     PRINT_ITINERARY = 1
     OPTIMIZED = 0
-    stop_out, route_groups, _, trip_groups = read_partitions(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2", partitioning_algorithm="kahypar")
-    nested_stop_out, nested_route_groups, _, nested_trip_groups = read_nested_partitions(stop_times_file, FOLDER, no_of_partitions=4, weighting_scheme="S2")
+    stop_out, route_groups, _, trip_groups = read_partitions(stop_times_file, network_name, no_of_partitions=4, weighting_scheme="S2", partitioning_algorithm="kahypar")
+    nested_stop_out, nested_route_groups, _, nested_trip_groups = read_nested_partitions(stop_times_file, network_name, no_of_partitions=4, weighting_scheme="S2")
 
     # main function
     d_time_groups = stop_times_file.groupby("stop_id")

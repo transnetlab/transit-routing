@@ -9,12 +9,12 @@ import pandas
 import pandas as pd
 
 
-def read_testcase(FOLDER: str) -> tuple:
+def read_testcase(network_name: str) -> tuple:
     """
     Reads the GTFS network and preprocessed dict. If the dicts are not present, dict_builder_functions are called to construct them.
 
     Args:
-        FOLDER (str): GTFS path
+        network_name (str): GTFS path
 
     Returns:
         stops_file (pandas.dataframe):  stops.txt file in GTFS.
@@ -28,20 +28,20 @@ def read_testcase(FOLDER: str) -> tuple:
         idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
 
     Examples:
-        >>> FOLDER = './swiss'
-        >>> read_testcase('FOLDER')
+        >>> network_name = './swiss'
+        >>> read_testcase('network_name')
     """
     import gtfs_loader
     from dict_builder import dict_builder_functions
-    stops_file, trips_file, stop_times_file, transfers_file = gtfs_loader.load_all_db(FOLDER)
+    stops_file, trips_file, stop_times_file, transfers_file = gtfs_loader.load_all_db(network_name)
     try:
-        stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = gtfs_loader.load_all_dict(FOLDER)
+        stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = gtfs_loader.load_all_dict(network_name)
     except FileNotFoundError:
-        stops_dict = dict_builder_functions.build_save_stops_dict(stop_times_file, trips_file, FOLDER)
-        stoptimes_dict = dict_builder_functions.build_save_stopstimes_dict(stop_times_file, trips_file, FOLDER)
-        routes_by_stop_dict = dict_builder_functions.build_save_route_by_stop(stop_times_file, FOLDER)
-        footpath_dict = dict_builder_functions.build_save_footpath_dict(transfers_file, FOLDER)
-        idx_by_route_stop_dict = dict_builder_functions.stop_idx_in_route(stop_times_file, FOLDER)
+        stops_dict = dict_builder_functions.build_save_stops_dict(stop_times_file, trips_file, network_name)
+        stoptimes_dict = dict_builder_functions.build_save_stopstimes_dict(stop_times_file, trips_file, network_name)
+        routes_by_stop_dict = dict_builder_functions.build_save_route_by_stop(stop_times_file, network_name)
+        footpath_dict = dict_builder_functions.build_save_footpath_dict(transfers_file, network_name)
+        idx_by_route_stop_dict = dict_builder_functions.stop_idx_in_route(stop_times_file, network_name)
     return stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict
 
 
@@ -126,13 +126,13 @@ def print_query_parameters(SOURCE: int, DESTINATION, D_TIME, MAX_TRANSFER: int, 
     return None
 
 
-def read_partitions(stop_times_file, FOLDER: str, no_of_partitions: int, weighting_scheme: str, partitioning_algorithm: str) -> tuple:
+def read_partitions(stop_times_file, network_name: str, no_of_partitions: int, weighting_scheme: str, partitioning_algorithm: str) -> tuple:
     """
     Reads the fill-in information.
 
     Args:
         stop_times_file (pandas.dataframe): dataframe with stoptimes details
-        FOLDER (str): path to network folder.
+        network_name (str): path to network network_name.
         no_of_partitions (int): number of partitions network has been divided into.
         weighting_scheme (str): which weighing scheme has been used to generate partitions.
         partitioning_algorithm (str):which algorithm has been used to generate partitions. Currently supported arguments are hmetis or kahypar.
@@ -145,14 +145,14 @@ def read_partitions(stop_times_file, FOLDER: str, no_of_partitions: int, weighti
     """
     import itertools
     if partitioning_algorithm == "hmetis":
-        route_out = pd.read_csv(f'./partitions/{FOLDER}/routeout_{weighting_scheme}_{no_of_partitions}.csv',
+        route_out = pd.read_csv(f'./partitions/{network_name}/routeout_{weighting_scheme}_{no_of_partitions}.csv',
                                 usecols=['path_id', 'group']).groupby('group')
-        stop_out = pd.read_csv(f'./partitions/{FOLDER}/cutstops_{weighting_scheme}_{no_of_partitions}.csv', usecols=['stop_id', 'g_id'])
-        fill_ins = pd.read_csv(f'./partitions/{FOLDER}/fill_ins_{weighting_scheme}_{no_of_partitions}.csv')
+        stop_out = pd.read_csv(f'./partitions/{network_name}/cutstops_{weighting_scheme}_{no_of_partitions}.csv', usecols=['stop_id', 'g_id'])
+        fill_ins = pd.read_csv(f'./partitions/{network_name}/fill_ins_{weighting_scheme}_{no_of_partitions}.csv')
     elif partitioning_algorithm == "kahypar":
-        route_out = pd.read_csv(f'./kpartitions/{FOLDER}/routeout_{weighting_scheme}_{no_of_partitions}.csv', usecols=['path_id', 'group']).groupby('group')
-        stop_out = pd.read_csv(f'./kpartitions/{FOLDER}/cutstops_{weighting_scheme}_{no_of_partitions}.csv', usecols=['stop_id', 'g_id']).astype(int)
-        fill_ins = pd.read_csv(f'./kpartitions/{FOLDER}/fill_ins_{weighting_scheme}_{no_of_partitions}.csv')
+        route_out = pd.read_csv(f'./kpartitions/{network_name}/routeout_{weighting_scheme}_{no_of_partitions}.csv', usecols=['path_id', 'group']).groupby('group')
+        stop_out = pd.read_csv(f'./kpartitions/{network_name}/cutstops_{weighting_scheme}_{no_of_partitions}.csv', usecols=['stop_id', 'g_id']).astype(int)
+        fill_ins = pd.read_csv(f'./kpartitions/{network_name}/fill_ins_{weighting_scheme}_{no_of_partitions}.csv')
 
     fill_ins.fillna(-1, inplace=True)
     fill_ins['routes'] = fill_ins['routes'].astype(int)
@@ -188,13 +188,13 @@ def read_partitions(stop_times_file, FOLDER: str, no_of_partitions: int, weighti
     return stop_out, route_groups, cut_trips, trip_groups
 
 
-def read_nested_partitions(stop_times_file, FOLDER: str, no_of_partitions: int, weighting_scheme: str) -> tuple:
+def read_nested_partitions(stop_times_file, network_name: str, no_of_partitions: int, weighting_scheme: str) -> tuple:
     """
     Read fill-ins in case of nested partitioning.
 
     Args:
         stop_times_file (pandas.dataframe): dataframe with stoptimes details
-        FOLDER (str): path to network folder.
+        network_name (str): path to network network_name.
         no_of_partitions (int): number of partitions network has been divided into.
         weighting_scheme (str): which weighing scheme has been used to generate partitions.
 
@@ -209,9 +209,9 @@ def read_nested_partitions(stop_times_file, FOLDER: str, no_of_partitions: int, 
     warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
     import itertools
     main_partitions = no_of_partitions
-    route_out = pd.read_csv(f'./kpartitions/{FOLDER}/nested/nested_route_out_{weighting_scheme}_{main_partitions}.csv')
-    stop_out = pd.read_csv(f'./kpartitions/{FOLDER}/nested/nested_cutstops_{weighting_scheme}_{main_partitions}.csv')
-    fill_ins = pd.read_csv(f'./kpartitions/{FOLDER}//nested/nested_fill_ins_{weighting_scheme}_{main_partitions}.csv')
+    route_out = pd.read_csv(f'./kpartitions/{network_name}/nested/nested_route_out_{weighting_scheme}_{main_partitions}.csv')
+    stop_out = pd.read_csv(f'./kpartitions/{network_name}/nested/nested_cutstops_{weighting_scheme}_{main_partitions}.csv')
+    fill_ins = pd.read_csv(f'./kpartitions/{network_name}//nested/nested_fill_ins_{weighting_scheme}_{main_partitions}.csv')
     fill_ins.fillna(-1, inplace=True)
     fill_ins['routes'] = fill_ins['routes'].astype(int)
     temp = stop_out.drop(columns=['lat', 'long', 'boundary_g_id'])
@@ -300,20 +300,20 @@ def check_nonoverlap(stoptimes_dict: dict, stops_dict: dict) -> set:
     return overlap
 
 
-def get_full_trans(FOLDER: str, time_limit) -> None:
+def get_full_trans(network_name: str, time_limit) -> None:
     '''
     Make the footpath graph transitively close and saves it in the form of transfer_dict
     Note: time_limit="full" means consider all footpaths
 
     Args:
-        FOLDER (str): Network FOLDER
+        network_name (str): Network network_name
         time_limit (str/int): maximum footpath duration to be considered (before footpath graph is made transitively closed)
 
     Returns:
         None
     '''
     #    print('editing transfers')
-    transfers_file = pd.read_csv(f'./GTFS/{FOLDER[2:]}/transfers.txt', sep=',')
+    transfers_file = pd.read_csv(f'./GTFS/{network_name[2:]}/transfers.txt', sep=',')
     ini_len = len(transfers_file)
     # print(f"initial graph transfer {len(transfers_file)}")
     if time_limit != "full":
@@ -333,7 +333,7 @@ def get_full_trans(FOLDER: str, time_limit) -> None:
     footpath_db = pd.DataFrame(footpath)
     footpath_db[2] = footpath_db[2].apply(lambda x: list(x.values())[0])
     footpath_db.rename(columns={0: "from_stop_id", 1: "to_stop_id", 2: "min_transfer_time"}, inplace=True)
-    footpath_db.to_csv(f'./GTFS/{FOLDER}/transfers_full.csv', index=False)
+    footpath_db.to_csv(f'./GTFS/{network_name}/transfers_full.csv', index=False)
     if len(footpath_db) != ini_len:
         print(f"initial graph transfer {len(transfers_file)}")
         print(f"full graph transfer {len(footpath_db)}")
@@ -345,7 +345,7 @@ def get_full_trans(FOLDER: str, time_limit) -> None:
         for _, row in details.iterrows():
             transfers_dict[from_stop].append(
                 (row.to_stop_id, pd.to_timedelta(float(row.min_transfer_time), unit='seconds')))
-    with open(f'./dict_builder/{FOLDER}/transfers_dict_full.pkl', 'wb') as pickle_file:
+    with open(f'./dict_builder/{network_name}/transfers_dict_full.pkl', 'wb') as pickle_file:
         pickle.dump(transfers_dict, pickle_file)
     return None
 
@@ -377,13 +377,13 @@ def check_footpath(footpath_dict: dict) -> None:
     return None
 
 
-def get_random_od(routes_by_stop_dict: dict, FOLDER: str)-> None:
+def get_random_od(routes_by_stop_dict: dict, network_name: str)-> None:
     """
     Generate Random OD pairs.
 
     Args:
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
-        FOLDER (str): Network FOLDER
+        network_name (str): Network network_name
 
     Returns:
         None
@@ -396,6 +396,6 @@ def get_random_od(routes_by_stop_dict: dict, FOLDER: str)-> None:
                             columns=["SOURCE", "DESTINATION"])
         random_od_db = random_od_db.append(temp, ignore_index=True).drop_duplicates()
         random_od_db = random_od_db[random_od_db['SOURCE'] != random_od_db['DESTINATION']].reset_index(drop=True)
-    random_od_db.iloc[:desired_len].to_csv(f'./partitions/test_od/random_od_{FOLDER[2:]}.csv', index=False)
-    print(f"{FOLDER} random OD saved")
+    random_od_db.iloc[:desired_len].to_csv(f'./partitions/test_od/random_od_{network_name[2:]}.csv', index=False)
+    print(f"{network_name} random OD saved")
     return None
