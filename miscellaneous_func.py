@@ -396,6 +396,6 @@ def get_random_od(routes_by_stop_dict: dict, NETWORK_NAME: str)-> None:
                             columns=["SOURCE", "DESTINATION"])
         random_od_db = random_od_db.append(temp, ignore_index=True).drop_duplicates()
         random_od_db = random_od_db[random_od_db['SOURCE'] != random_od_db['DESTINATION']].reset_index(drop=True)
-    random_od_db.iloc[:desired_len].to_csv(f'./partitions/test_od/random_od_{NETWORK_NAME[2:]}.csv', index=False)
+    random_od_db.iloc[:desired_len].to_csv(f"./GTFS/{NETWORK_NAME[2:]}_randomOD.csv", index=False)
     print(f"{NETWORK_NAME} random OD saved")
     return None
