@@ -21,12 +21,12 @@ def build_save_route_by_stop(stop_times_file, NETWORK_NAME: str) -> dict:
     print("building routes_by_stop")
     stops_by_route = stop_times_file.drop_duplicates(subset=['route_id', 'stop_sequence'])[
         ['stop_id', 'route_id']].groupby('stop_id')
-    route_by_stop_dict_new = {id: list(routes.route_id) for id, routes in stops_by_route}
+    route_by_stop_dict = {id: list(routes.route_id) for id, routes in stops_by_route}
 
     with open(f'./dict_builder/{NETWORK_NAME}/routes_by_stop.pkl', 'wb') as pickle_file:
-        pickle.dump(route_by_stop_dict_new, pickle_file)
+        pickle.dump(route_by_stop_dict, pickle_file)
     print("routes_by_stop done")
-    return route_by_stop_dict_new
+    return route_by_stop_dict
 
 
 def build_save_stops_dict(stop_times_file, trips_file, NETWORK_NAME: str)-> dict:
@@ -53,8 +53,7 @@ def build_save_stops_dict(stop_times_file, trips_file, NETWORK_NAME: str)-> dict
     if len(trips_with_correct_timestamps) != len(trips_file):
         print(f"Incorrect time sequence in stoptimes builder file")
     stop_times = stop_times_file[stop_times_file["trip_id"].isin(trips_with_correct_timestamps)]
-    route_groups = stop_times.drop_duplicates(subset=['route_id', 'stop_sequence'])[
-        ['stop_id', 'route_id', 'stop_sequence']].groupby('route_id')
+    route_groups = stop_times.drop_duplicates(subset=['route_id', 'stop_sequence'])[['stop_id', 'route_id', 'stop_sequence']].groupby('route_id')
     stops_dict = {id: routes.sort_values(by='stop_sequence')['stop_id'].to_list() for id, routes in route_groups}
 
     with open(f'./dict_builder/{NETWORK_NAME}/stops_dict_pkl.pkl', 'wb') as pickle_file:
