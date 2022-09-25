@@ -1,5 +1,5 @@
 """
-This is the Main module.
+Runs the query algorithm
 """
 
 from RAPTOR.hypraptor import hypraptor

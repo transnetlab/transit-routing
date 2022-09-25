@@ -1,3 +1,7 @@
+"""
+THis is the main module.
+"""
+
 import os
 
 os.system('python GTFS_wrapper.py')

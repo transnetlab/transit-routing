@@ -1,3 +1,6 @@
+"""
+Builds the transfer.txt file.
+"""
 import networkx as nx
 import osmnx as ox
 import multiprocessing

@@ -1,3 +1,6 @@
+"""
+Builds data structure for TBTR related algorithms
+"""
 from itertools import chain
 import os
 import multiprocessing
