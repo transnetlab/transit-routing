@@ -3,9 +3,9 @@ Module contains miscellaneous functions used for reading data, printing logo etc
 """
 import pickle
 from random import sample
+import os
 
 import networkx as nx
-import pandas
 import pandas as pd
 
 
@@ -34,9 +34,12 @@ def read_testcase(NETWORK_NAME: str) -> tuple:
     import gtfs_loader
     from dict_builder import dict_builder_functions
     stops_file, trips_file, stop_times_file, transfers_file = gtfs_loader.load_all_db(NETWORK_NAME)
+    if not os.path.exists(f'./dict_builder/{NETWORK_NAME}/'):
+        os.makedirs(f'./dict_builder/{NETWORK_NAME}/')
     try:
         stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = gtfs_loader.load_all_dict(NETWORK_NAME)
     except FileNotFoundError:
+        print("Building required dictionaries")
         stops_dict = dict_builder_functions.build_save_stops_dict(stop_times_file, trips_file, NETWORK_NAME)
         stoptimes_dict = dict_builder_functions.build_save_stopstimes_dict(stop_times_file, trips_file, NETWORK_NAME)
         routes_by_stop_dict = dict_builder_functions.build_save_route_by_stop(stop_times_file, NETWORK_NAME)
@@ -150,7 +153,8 @@ def read_partitions(stop_times_file, NETWORK_NAME: str, no_of_partitions: int, w
         stop_out = pd.read_csv(f'./partitions/{NETWORK_NAME}/cutstops_{weighting_scheme}_{no_of_partitions}.csv', usecols=['stop_id', 'g_id'])
         fill_ins = pd.read_csv(f'./partitions/{NETWORK_NAME}/fill_ins_{weighting_scheme}_{no_of_partitions}.csv')
     elif partitioning_algorithm == "kahypar":
-        route_out = pd.read_csv(f'./kpartitions/{NETWORK_NAME}/routeout_{weighting_scheme}_{no_of_partitions}.csv', usecols=['path_id', 'group']).groupby('group')
+        route_out = pd.read_csv(f'./kpartitions/{NETWORK_NAME}/routeout_{weighting_scheme}_{no_of_partitions}.csv', usecols=['path_id', 'group']).groupby(
+            'group')
         stop_out = pd.read_csv(f'./kpartitions/{NETWORK_NAME}/cutstops_{weighting_scheme}_{no_of_partitions}.csv', usecols=['stop_id', 'g_id']).astype(int)
         fill_ins = pd.read_csv(f'./kpartitions/{NETWORK_NAME}/fill_ins_{weighting_scheme}_{no_of_partitions}.csv')
 
@@ -270,7 +274,7 @@ def check_nonoverlap(stoptimes_dict: dict, stops_dict: dict) -> set:
     for x in stops_dict.items():
         if len(x[1]) != len(set(x[1])):
             print(f'duplicates stops in a route {x}')
-    overlap = set()     #Collect routes with non-overlapping trips
+    overlap = set()  # Collect routes with non-overlapping trips
     for r_idx, route_trips in stoptimes_dict.items():
         for x in range(len(route_trips) - 1):
             first_trip = route_trips[x]
@@ -280,7 +284,7 @@ def check_nonoverlap(stoptimes_dict: dict, stops_dict: dict) -> set:
     if overlap:
         print(f"{len(overlap)} have overlapping trips")
         while overlap:
-            for r_idx in overlap:       #Correct routes with non-overlapping trips
+            for r_idx in overlap:  # Correct routes with non-overlapping trips
                 route_trips = stoptimes_dict[r_idx].copy()
                 for x in range(len(route_trips) - 1):
                     first_trip = route_trips[x]
@@ -288,7 +292,7 @@ def check_nonoverlap(stoptimes_dict: dict, stops_dict: dict) -> set:
                     for idx, _ in enumerate(first_trip):
                         if second_trip[idx][1] <= first_trip[idx][1]:
                             stoptimes_dict[r_idx][x][idx] = (second_trip[idx][0], second_trip[idx][1] - pd.to_timedelta(1, unit="seconds"))
-            overlap = set()             #Collect (again) routes with non-overlapping trips
+            overlap = set()  # Collect (again) routes with non-overlapping trips
             for r_idx, route_trips in stoptimes_dict.items():
                 for x in range(len(route_trips) - 1):
                     first_trip = route_trips[x]
@@ -377,7 +381,7 @@ def check_footpath(footpath_dict: dict) -> None:
     return None
 
 
-def get_random_od(routes_by_stop_dict: dict, NETWORK_NAME: str)-> None:
+def get_random_od(routes_by_stop_dict: dict, NETWORK_NAME: str) -> None:
     """
     Generate Random OD pairs.
 
