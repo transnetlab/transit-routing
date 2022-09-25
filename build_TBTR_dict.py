@@ -22,6 +22,7 @@ from miscellaneous_func import *
 def algorithm1_parallel(route_details: tuple) -> list:
     """
     Collects all possible trip transfers.
+
     Args:
         route_details (list): tuple of format: (route id, list of trips)
 
@@ -70,6 +71,7 @@ def algorithm1_parallel(route_details: tuple) -> list:
 def algorithm2_parallel(trip_transfer_: list) :
     """
     Removes trip transfers which cause U-turns.
+
     Args:
         trip_transfer_ (list): trip transfers. Format : ['index', 'from_routeid', 'from_tid', 'to_routeid', 'to_tid', 'from_stop_index', 'to_stop_index']
 
@@ -91,6 +93,7 @@ def algorithm2_parallel(trip_transfer_: list) :
 def algorithm3_parallel(trip_details: tuple)-> list:
     """
     Removes trip transfers that are not part of any optimal journey
+
     Args:
         trip_details: tuple of form: (route_id, trip_id, trip)
 
