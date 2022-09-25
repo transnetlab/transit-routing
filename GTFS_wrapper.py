@@ -8,7 +8,13 @@ from math import ceil
 import pickle
 
 
-def take_inputs():
+def take_inputs() -> tuple:
+    '''
+    Takes the required inputs for building GTFS wrapper
+
+    Returns:
+        NETWORK_NAME, DATE_TOFILTER_ON, VALID_ROUTE_TYPES, BUILD_TRANSFER, breaker, READ_PATH, SAVE_PATH
+    '''
     print("Rename the gtfs.zip to network_gtfs.zip and place it in main directory"
           "For example, for chicago, place the chicago_gtfs.zip in the main directory.")
 
@@ -58,6 +64,7 @@ def read_gtfs(READ_PATH: str, NETWORK_NAME: str):
     Args:
         READ_PATH (str): Path to read GTFS
         NETWORK_NAME (str): Network name
+
     Returns:
         GTFS files
     """
@@ -136,6 +143,7 @@ def filter_trips_routes_ondates(valid_routes_set: set, calendar_dates, calendar,
 
     Returns:
         Filtered trips file and a set of valid trips and routes.
+
     Note:
         calendar_dates can be used in two sense. In the first case, it acts as a supplement to calendar.txt by defining listing the service id
         removed or added on a particular day (recommended usage).In the second case, it acts independently by listing all the service active
@@ -213,7 +221,7 @@ def filter_stoptimes(valid_trips: set, trips, DATE_TOFILTER_ON: int, stop_times)
 
 def filter_stopsfile(stops_map, stops):
     """
-        Apply filter to stops file
+    Apply filter to stops file
 
     Args:
         stops_map: stop id mapping
