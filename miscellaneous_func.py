@@ -89,7 +89,7 @@ def print_network_details(transfers_file, trips_file, stops_file) -> None:
     return None
 
 
-def print_query_parameters(SOURCE: int, DESTINATION, D_TIME, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, variant: int,
+def print_query_parameters(NETWORK_NAME: str, SOURCE: int, DESTINATION, D_TIME, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, variant: int,
                            no_of_partitions=None, weighting_scheme=None, partitioning_algorithm=None) -> None:
     """
     Prints the input parameters related to the shortest path query
@@ -112,7 +112,7 @@ def print_query_parameters(SOURCE: int, DESTINATION, D_TIME, MAX_TRANSFER: int, 
         None
     """
     print("___________________Query Parameters__________________")
-    print("Network: Switzerland")
+    print(f"Network: {NETWORK_NAME}")
     print(f"SOURCE stop id: {SOURCE}")
     print(f"DESTINATION stop id: {DESTINATION}")
     print(f"Maximum Transfer allowed: {MAX_TRANSFER}")
