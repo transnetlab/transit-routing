@@ -13,7 +13,9 @@ from TBTR.tbtr import tbtr
 from miscellaneous_func import *
 
 print_logo()
-print("Reading Testcase...")
+
+
+# print("Reading Testcase...")
 
 
 def take_inputs():
@@ -43,7 +45,7 @@ def main():
     Runs the test case depending upon the values of algorithm, variant
     """
     algorithm, variant = take_inputs()
-    print_query_parameters(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, variant, no_of_partitions=4,
+    print_query_parameters(NETWORK_NAME, SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, variant, no_of_partitions=4,
                            weighting_scheme="S2", partitioning_algorithm="KaHyPar")
     if algorithm == 0:
         if variant == 0:
@@ -104,28 +106,61 @@ def main():
 
 if __name__ == "__main__":
     # Read network
-    NETWORK_NAME = './swiss'
+    USE_TESTCASE = int(input("Press 1 to use test case (chicago), 0 to enter values manually\n: "))
+    if USE_TESTCASE == 1:
+        NETWORK_NAME = './chicago'
 
-    stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(
-        NETWORK_NAME)
+        stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(
+            NETWORK_NAME)
+        try:
+            with open(f'./GTFS/{NETWORK_NAME}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
+                trip_transfer_dict = pickle.load(file)
+            trip_set = set(trip_transfer_dict.keys())
+        except FileNotFoundError:
+            print("TBTR preprocessing missing for Chicago.")
+        print_network_details(transfers_file, trips_file, stops_file)
 
-    with open(f'./GTFS/{NETWORK_NAME}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
-        trip_transfer_dict = pickle.load(file)
-    trip_set = set(trip_transfer_dict.keys())
-    print_network_details(transfers_file, trips_file, stops_file)
+        # Query parameters
+        SOURCE, DESTINATION, DESTINATION_LIST = 10213, 232, [232]
+        D_TIME = stop_times_file.arrival_time.sort_values().iloc[0]
+        MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC = 4, 1, 0
+        PRINT_ITINERARY, OPTIMIZED = 1, 0
+        # TODO add partition testcases
 
-    # Query parameters
-    SOURCE = 20775
-    DESTINATION = 1482
-    DESTINATION_LIST = [1482]
-    D_TIME = stop_times_file.arrival_time.sort_values().iloc[0]
-    MAX_TRANSFER = 4
-    WALKING_FROM_SOURCE = 1
-    CHANGE_TIME_SEC = 0
-    PRINT_ITINERARY = 1
-    OPTIMIZED = 0
-    stop_out, route_groups, _, trip_groups = read_partitions(stop_times_file, NETWORK_NAME, no_of_partitions=4, weighting_scheme="S2", partitioning_algorithm="kahypar")
-    nested_stop_out, nested_route_groups, _, nested_trip_groups = read_nested_partitions(stop_times_file, NETWORK_NAME, no_of_partitions=4, weighting_scheme="S2")
+        # stop_out, route_groups, _, trip_groups = read_partitions(stop_times_file, NETWORK_NAME, no_of_partitions=4, weighting_scheme="S2", partitioning_algorithm="kahypar")
+        # nested_stop_out, nested_route_groups, _, nested_trip_groups = read_nested_partitions(stop_times_file, NETWORK_NAME, no_of_partitions=4, weighting_scheme="S2")
+
+    else:
+        NETWORK_NAME = input("Enter Network name in small case. Example: chicago\n: ")
+
+        stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(
+            NETWORK_NAME)
+
+        try:
+            with open(f'./GTFS/{NETWORK_NAME}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
+                trip_transfer_dict = pickle.load(file)
+            trip_set = set(trip_transfer_dict.keys())
+        except FileNotFoundError:
+            print("TBTR preprocessing missing for Chicago.")
+        print_network_details(transfers_file, trips_file, stops_file)
+
+        SOURCE = int(input("Enter source stop id\n: "))
+        DESTINATION = int(input("Enter destination stop id\n: "))
+        D_TIME = input("Enter departure time. Format: YYYY-MM-DD HH-MM-SS (24 hour format)\n: ")
+        MAX_TRANSFER = int(input("Maximum transfer limit\n: "))
+        WALKING_FROM_SOURCE = int(input("Press 1 to allow walking from source, else 0\n: "))
+        CHANGE_TIME_SEC = int(input("Enter change time (in seconds) \n: "))
+        PRINT_ITINERARY, OPTIMIZED = 1, 0
+        PARTITIONING_PARAMETER = int(input("Press 1 to enter partitioning related parameters. Else press 0\n: "))
+        if PARTITIONING_PARAMETER == 1:
+            NO_OF_PARTITION = int(input("Enter number of partitions\n: "))
+            WEIGHING_SCHEME = str(input("Enter weighing scheme [S1, S2, S3 S4 S5 S6]\n: "))
+
+            stop_out, route_groups, _, trip_groups = read_partitions(stop_times_file, NETWORK_NAME, no_of_partitions=NO_OF_PARTITION,
+                                                                     weighting_scheme=WEIGHING_SCHEME, partitioning_algorithm="kahypar")
+            nested_stop_out, nested_route_groups, _, nested_trip_groups = read_nested_partitions(stop_times_file, NETWORK_NAME,
+                                                                                                 no_of_partitions=NO_OF_PARTITION,
+                                                                                                 weighting_scheme=WEIGHING_SCHEME)
 
     # main function
     d_time_groups = stop_times_file.groupby("stop_id")
