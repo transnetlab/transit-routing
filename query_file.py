@@ -21,6 +21,7 @@ print_logo()
 def take_inputs():
     """
     defines the use input
+
     Returns:
         algorithm (int): algorithm type. 0 for RAPTOR and 1 for TBTR
         variant (int): variant of the algorithm. 0 for normal version,
