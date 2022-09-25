@@ -54,12 +54,26 @@
 <li><p>Stop sequence in stoptimes.txt file is made continuous.</p></li>
 <li><p>Overlapping trips along a route are removed</p></li>
 <li><p>Disjoint routes (i.e., routes which cannot be reached from any other route in the network) are removed. These generally include waterways, airways.</p></li>
-<li><p>Transfers file in the GTFS set is prepared externally using <a class="reference external" href="https://www.openstreetmap.org/">OpenStreetMaps</a>. Additionally, footpaths are also required to be transitively closed. See References for details.</p></li>
 <li><p>The timetable provided is for a day. All the timestamps are converted into pandas.datetime format.</p></li>
+<li><p>calendar_dates can be used in two sense. In the first case, it acts as a supplement to calendar.txt by defining listing the service id removed or added on a particular day (recommended usage).In the second case, it acts independently by listing all the service active on the particular day. See  GTFS reference for more details. Currently only first type of functionality is supported.</p></li>
 </ul>
 </dd>
 </dl>
-<p>For implementation details, see <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/Switzerland_wrapper.py">Switzerland_wrapper.py</a>.</p>
+<p>For implementation details, see <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/GTFS_wrapper.py">GTFS_wrapper.py</a>.</p>
+</li>
+<li><dl class="simple">
+<dt><a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/build_transfer_file.py">build_transfer_file.py</a>. has been provided to transfers_file.txt. This module requires OSMNX package. Following inputs are required:</dt><dd><ul class="simple">
+<li><p>The graph (if not found on disk) is extracted using <a class="reference external" href="https://www.openstreetmap.org/#map=4/21.84/82.79">OpenStreetMaps</a></p></li>
+<li><p>For every stop, shortest path comutation is performaed within a radius maximum walking limit.</p></li>
+<li><p>Ensures the transitive closure of footpaths.</p></li>
+</ul>
+</dd>
+<dt>Following additional inputs are required.</dt><dd><ul class="simple">
+<li><p>WALKING_LIMIT (int)- Maximum allowed walking time. Note that the final transfers file can have longer transfers due to transitive closure.</p></li>
+<li><p>CORES (int): Number of codes to be used. Shortest path computation can be done in parallel.</p></li>
+</ul>
+</dd>
+</dl>
 </li>
 <li><dl class="simple">
 <dt>For faster lookup, the GTFS set is post-processed into several dictionaries and provided as pickle files.</dt><dd><ul class="simple">

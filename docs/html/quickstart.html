@@ -61,24 +61,26 @@
 </pre></div>
 </div>
 </li>
-<li><p>Run <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a></p></li>
-<li><p>Select following options when prompted:</p></li>
+<li><p>Run <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a> using following command:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
 </ol>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">algorithm</span>&#160; <span class="pre">-&gt;</span> <span class="pre">0</span> <span class="pre">or</span> <span class="pre">1</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">variant</span>&#160;&#160;&#160;&#160; <span class="pre">-&gt;</span> <span class="pre">0</span> <span class="pre">or</span> <span class="pre">1</span> <span class="pre">or</span> <span class="pre">2</span> <span class="pre">or</span> <span class="pre">3</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">test_case</span>&#160; <span class="pre">-&gt;</span> <span class="pre">0</span></code></p>
+<div><p>In case of error, edit <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a></p>
 </div></blockquote>
+<ol class="arabic simple">
+<li><p>For running the test case, enter the prompted values</p></li>
+</ol>
 </div></blockquote>
-<p>To run algorithms on a different GTFS set, enter the network details in <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a>.</p>
 </div>
 <div class="section" id="dataset-generation">
 <h2>Dataset generation<a class="headerlink" href="#dataset-generation" title="Permalink to this headline">¶</a></h2>
 <p>Due to inconsistencies in the GTFS sets available online, they cannot be used directly.
 Moreover, a significant amount of preprocessing (e.g., transitively closed footpaths,
-non-overtaking trips, continuous stop sequence) is required. The Switzerland test network
-is generated in accordance with these.  See GTFS preprocessing
-for documentation on the same.</p>
+non-overtaking trips, continuous stop sequence) is required. The <a class="reference external" href="https://transitfeeds.com/p/chicago-transit-authority/165">Chicago</a> test network
+is generated in accordance with these. See GTFS preprocessing for further details.</p>
 </div>
 <div class="section" id="additional-notes">
 <h2>Additional notes<a class="headerlink" href="#additional-notes" title="Permalink to this headline">¶</a></h2>

@@ -16,23 +16,23 @@ Running Test cases
 
        gh repo clone transnetlab/transit-routing
 
- #. Run `main.py <https://github.com/transnetlab/transit-routing/blob/main/main.py>`_
- #. Select following options when prompted:
-   ``algorithm  -> 0 or 1``
+ #. Run `main.py <https://github.com/transnetlab/transit-routing/blob/main/main.py>`_ using following command:
 
-   ``variant     -> 0 or 1 or 2 or 3``
+    .. code-block:: python
 
-   ``test_case  -> 0``
+         python main.py
 
-To run algorithms on a different GTFS set, enter the network details in `main.py <https://github.com/transnetlab/transit-routing/blob/main/main.py>`_.
+   In case of error, edit `main.py <https://github.com/transnetlab/transit-routing/blob/main/main.py>`_
+
+ #. For running the test case, enter the prompted values
+
 
 Dataset generation
 ------------------
 Due to inconsistencies in the GTFS sets available online, they cannot be used directly. 
 Moreover, a significant amount of preprocessing (e.g., transitively closed footpaths,
-non-overtaking trips, continuous stop sequence) is required. The Switzerland test network
-is generated in accordance with these.  See GTFS preprocessing
-for documentation on the same. 
+non-overtaking trips, continuous stop sequence) is required. The `Chicago <https://transitfeeds.com/p/chicago-transit-authority/165>`_ test network
+is generated in accordance with these. See GTFS preprocessing for further details. 
 
 Additional notes
 ------------------

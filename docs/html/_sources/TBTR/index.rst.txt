@@ -13,7 +13,7 @@ TBTR solves the bicriterion (travel time and transfer) optimization problem usin
    rraptor
    one_many_tbtr
    TBTR_functions
-   
+   build_TBTR_dict
 
 
 Refrences
