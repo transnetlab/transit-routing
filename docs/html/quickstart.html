@@ -61,26 +61,58 @@
 </pre></div>
 </div>
 </li>
-<li><p>Run <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a> using following command:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span>
+<li><p>Run the following commands inside transit-routing-main directory. In case of error, edit <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -r requirements.txt
+python main.py
+</pre></div>
+</div>
+</li>
+<li><p>Enter following parameters when prompted:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Network</span> <span class="n">name</span><span class="p">:</span> <span class="n">Chicago</span>
+<span class="n">Date</span><span class="p">:</span> <span class="mi">20220815</span>
+<span class="n">Bus</span> <span class="n">routes</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">build</span> <span class="n">transfers</span> <span class="n">file</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">build</span> <span class="n">TBTR</span> <span class="n">files</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">use</span> <span class="n">test</span> <span class="n">case</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">RAPTOR</span> <span class="n">environment</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">Standard</span> <span class="n">RAPTOR</span><span class="p">:</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</li>
+<li><p>Following output should be displayed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>___________________Query Parameters__________________
+Network: ./chicago
+SOURCE stop id: 6465
+DESTINATION stop id: 8781
+Maximum Transfer allowed: 4
+Is walking from SOURCE allowed ?: 1
+Earliest departure time: 2022-08-15 00:00:00
+_____________________________________________________
+from 6465 walk till  2651.0 for 51.7 seconds
+from 2651 board at 00:24:06 and get down on 3685 at 00:26:04 along 1045_0
+from 3685 walk till  1929.0 for 144.6 seconds
+from 1929 board at 00:52:03 and get down on 7906 at 01:01:44 along 1392_1
+from 7906 board at 04:04:35 and get down on 8781 at 04:06:46 along 1432_1
+####################################
+from 6465 board at 05:03:01 and get down on 2300 at 05:12:00 along 1549_0
+from 2300 board at 05:27:00 and get down on 8781 at 05:34:58 along 1432_4
+####################################
+Optimal arrival time are: [[Timestamp(&#39;2022-08-15 04:06:46&#39;), Timestamp(&#39;2022-08-15 05:34:58&#39;)]]
 </pre></div>
 </div>
 </li>
 </ol>
-<blockquote>
-<div><p>In case of error, edit <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a></p>
-</div></blockquote>
-<ol class="arabic simple">
-<li><p>For running the test case, enter the prompted values</p></li>
-</ol>
 </div></blockquote>
 </div>
-<div class="section" id="dataset-generation">
-<h2>Dataset generation<a class="headerlink" href="#dataset-generation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="running-your-instance">
+<h2>Running your instance<a class="headerlink" href="#running-your-instance" title="Permalink to this headline">¶</a></h2>
 <p>Due to inconsistencies in the GTFS sets available online, they cannot be used directly.
 Moreover, a significant amount of preprocessing (e.g., transitively closed footpaths,
 non-overtaking trips, continuous stop sequence) is required. The <a class="reference external" href="https://transitfeeds.com/p/chicago-transit-authority/165">Chicago</a> test network
-is generated in accordance with these. See GTFS preprocessing for further details.</p>
+is generated in accordance with these. <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/GTFS_wrapper.py">GTFS_wrapper.py</a> provides the functions to convert GTFS set into required format. See GTFS preprocessing for further details.</p>
+<p>Rename your GTFS.zip to network_GTFS.zip (e.g. chicago_GTFS.zip) and place it in main directory. Run <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a> and
+enter the variables accordingly.</p>
+<p>Once the GTFS set is processed successfully, directly run <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/query_file.py">query_file.py</a> to find shortest paths.</p>
 </div>
 <div class="section" id="additional-notes">
 <h2>Additional notes<a class="headerlink" href="#additional-notes" title="Permalink to this headline">¶</a></h2>
@@ -105,7 +137,7 @@ is generated in accordance with these. See GTFS preprocessing for further detail
 <li><a class="reference internal" href="#">Quickstart</a><ul>
 <li><a class="reference internal" href="#requirements">Requirements</a></li>
 <li><a class="reference internal" href="#running-test-cases">Running Test cases</a></li>
-<li><a class="reference internal" href="#dataset-generation">Dataset generation</a></li>
+<li><a class="reference internal" href="#running-your-instance">Running your instance</a></li>
 <li><a class="reference internal" href="#additional-notes">Additional notes</a></li>
 </ul>
 </li>

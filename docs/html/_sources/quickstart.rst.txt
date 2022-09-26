@@ -16,23 +16,62 @@ Running Test cases
 
        gh repo clone transnetlab/transit-routing
 
- #. Run `main.py <https://github.com/transnetlab/transit-routing/blob/main/main.py>`_ using following command:
+ #. Run the following commands inside transit-routing-main directory. In case of error, edit `main.py <https://github.com/transnetlab/transit-routing/blob/main/main.py>`_
+
+    .. code-block:: bash
+
+         pip install -r requirements.txt
+         python main.py
+
+ #. Enter following parameters when prompted:
 
     .. code-block:: python
 
-         python main.py
+        Network name: Chicago
+        Date: 20220815
+        Bus routes: 3, -1
+        build transfers file: 0
+        build TBTR files: 0
+        use test case: 1
+        RAPTOR environment: 0
+        Standard RAPTOR: 0
 
-   In case of error, edit `main.py <https://github.com/transnetlab/transit-routing/blob/main/main.py>`_
+ #. Following output should be displayed:
 
- #. For running the test case, enter the prompted values
+    .. code-block:: python
+
+        ___________________Query Parameters__________________
+        Network: ./chicago
+        SOURCE stop id: 6465
+        DESTINATION stop id: 8781
+        Maximum Transfer allowed: 4
+        Is walking from SOURCE allowed ?: 1
+        Earliest departure time: 2022-08-15 00:00:00
+        _____________________________________________________
+        from 6465 walk till  2651.0 for 51.7 seconds
+        from 2651 board at 00:24:06 and get down on 3685 at 00:26:04 along 1045_0
+        from 3685 walk till  1929.0 for 144.6 seconds
+        from 1929 board at 00:52:03 and get down on 7906 at 01:01:44 along 1392_1
+        from 7906 board at 04:04:35 and get down on 8781 at 04:06:46 along 1432_1
+        ####################################
+        from 6465 board at 05:03:01 and get down on 2300 at 05:12:00 along 1549_0
+        from 2300 board at 05:27:00 and get down on 8781 at 05:34:58 along 1432_4
+        ####################################
+        Optimal arrival time are: [[Timestamp('2022-08-15 04:06:46'), Timestamp('2022-08-15 05:34:58')]]
 
 
-Dataset generation
+Running your instance
 ------------------
-Due to inconsistencies in the GTFS sets available online, they cannot be used directly. 
+Due to inconsistencies in the GTFS sets available online, they cannot be used directly.
 Moreover, a significant amount of preprocessing (e.g., transitively closed footpaths,
 non-overtaking trips, continuous stop sequence) is required. The `Chicago <https://transitfeeds.com/p/chicago-transit-authority/165>`_ test network
-is generated in accordance with these. See GTFS preprocessing for further details. 
+is generated in accordance with these. `GTFS_wrapper.py <https://github.com/transnetlab/transit-routing/blob/main/GTFS_wrapper.py>`_ provides the functions to convert GTFS set into required format. See GTFS preprocessing for further details.
+
+
+Rename your GTFS.zip to network_GTFS.zip (e.g. chicago_GTFS.zip) and place it in main directory. Run `main.py <https://github.com/transnetlab/transit-routing/blob/main/main.py>`_ and
+enter the variables accordingly.
+
+Once the GTFS set is processed successfully, directly run `query_file.py <https://github.com/transnetlab/transit-routing/blob/main/query_file.py>`_ to find shortest paths.
 
 Additional notes
 ------------------
