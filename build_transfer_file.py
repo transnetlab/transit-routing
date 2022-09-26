@@ -12,7 +12,7 @@ from time import time
 import pickle
 
 
-def extract_graph(NETWORK_NAME: str) -> tuple:
+def extract_graph(NETWORK_NAME: str, breaker: str) -> tuple:
     """
     Extracts the required OSM.
     Args:
@@ -112,7 +112,7 @@ def initialize() -> tuple:
         WALKING_LIMIT (int): Maximum allowed walking time
         start_time: timestamp object
     """
-    breaker = "________________________________"
+    breaker = "________________________________________________________________"
     print(breaker)
     print("Building transfers file. Enter following parameters.\n")
     WALKING_LIMIT = int(input("Enter maximum allowed walking limit in seconds. Format: YYYYMMDD. Example: 180\n: "))
@@ -123,7 +123,7 @@ def initialize() -> tuple:
     print(f'RAM {round(psutil.virtual_memory().total / (1024.0 ** 3))} GB (% used:{psutil.virtual_memory()[2]})')
     start_time = time()
 
-    G, stops_list = extract_graph(NETWORK_NAME)
+    G, stops_list = extract_graph(NETWORK_NAME, breaker)
     # stops_db = stops_db.sort_values(by='stop_id').reset_index(drop=True).reset_index().rename(columns={"index": 'new_stop_id'})
     # stops_list = stops_list[:10]
     print(f"Running shortest path on {CORES} CORES")
