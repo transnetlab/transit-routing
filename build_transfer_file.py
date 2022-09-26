@@ -2,7 +2,6 @@
 Builds the transfer.txt file.
 """
 import networkx as nx
-import osmnx as ox
 import multiprocessing
 from multiprocessing import Pool
 import pandas as pd
@@ -25,6 +24,7 @@ def extract_graph(NETWORK_NAME: str, breaker: str) -> tuple:
         G = nx.read_gpickle(f"./GTFS/{NETWORK_NAME}/gtfs_o/{NETWORK_NAME}_G.pickle")
         print("Graph imported from disk")
     except FileNotFoundError:
+        import osmnx as ox
         print(f"Extracting OSM graph for {NETWORK_NAME}")
         G = ox.graph_from_place(f"{NETWORK_NAME}", network_type='drive')
         print(f"Number of Edges: {len(G.edges())}")
@@ -147,5 +147,6 @@ if __name__ == '__main__':
         try:
             transfer_file = pd.read_csv(f'./GTFS/{NETWORK_NAME}/gtfs_o/transfers.txt')
             transfer_file.to_csv(f'./GTFS/{NETWORK_NAME}/transfers.txt', index=False)
+            print("Using  Transfers.txt found in GTFS set. Warning: Ensure that transfers are transitively closed.")
         except FileNotFoundError:
             print("Transfers file missing. Either build the file by setting BUILD_TRANSFER to 1 or place transfers.txt in zip file.")
