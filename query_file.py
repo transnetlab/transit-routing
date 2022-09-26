@@ -30,13 +30,13 @@ def take_inputs():
                                                  3 for Hyper version
                                                  3 for Nested Hyper version
     """
-    algorithm = int(input("Press 0 for RAPTOR \nPress 1 for TBTR \n:"))
+    algorithm = int(input("Press 0 for RAPTOR \nPress 1 for TBTR \n: "))
     print("***************")
     if algorithm == 0:
         variant = int(input(
-            "Press 0 for RAPTOR \nPress 1 for rRAPTOR \nPress 2 for One-To-Many rRAPTOR \nPress 3 for HypRAPTOR\nPress 4 for Multilevel-HypRAPTOR \n:"))
+            "Press 0 for RAPTOR \nPress 1 for rRAPTOR \nPress 2 for One-To-Many rRAPTOR \nPress 3 for HypRAPTOR\nPress 4 for Multilevel-HypRAPTOR \n: "))
     elif algorithm == 1:
-        variant = int(input("Press 0: TBTR \nPress 1: rTBTR \nPress 2: One-To-Many rTBTR \nPress 3: HypTBTR \nPress 4 for Multilevel-HypTBTR \n:"))
+        variant = int(input("Press 0: TBTR \nPress 1: rTBTR \nPress 2: One-To-Many rTBTR \nPress 3: HypTBTR \nPress 4 for Multilevel-HypTBTR \n: "))
     print("***************")
     return algorithm, variant
 
