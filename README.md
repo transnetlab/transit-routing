@@ -26,19 +26,19 @@ outperform the existing approach for location-based queries (as a location can h
 Switzerland's public transit network has been provided as a test case. The figure below shows the transit stop location (left) and 4-way partitioning using [KaHyPar](https://github.com/kahypar/kahypar) (right).
 ![plot](documentation/location.png)
 ### List of Algorithms
-|  Algorithm                 | SOURCE | Status             | Comments |
-|----------------------------|---|--------------------|---|
-| RAPTOR                     | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) | Complete           |
-| TBTR                       | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) | Complete           |
-| rRAPTOR                    | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) | Complete           |
-| rTBTR                      | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) | Complete           |
-| One-To-Many rRAPTOR        | [link](https://arxiv.org/abs/2111.06654) | Complete           |
-| One-To-Many rTBTR          | [link](https://arxiv.org/abs/2111.06654) | Complete           |
-| HypRAPTOR                  | [link](https://drops.dagstuhl.de/opus/volltexte/2017/7896/) | Complete           |
-| HypTBTR                    |  [link](https://arxiv.org/abs/2111.06654) | Complete           |
-| MHypTBTR                   | [link](https://arxiv.org/abs/2111.06654) | Complete           |
-| MHypTBTR                   | [link](https://arxiv.org/abs/2111.06654) | Complete           |
-| Transfer Patterns          | [link](https://link.springer.com/chapter/10.1007/978-3-642-15775-2_25) | To be updated soon |
+|  Algorithm                 | SOURCE | Status                       | Comments |
+|----------------------------|---|------------------------------|---|
+| RAPTOR                     | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) | Complete                     |
+| TBTR                       | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) | Complete                     |
+| rRAPTOR                    | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) | Complete                     |
+| rTBTR                      | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) | Complete                     |
+| One-To-Many rRAPTOR        | [link](https://arxiv.org/abs/2111.06654) | Complete                     |
+| One-To-Many rTBTR          | [link](https://arxiv.org/abs/2111.06654) | Complete                     |
+| HypRAPTOR                  | [link](https://drops.dagstuhl.de/opus/volltexte/2017/7896/) | Test case to be updated soon |
+| HypTBTR                    |  [link](https://arxiv.org/abs/2111.06654) | Test case to be updated soon                     |
+| MHypTBTR                   | [link](https://arxiv.org/abs/2111.06654) | Test case to be updated soon                     |
+| MHypTBTR                   | [link](https://arxiv.org/abs/2111.06654) | Test case to be updated soon                     |
+| Transfer Patterns          | [link](https://link.springer.com/chapter/10.1007/978-3-642-15775-2_25) | To be updated soon           |
 | Scalable Transfer Patterns | [link](https://epubs.siam.org/doi/abs/10.1137/1.9781611974317.2) | To be updated soon           |
 
 ### Usage Instructions
