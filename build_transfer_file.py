@@ -146,5 +146,6 @@ if __name__ == '__main__':
     else:
         try:
             transfer_file = pd.read_csv(f'./GTFS/{NETWORK_NAME}/gtfs_o/transfers.txt')
+            transfer_file.to_csv(f'./GTFS/{NETWORK_NAME}/transfers.txt', index=False)
         except FileNotFoundError:
             print("Transfers file missing. Either build the file by setting BUILD_TRANSFER to 1 or place transfers.txt in zip file.")
