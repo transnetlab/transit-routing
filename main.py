@@ -4,7 +4,10 @@ THis is the main module.
 
 import os
 
-os.system('python GTFS_wrapper.py')
-os.system('python build_transfer_file.py')
-os.system('python TBTR_dict_builder.py')
-os.system('python query_file.py')
+python_global_call = 'python'
+
+# python_global_call = 'python3'
+os.system(f'{python_global_call} GTFS_wrapper.py')
+os.system(f'{python_global_call} build_transfer_file.py')
+os.system(f'{python_global_call} build_TBTR_file.py')
+os.system(f'{python_global_call} query_file.py')
