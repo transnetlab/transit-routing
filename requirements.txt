@@ -1,0 +1,14 @@
+pandas~=1.2.3
+tqdm~=4.59.0
+Jinja2~=2.11.3
+Sphinx~=3.5.4
+Pygments~=2.8.1
+packaging~=20.9
+docutils~=0.16
+numpy~=1.20.2
+cplex~=20.1.0.1
+setuptools~=40.8.0
+matplotlib~=3.4.1
+networkx~=2.5.1
+psutil~=5.8.0
+scipy~=1.6.2
