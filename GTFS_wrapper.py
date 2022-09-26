@@ -7,6 +7,7 @@ import zipfile
 from math import ceil
 import pickle
 
+pd.options.mode.chained_assignment = None  # default='warn'
 
 def take_inputs() -> tuple:
     '''
@@ -487,5 +488,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    breaker = "________________________________"
+    breaker = "________________________________________________________________"
     main()
