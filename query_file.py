@@ -18,7 +18,7 @@ print_logo()
 # print("Reading Testcase...")
 
 
-def take_inputs():
+def take_inputs() -> tuple:
     """
     defines the use input
 
@@ -30,7 +30,7 @@ def take_inputs():
                                                  3 for Hyper version
                                                  3 for Nested Hyper version
     """
-    algorithm = int(input("Press 0 for RAPTOR \nPress 1 for TBTR \n: "))
+    algorithm = int(input("Press 0 to enter RAPTOR environment \nPress 1 to enter TBTR environment \n: "))
     print("***************")
     if algorithm == 0:
         variant = int(input(
@@ -41,7 +41,7 @@ def take_inputs():
     return algorithm, variant
 
 
-def main():
+def main() -> None:
     """
     Runs the test case depending upon the values of algorithm, variant
     """
@@ -103,7 +103,7 @@ def main():
             output = hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_ITINERARY, nested_stop_out, nested_trip_groups,
                              routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
             print(f"Optimal arrival times are: {output[0]}")
-
+    return None
 
 if __name__ == "__main__":
     # Read network
