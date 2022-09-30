@@ -24,9 +24,9 @@ def extract_graph(NETWORK_NAME: str, breaker: str) -> tuple:
         G = nx.read_gpickle(f"./GTFS/{NETWORK_NAME}/gtfs_o/{NETWORK_NAME}_G.pickle")
         print("Graph imported from disk")
     except FileNotFoundError:
-        import osmnx as ox
         print(f"Extracting OSM graph for {NETWORK_NAME}")
         G = ox.graph_from_place(f"{NETWORK_NAME}", network_type='drive')
+        #TODO: Change this to bound box + 1 km
         print(f"Number of Edges: {len(G.edges())}")
         print(f"Number of Nodes: {len(G.nodes())}")
         print(f"Saving {NETWORK_NAME}")
@@ -68,12 +68,12 @@ def post_process(transfer_file, WALKING_LIMIT: int, NETWORK_NAME: str) -> None:
     Returns:
         None
     """
+    transfer_file = transfer_file[transfer_file.from_stop_id != transfer_file.to_stop_id].drop_duplicates(subset=['from_stop_id', 'to_stop_id'])
+    transfer_file = transfer_file[(transfer_file.min_transfer_time < WALKING_LIMIT) & (transfer_file.min_transfer_time > 0)].reset_index(drop=True)
     transfer_file.to_csv(f'./GTFS/{NETWORK_NAME}/gtfs_o/transfers.csv', index=False)
     transfer_file.to_csv(f'./GTFS/{NETWORK_NAME}/gtfs_o/transfers.txt', index=False)
 
     print("Post processing transfers file")
-    transfer_file = transfer_file[transfer_file.from_stop_id != transfer_file.to_stop_id].drop_duplicates(subset=['from_stop_id', 'to_stop_id'])
-    transfer_file = transfer_file[(transfer_file.min_transfer_time < WALKING_LIMIT) & (transfer_file.min_transfer_time > 0)].reset_index(drop=True)
 
     G = nx.Graph()  # Ensure transitive closure of footpath graph
     edges = list(zip(transfer_file.from_stop_id, transfer_file.to_stop_id, transfer_file.min_transfer_time))
@@ -111,6 +111,9 @@ def initialize() -> tuple:
         CORES (int): Number of codes to be used
         WALKING_LIMIT (int): Maximum allowed walking time
         start_time: timestamp object
+
+    Warnings:
+        Building Transfers file requires OSMnX module.
     """
     breaker = "________________________________________________________________"
     print(breaker)
@@ -119,7 +122,6 @@ def initialize() -> tuple:
     CORES = int(input(
         f"Transfer.txt can be build in parallel. Enter number of CORES (1 for serial). \nAvailable cores (logical and physical):  {multiprocessing.cpu_count()}\n: "))
 
-    ox.config(use_cache=True, log_console=False)
     print(f'RAM {round(psutil.virtual_memory().total / (1024.0 ** 3))} GB (% used:{psutil.virtual_memory()[2]})')
     start_time = time()
 
@@ -134,7 +136,10 @@ if __name__ == '__main__':
     with open(f'parameters_entered.txt', 'rb') as file:
         parameter_files = pickle.load(file)
     BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES = parameter_files
+    # BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES = 1, "Vancouver", 1
     if BUILD_TRANSFER == 1:
+        import osmnx as ox
+        ox.config(use_cache=True, log_console=False)
         breaker, G, stops_list, CORES, WALKING_LIMIT, start_time = initialize()
         with Pool(CORES) as pool:
             result = pool.map(parallel_func, stops_list)
