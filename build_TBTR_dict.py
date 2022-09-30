@@ -233,7 +233,7 @@ if __name__ == "__main__":
         #Added [] for every stop of key (or cast it as default dict to avoid error keyerror in TBTR code)
         for tid in trip_transfer_dict_new.keys():
             numberofstops = set(range(len(stops_dict[int(tid.split('_')[0])])))
-            keys_present = set(trip_transfer_dict[tid].keys())
+            keys_present = set(trip_transfer_dict_new[tid].keys())
             keystobeadded = numberofstops - keys_present
             for key in keystobeadded:
                 trip_transfer_dict_new[tid][key] = []
