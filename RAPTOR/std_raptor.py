@@ -111,8 +111,9 @@ def raptor(SOURCE: int, DESTINATION: int, D_TIME, MAX_TRANSFER: int, WALKING_FRO
                 continue
         # Main code End
         if marked_stop == deque([]):
-            if PRINT_ITINERARY == 1:pass
+            if PRINT_ITINERARY == 1:
                 # print('code ended with termination condition')
+                pass
             break
     _, _, rap_out = post_processing(DESTINATION, pi_label, PRINT_ITINERARY, label)
     out.append(rap_out)
