@@ -68,11 +68,11 @@ python main.py
 </div>
 </li>
 <li><p>Enter following parameters when prompted:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Network</span> <span class="n">name</span><span class="p">:</span> <span class="n">Chicago</span>
-<span class="n">Date</span><span class="p">:</span> <span class="mi">20220815</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Network</span> <span class="n">name</span><span class="p">:</span> <span class="n">anaheim</span>
+<span class="n">Date</span><span class="p">:</span> <span class="mi">20220630</span>
 <span class="n">Bus</span> <span class="n">routes</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
 <span class="n">build</span> <span class="n">transfers</span> <span class="n">file</span><span class="p">:</span> <span class="mi">0</span>
-<span class="n">build</span> <span class="n">TBTR</span> <span class="n">files</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">build</span> <span class="n">TBTR</span> <span class="n">files</span><span class="p">:</span> <span class="mi">1</span>
 <span class="n">use</span> <span class="n">test</span> <span class="n">case</span><span class="p">:</span> <span class="mi">1</span>
 <span class="n">RAPTOR</span> <span class="n">environment</span><span class="p">:</span> <span class="mi">0</span>
 <span class="n">Standard</span> <span class="n">RAPTOR</span><span class="p">:</span> <span class="mi">0</span>
@@ -81,23 +81,21 @@ python main.py
 </li>
 <li><p>Following output should be displayed:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>___________________Query Parameters__________________
-Network: ./chicago
-SOURCE stop id: 6465
-DESTINATION stop id: 8781
+Network: ./anaheim
+SOURCE stop id: 43
+DESTINATION stop id: 4
 Maximum Transfer allowed: 4
 Is walking from SOURCE allowed ?: 1
-Earliest departure time: 2022-08-15 00:00:00
+Earliest departure time: 2022-06-30 05:41:00
 _____________________________________________________
-from 6465 walk till  2651.0 for 51.7 seconds
-from 2651 board at 00:24:06 and get down on 3685 at 00:26:04 along 1045_0
-from 3685 walk till  1929.0 for 144.6 seconds
-from 1929 board at 00:52:03 and get down on 7906 at 01:01:44 along 1392_1
-from 7906 board at 04:04:35 and get down on 8781 at 04:06:46 along 1432_1
+from 43 board at 05:46:00 and get down on 2 at 06:03:00 along 1022_0
+from 2 walk till  47.0 for 14.4 seconds
+from 47 board at 16:07:00 and get down on 9 at 16:23:00 along 1038_0
+from 9 walk till  33.0 for 15.0 seconds
+from 33 board at 16:28:00 and get down on 55 at 16:29:00 along 1004_72
+from 55 board at 19:30:00 and get down on 4 at 19:37:32 along 1015_0
 ####################################
-from 6465 board at 05:03:01 and get down on 2300 at 05:12:00 along 1549_0
-from 2300 board at 05:27:00 and get down on 8781 at 05:34:58 along 1432_4
-####################################
-Optimal arrival time are: [[Timestamp(&#39;2022-08-15 04:06:46&#39;), Timestamp(&#39;2022-08-15 05:34:58&#39;)]]
+Optimal arrival time are: [[Timestamp(&#39;2022-06-30 19:37:32&#39;)]]
 </pre></div>
 </div>
 </li>
