@@ -109,7 +109,7 @@ if __name__ == "__main__":
     # Read network
     USE_TESTCASE = int(input("Press 1 to use test case (chicago), 0 to enter values manually\n: "))
     if USE_TESTCASE == 1:
-        NETWORK_NAME = './chicago'
+        NETWORK_NAME = './anaheim'
 
         stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(
             NETWORK_NAME)
@@ -122,7 +122,7 @@ if __name__ == "__main__":
         print_network_details(transfers_file, trips_file, stops_file)
 
         # Query parameters
-        SOURCE, DESTINATION, DESTINATION_LIST = 6465, 8781, [8781]
+        SOURCE, DESTINATION, DESTINATION_LIST = 43, 4, [4]
         D_TIME = stop_times_file.arrival_time.sort_values().iloc[0]
         MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC = 4, 1, 0
         PRINT_ITINERARY, OPTIMIZED = 1, 0

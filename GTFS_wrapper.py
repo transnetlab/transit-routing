@@ -16,11 +16,12 @@ def take_inputs() -> tuple:
     Returns:
         NETWORK_NAME, DATE_TOFILTER_ON, VALID_ROUTE_TYPES, BUILD_TRANSFER, breaker, READ_PATH, SAVE_PATH
     '''
-    print("Rename the gtfs.zip to network_gtfs.zip and place it in main directory"
-          "For example, for chicago, place the chicago_gtfs.zip in the main directory.")
+    print("Rename the gtfs.zip to network_gtfs.zip and place it in main directory."
+          " For example, for chicago, place the chicago_gtfs.zip in the main directory.")
 
-    NETWORK_NAME = input("Enter Network name in small case. Example: chicago\n: ")
-    DATE_TOFILTER_ON = int(input("Enter date to filter on. Format: YYYYMMDD. Example: 20220815\n: "))
+    NETWORK_NAME = input("Enter Network name in small case. Example: anaheim\n: ")
+    DATE_TOFILTER_ON = int(input("Enter date to filter on. Format: YYYYMMDD. Example: 20220630\n: "))
+    #TODO: display options according to dataset
     VALID_ROUTE_TYPES = []
     while True:
         new_route_type = int(input("Enter route types to keep GTFS set. For example: 3 (bus routes). Press -1 when done\n: "))
