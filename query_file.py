@@ -132,7 +132,7 @@ if __name__ == "__main__":
         # nested_stop_out, nested_route_groups, _, nested_trip_groups = read_nested_partitions(stop_times_file, NETWORK_NAME, no_of_partitions=4, weighting_scheme="S2")
 
     else:
-        NETWORK_NAME = input("Enter Network name in small case. Example: chicago\n: ")
+        NETWORK_NAME = input("Enter Network name in small case. Example: anaheim\n: ")
 
         stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(
             NETWORK_NAME)
