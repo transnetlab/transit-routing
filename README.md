@@ -42,7 +42,7 @@ Switzerland's public transit network has been provided as a test case. The figur
 | Scalable Transfer Patterns | [link](https://epubs.siam.org/doi/abs/10.1137/1.9781611974317.2) | To be updated soon           |
 
 ### Usage Instructions
-See [Usage Instructions](./documentation/usage_instructions.md) for details on the usage instructions. 
+Refer [https://transnetlab.github.io/transit-routing/html/index.html](https://transnetlab.github.io/transit-routing/html/index.html). 
 
 
 ### Contributing
