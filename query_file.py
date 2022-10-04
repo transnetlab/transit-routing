@@ -107,7 +107,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     # Read network
-    USE_TESTCASE = int(input("Press 1 to use test case (chicago), 0 to enter values manually\n: "))
+    USE_TESTCASE = int(input("Press 1 to use test case (anaheim), 0 to enter values manually\n: "))
     if USE_TESTCASE == 1:
         NETWORK_NAME = './anaheim'
 
