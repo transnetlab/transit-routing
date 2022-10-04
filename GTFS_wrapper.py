@@ -17,7 +17,8 @@ def take_inputs() -> tuple:
         NETWORK_NAME, DATE_TOFILTER_ON, VALID_ROUTE_TYPES, BUILD_TRANSFER, breaker, READ_PATH, SAVE_PATH
     '''
     print("Rename the gtfs.zip to network_gtfs.zip and place it in main directory."
-          " For example, for chicago, place the chicago_gtfs.zip in the main directory.")
+          " For example, for anaheim, place the anaheim_gtfs.zip in the main directory.")
+    print("Enter Example parameters to build test case.")
 
     NETWORK_NAME = input("Enter Network name in small case. Example: anaheim\n: ")
     DATE_TOFILTER_ON = int(input("Enter date to filter on. Format: YYYYMMDD. Example: 20220630\n: "))
