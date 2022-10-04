@@ -57,12 +57,13 @@
 <blockquote>
 <div><ol class="arabic">
 <li><p>Clone the repository using following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gh repo clone transnetlab/transit-routing
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/transnetlab/transit-routing.git
 </pre></div>
 </div>
 </li>
-<li><p>Run the following commands inside transit-routing-main directory. In case of error, edit <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -r requirements.txt
+<li><p>Enter following commands. In case of error, edit <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> transit-routing
+pip install -r requirements.txt
 python main.py
 </pre></div>
 </div>
@@ -82,20 +83,27 @@ python main.py
 <li><p>Following output should be displayed:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>___________________Query Parameters__________________
 Network: ./anaheim
-SOURCE stop id: 43
-DESTINATION stop id: 4
+SOURCE stop id: 36
+DESTINATION stop id: 52
 Maximum Transfer allowed: 4
 Is walking from SOURCE allowed ?: 1
 Earliest departure time: 2022-06-30 05:41:00
 _____________________________________________________
-from 43 board at 05:46:00 and get down on 2 at 06:03:00 along 1022_0
-from 2 walk till  47.0 for 14.4 seconds
-from 47 board at 16:07:00 and get down on 9 at 16:23:00 along 1038_0
-from 9 walk till  33.0 for 15.0 seconds
-from 33 board at 16:28:00 and get down on 55 at 16:29:00 along 1004_72
-from 55 board at 19:30:00 and get down on 4 at 19:37:32 along 1015_0
+from 36 walk till  38.0 for 337.2 seconds
+from 38 board at 06:38:18 and get down on 1 at 06:41:53 along 1020_0
+from 1 walk till  17.0 for 171.7 seconds
+from 17 board at 06:53:44 and get down on 30 at 06:55:53 along 1025_1
+from 30 walk till  53.0 for 124.7 seconds
+from 53 board at 07:14:00 and get down on 68 at 07:20:00 along 1018_2
+from 68 board at 15:00:00 and get down on 52 at 15:12:00 along 1030_0
 ####################################
-Optimal arrival time are: [[Timestamp(&#39;2022-06-30 19:37:32&#39;)]]
+from 36 walk till  38.0 for 337.2 seconds
+from 38 board at 06:38:18 and get down on 1 at 06:41:53 along 1020_0
+from 1 board at 18:30:00 and get down on 35 at 18:31:50 along 1014_0
+from 35 walk till  51.0 for 85.2 seconds
+from 51 board at 18:37:00 and get down on 52 at 18:42:00 along 1012_0
+####################################
+Optimal arrival time are: [[Timestamp(&#39;2022-06-30 15:12:00&#39;), Timestamp(&#39;2022-06-30 18:42:00&#39;)]]
 </pre></div>
 </div>
 </li>

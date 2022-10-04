@@ -27,7 +27,7 @@ def raptor(SOURCE: int, DESTINATION: int, D_TIME, MAX_TRANSFER: int, WALKING_FRO
         out (list): list of pareto-optimal arrival timestamps.
 
     Examples:
-        >>> output = raptor(20775, 1482, pd.to_datetime('2019-06-10 00:00:00'), 4, 1, 0, 1, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
+        >>> output = raptor(36, 52, pd.to_datetime('2022-06-30 05:41:00'), 4, 1, 0, 1, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
         >>> print(f"Optimal arrival time are: {output}")
 
     See Also:

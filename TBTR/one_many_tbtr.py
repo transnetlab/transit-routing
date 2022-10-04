@@ -34,7 +34,7 @@ def onetomany_rtbtr(SOURCE: int, DESTINATION_LIST: list, d_time_groups, MAX_TRAN
             out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
 
     Examples:
-        >>> output = onetomany_rtbtr(20775, [1482], d_time_groups, 4, 1, 1, 0, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
+        >>> output = onetomany_rtbtr(36, [52, 43], d_time_groups, 4, 1, 1, 0, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
         >>> print(output)
 
     See Also:

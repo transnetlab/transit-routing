@@ -30,7 +30,7 @@ def hypraptor(SOURCE: int, DESTINATION: int, D_TIME, MAX_TRANSFER: int, WALKING_
         out (list): list of pareto-optimal arrival Timestamps.
 
     Examples:
-        >>> output = hypraptor(20775, 1482, pd.to_datetime('2019-06-10 00:00:00'), 4, 1, 0, 1, stop_out, route_groups, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
+        >>> output = hypraptor(36, 52, pd.to_datetime('2019-06-10 00:00:00'), 4, 1, 0, 1, stop_out, route_groups, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
 
     See Also:
         HypTBTR, RAPTOR

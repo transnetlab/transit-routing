@@ -65,7 +65,7 @@
 <span class="sd">        out (list): list of pareto-optimal arrival timestamps.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; output = raptor(20775, 1482, pd.to_datetime(&#39;2019-06-10 00:00:00&#39;), 4, 1, 0, 1, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)</span>
+<span class="sd">        &gt;&gt;&gt; output = raptor(36, 52, pd.to_datetime(&#39;2022-06-30 05:41:00&#39;), 4, 1, 0, 1, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)</span>
 <span class="sd">        &gt;&gt;&gt; print(f&quot;Optimal arrival time are: {output}&quot;)</span>
 
 <span class="sd">    See Also:</span>
@@ -149,8 +149,9 @@
                 <span class="k">continue</span>
         <span class="c1"># Main code End</span>
         <span class="k">if</span> <span class="n">marked_stop</span> <span class="o">==</span> <span class="n">deque</span><span class="p">([]):</span>
-            <span class="k">if</span> <span class="n">PRINT_ITINERARY</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span><span class="k">pass</span>
-            <span class="c1"># print(&#39;code ended with termination condition&#39;)</span>
+            <span class="k">if</span> <span class="n">PRINT_ITINERARY</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># print(&#39;code ended with termination condition&#39;)</span>
+                <span class="k">pass</span>
             <span class="k">break</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">rap_out</span> <span class="o">=</span> <span class="n">post_processing</span><span class="p">(</span><span class="n">DESTINATION</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
     <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rap_out</span><span class="p">)</span>

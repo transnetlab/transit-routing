@@ -30,7 +30,7 @@ def tbtr(SOURCE: int, DESTINATION: int, D_TIME, MAX_TRANSFER: int, WALKING_FROM_
         out (list): List of pareto-optimal arrival Timestamps
 
     Examples:
-        >>> output = tbtr(20775, 1482, pd.to_datetime('2019-06-10 00:00:00'), 4, 1, 1, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
+        >>> output = tbtr(36, 52, pd.to_datetime('2019-06-10 00:00:00'), 4, 1, 1, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
         >>> print(output)
 
     See Also:

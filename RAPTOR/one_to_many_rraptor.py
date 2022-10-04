@@ -32,7 +32,7 @@ def onetomany_rraptor(SOURCE: int, DESTINATION_LIST: list, d_time_groups, MAX_TR
             out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
 
     Examples:
-        >>> output = onetomany_rraptor(20775, [1482], pd.to_datetime('2019-06-10 00:00:00'), 4, 1, 0, 1, 0, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
+        >>> output = onetomany_rraptor(36, [52, 43], pd.to_datetime('2019-06-10 00:00:00'), 4, 1, 0, 1, 0, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
 
     See Also:
         One-To-Many rTBTR

@@ -32,7 +32,7 @@ def rtbtr(SOURCE: int, DESTINATION: int, d_time_groups, MAX_TRANSFER: int, WALKI
             out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
 
     Examples:
-        >>> output = rtbtr(20775, 1482, d_time_groups, 4, 1, 1, 0, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
+        >>> output = rtbtr(36, 52, d_time_groups, 4, 1, 1, 0, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
         >>> print(output)
 
     See Also:

@@ -31,7 +31,7 @@ def rraptor(SOURCE: int, DESTINATION: int, d_time_groups, MAX_TRANSFER: int, WAL
             out (list):  list of routes required to cover all optimal journeys. Format: [route_id]
 
     Examples:
-        >>> output = rraptor(20775, 1482, d_time_groups, 4, 1, 0, 1, 0, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
+        >>> output = rraptor(36, 52, d_time_groups, 4, 1, 0, 1, 0, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)
         >>> print(f"Optimal arrival time are: {output}")
 
     See Also:
