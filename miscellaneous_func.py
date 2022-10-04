@@ -28,7 +28,7 @@ def read_testcase(NETWORK_NAME: str) -> tuple:
         idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
 
     Examples:
-        >>> NETWORK_NAME = './swiss'
+        >>> NETWORK_NAME = './anaheim'
         >>> read_testcase('NETWORK_NAME')
     """
     import gtfs_loader
