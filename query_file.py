@@ -122,7 +122,7 @@ if __name__ == "__main__":
         print_network_details(transfers_file, trips_file, stops_file)
 
         # Query parameters
-        SOURCE, DESTINATION, DESTINATION_LIST = 13, 32, [32, 12]
+        SOURCE, DESTINATION, DESTINATION_LIST = 29, 23, [23, 30]
         D_TIME = stop_times_file.arrival_time.sort_values().iloc[0]
         MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC = 4, 1, 0
         PRINT_ITINERARY, OPTIMIZED = 1, 0
