@@ -206,7 +206,8 @@ def filter_stoptimes(valid_trips: set, trips, DATE_TOFILTER_ON: int, stop_times)
     stop_times.loc[:, 'stop_sequence'] = stop_times.groupby("trip_id")["stop_sequence"].rank(method="first", ascending=True).astype(int) - 1
 
     stop_times = pd.merge(stop_times, trips, on='trip_id')
-    stops_map = pd.DataFrame([t[::-1] for t in enumerate(set(stop_times.stop_id), 1)], columns=['stop_id', 'new_stop_id'])
+    stoplist = sorted(list(set(stop_times.stop_id)))
+    stops_map = pd.DataFrame([t[::-1] for t in enumerate(stoplist, 1)], columns=['stop_id', 'new_stop_id'])
     stop_times = pd.merge(stop_times, stops_map, on='stop_id').drop(columns=['stop_id']).rename(columns={'new_stop_id': 'stop_id'})
     print("Applying dates")
     DATE_TOFILTER_ON = f'{str(DATE_TOFILTER_ON)[:4]}-{str(DATE_TOFILTER_ON)[4:6]}-{str(DATE_TOFILTER_ON)[6:]}'
