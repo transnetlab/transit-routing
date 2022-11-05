@@ -14,10 +14,30 @@ def Dij_generator():
         graph_object: variable containing network information.
     """
     graph_object = None
-    try:
-        # Enter your code here
-        return graph_object
-    except:
+  
+       
+    class Graph():
+
+	def __init__(source, vertices):
+		source.V = vertices
+		source.graph = [[0 for column in range(vertices)]
+					for row in range(vertices)]
+
+	def printSolution(source, length):
+		print("Source \tDistance from Source: graph_object")
+		for node in range(source.V):
+			print(node, "\t", length[node])
+    
+
+    def minDistance(source, length, sptSet):        # Initialize minimum distance for next node
+		min = sys.maxsize
+
+		# Search not nearest vertex not in the
+		# shortest path tree
+		for u in range(source.V):
+			if length[u] < min and sptSet[u] == False:
+				graph_object = length[u]
+			
         return graph_object
 
 
@@ -38,7 +58,32 @@ def Q1_dijkstra(source: int, destination: int, graph_object) -> int:
     """
     shortest_path_distance = -1
     try:
-        # Enter your code here
+        
+        def dijkstra(source, shortest_path_distance):
+
+		length = [sys.maxsize] * source.V
+		length[shortest_path_distance] = 0
+		sptSet = [False] * source.V
+
+		for cout in range(source.V):
+
+			                                                                                    # Pick the minimum distance vertex from
+		                                                                                    	# the set of vertices not yet processed.
+			x = source.minDistance(length, sptSet)
+
+			                                                                                    # Put the minimum distance vertex in the
+			                                                                                    # shortest path tree
+			sptSet[x] = True
+
+			                                                                                    # Update dist value of the adjacent vertices
+			                                                                                    # of the picked vertex only if the current
+			                                                                                    # distance is greater than new distance and
+		                                                                                     	# the vertex in not in the shortest path tree
+			for y in range(source.V):
+				if source.graph[x][y] > 0 and sptSet[y] == False and \
+						length[y] > length[x] + source.graph[x][y]:
+					length[y] = length[x] + source.graph[x][y]
+
+		source.shortest_path_distance(length)
         return shortest_path_distance
-    except:
-        return shortest_path_distance
+   
