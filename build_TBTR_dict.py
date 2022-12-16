@@ -132,6 +132,18 @@ def algorithm3_parallel(trip_details: tuple)-> list:
             pass
     return removed_trans
 
+def take_inputs() -> tuple:
+    '''
+    Takes the required inputs for building TBTR preprocessing
+    '''
+    breaker = "________________________________"
+    print("Building trip-transfers dict for TBTR. Enter following parameters.\n ")
+    CORES = int(input(
+        f"trip-transfers can be build in parallel. Enter number of CORES (1 for serial). \nAvailable CORES (logical and physical):  {multiprocessing.cpu_count()}\n: "))
+    change_time = pd.to_timedelta(0, unit='seconds')
+    GENERATE_LOGFILE = int(input(f"Press 1 to redirect output to a log file in logs folder. Else press 0\n: "))
+    return breaker, CORES, change_time, GENERATE_LOGFILE
+
 
 if __name__ == "__main__":
     with open(f'parameters_entered.txt', 'rb') as file:
@@ -140,15 +152,11 @@ if __name__ == "__main__":
     if BUILD_TBTR_FILES==1:
         # NETWORK_NAME = 'uk'
         # NETWORK_NAME = 'germany'
-        breaker = "________________________________"
+        breaker, CORES, change_time, GENERATE_LOGFILE = take_inputs()
         print(breaker)
         stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(
             NETWORK_NAME)
         # inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day")
-        print("Building trip-transfers dict for TBTR. Enter following parameters.\n ")
-        CORES = int(input(f"trip-transfers can be build in parallel. Enter number of CORES (1 for serial). \nAvailable CORES (logical and physical):  {multiprocessing.cpu_count()}\n: "))
-        change_time = pd.to_timedelta(0, unit='seconds')
-        GENERATE_LOGFILE = int(input(f"Press 1 to redirect output to a log file in logs folder. Else press 0\n: "))
         # GENERATE_LOGFILE = 1
         if GENERATE_LOGFILE == 1:
             if not os.path.exists(f'./logs/.'):
