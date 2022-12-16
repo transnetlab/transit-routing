@@ -147,7 +147,7 @@ if __name__ == "__main__":
 
         SOURCE = int(input("Enter source stop id\n: "))
         DESTINATION = int(input("Enter destination stop id\n: "))
-        D_TIME = input("Enter departure time. Format: YYYY-MM-DD HH-MM-SS (24 hour format)\n: ")
+        D_TIME = pd.to_datetime(input("Enter departure time. Format: YYYY-MM-DD HH:MM:SS (24 hour format)\n: "))
         MAX_TRANSFER = int(input("Maximum transfer limit\n: "))
         WALKING_FROM_SOURCE = int(input("Press 1 to allow walking from source, else 0\n: "))
         CHANGE_TIME_SEC = int(input("Enter change time (in seconds) \n: "))
