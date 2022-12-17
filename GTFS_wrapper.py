@@ -105,7 +105,10 @@ def read_gtfs(READ_PATH: str, NETWORK_NAME: str):
     except FileNotFoundError:
         raise FileNotFoundError("stop_times.txt missing")
     try:
-        stops = pd.read_csv(f'{READ_PATH}/stops.txt', usecols=stops_column)
+        try:
+            stops = pd.read_csv(f'{READ_PATH}/stops.txt', usecols= stops_column + ["stop_name"])
+        except ValueError:
+            stops =  pd.read_csv(f'{READ_PATH}/stops.txt', usecols= stops_column)
     except FileNotFoundError:
         raise FileNotFoundError("stops.txt missing")
     print(breaker)
