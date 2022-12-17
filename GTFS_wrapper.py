@@ -423,7 +423,7 @@ def filter_trips(trips, stop_times, stops):
     # Rename all trip_id with following format: Routeid_trip_count.
     # E.g., 502_4 is 4th trip (sorted according to departure time) on route 502.
     trips = trips[trips.trip_id.isin(stop_times.trip_id)].drop(columns=['service_id'])
-    stops = stops[stops.stop_id.isin(stop_times.stop_id)]
+    stops = stops[stops.stop_id.isin(stop_times.stop_id)].sort_values(by="stop_id").reset_index(drop=True)
     _, tid_list = zip(*trips.trip_id.str.split('_'))
     trips['tid'] = tid_list
     trips['tid'] = trips['tid'].astype(int)
