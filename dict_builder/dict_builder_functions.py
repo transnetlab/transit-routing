@@ -118,7 +118,7 @@ def build_save_footpath_dict(transfers_file, NETWORK_NAME: str)-> dict:
     print("transfers_dict done")
     return footpath_dict
 
-def stop_idx_in_route(stop_times_file, NETWORK_NAME: str)-> dict:
+def build_stop_idx_in_route(stop_times_file, NETWORK_NAME: str)-> dict:
     """
     This function saves a dictionary to provide easy access to index of a stop in a route.
 
@@ -136,3 +136,28 @@ def stop_idx_in_route(stop_times_file, NETWORK_NAME: str)-> dict:
         pickle.dump(idx_by_route_stop, pickle_file)
     print("idx_by_route_stop done")
     return idx_by_route_stop
+
+
+def build_routesindx_by_stop_dict(NETWORK_NAME: str)-> dict:
+    """
+    This function saves a dictionary.
+
+    Args:
+        NETWORK_NAME (str): path to network NETWORK_NAME.
+
+    Returns:
+        routesindx_by_stop_dict (dict): Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]
+    """
+    with open(f'./dict_builder/{NETWORK_NAME}/stops_dict_pkl.pkl', 'rb') as file:
+        stops_dict = pickle.load(file)
+    with open(f'./dict_builder/{NETWORK_NAME}/routes_by_stop.pkl', 'rb') as file:
+        routes_by_stop_dict = pickle.load(file)
+
+    routesindx_by_stop_dict = {stop: list(zip(listofroutes, [stops_dict[x].index(stop) for x in listofroutes])) for stop, listofroutes in
+                               routes_by_stop_dict.items()}
+
+    with open(f'./dict_builder/{NETWORK_NAME}/routesindx_by_stop.pkl', 'wb') as pickle_file:
+        pickle.dump(routesindx_by_stop_dict, pickle_file)
+    print("routesindx_by_stop_dict done")
+    return routesindx_by_stop_dict
+
