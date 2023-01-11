@@ -177,6 +177,7 @@ if __name__ == '__main__':
         edges = list(zip(transfer_file.from_stop_id, transfer_file.to_stop_id, transfer_file.min_transfer_time))
         G_new.add_weighted_edges_from(edges)
         connected_compnent_list = [(G_new, c) for c in nx.connected_components(G_new)]
+        print(f"Total connected components identified: {connected_compnent_list}")
         if USE_PARALlEL != 0:
             print("Ensuring Transitive closure in parallel...")
             with Pool(CORES) as pool:
