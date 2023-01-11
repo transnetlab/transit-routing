@@ -22,7 +22,7 @@ def initialize_raptor(routes_by_stop_dict: dict, SOURCE: int, MAX_TRANSFER: int)
         pi_label (dict): Nested dict used for backtracking labels. Format {round : {stop_id: pointer_label}}
         if stop is reached by walking, pointer_label= ('walking', from stop id, to stop id, time, arrival time)}} else pointer_label= (trip boarding time, boarding_point, stop id, arr_by_trip, trip id)
         star_label (dict): dict to maintain best arrival label {stop id: pandas.datetime}.
-        inf_time (pd.timestamp): Variable indicating infinite time (pandas.datetime).
+        inf_time (pandas.datetime): Variable indicating infinite time (pandas.datetime).
 
     Examples:
         >>> output = initialize_raptor(routes_by_stop_dict, 20775, 4)
