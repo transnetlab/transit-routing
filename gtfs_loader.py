@@ -14,6 +14,7 @@ def load_all_dict(NETWORK_NAME: str):
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
         idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.
+        routesindx_by_stop_dict (dict): Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]
     """
     import pickle
     with open(f'./dict_builder/{NETWORK_NAME}/stops_dict_pkl.pkl', 'rb') as file:
@@ -26,7 +27,9 @@ def load_all_dict(NETWORK_NAME: str):
         routes_by_stop_dict = pickle.load(file)
     with open(f'./dict_builder/{NETWORK_NAME}/idx_by_route_stop.pkl', 'rb') as file:
         idx_by_route_stop_dict = pickle.load(file)
-    return stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict
+    with open(f'./dict_builder/{NETWORK_NAME}/routesindx_by_stop_dict.pkl', 'rb') as file:
+        routesindx_by_stop_dict = pickle.load(file)
+    return stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict
 
 
 def load_all_db(NETWORK_NAME: str):
