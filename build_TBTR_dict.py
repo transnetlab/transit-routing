@@ -1,21 +1,17 @@
 """
 Builds data structure for TBTR related algorithms
 """
-from itertools import chain
-import os
 import multiprocessing
-from random import shuffle
-from time import time as time_measure
+import sys
 # print(os.getcwd())
 # os.chdir(os.path.dirname(os.getcwd()))
 # os.chdir('D:\\prateek\\research\\indivisual\\TB2')
 from collections import defaultdict
+from itertools import chain
 from multiprocessing import Pool
+from random import shuffle
+from time import time as time_measure
 
-import pandas as pd
-from tqdm import tqdm
-import sys
-import gtfs_loader
 from miscellaneous_func import *
 
 
@@ -68,7 +64,7 @@ def algorithm1_parallel(route_details: tuple) -> list:
     return trip_transfer_list
 
 
-def algorithm2_parallel(trip_transfer_: list)-> list:
+def algorithm2_parallel(trip_transfer_: list) -> list:
     """
     Removes trip transfers which cause U-turns.
 
@@ -81,7 +77,7 @@ def algorithm2_parallel(trip_transfer_: list)-> list:
     """
     try:
         from_stop_dep, to_stop_det = stoptimes_dict[trip_transfer_[1]][trip_transfer_[2]][trip_transfer_[5]], \
-                     stoptimes_dict[trip_transfer_[3]][trip_transfer_[4]][trip_transfer_[6]]
+            stoptimes_dict[trip_transfer_[3]][trip_transfer_[4]][trip_transfer_[6]]
         if from_stop_dep[0] == to_stop_det[0] and from_stop_dep[0] <= to_stop_det[0]:
             return trip_transfer_[0]
         else:
@@ -90,7 +86,7 @@ def algorithm2_parallel(trip_transfer_: list)-> list:
         return []
 
 
-def algorithm3_parallel(trip_details: tuple)-> list:
+def algorithm3_parallel(trip_details: tuple) -> list:
     """
     Removes trip transfers that are not part of any optimal journey
 
@@ -132,6 +128,7 @@ def algorithm3_parallel(trip_details: tuple)-> list:
             pass
     return removed_trans
 
+
 def take_inputs() -> tuple:
     '''
     Takes the required inputs for building TBTR preprocessing
@@ -155,7 +152,7 @@ if __name__ == "__main__":
     with open(f'parameters_entered.txt', 'rb') as file:
         parameter_files = pickle.load(file)
     BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES = parameter_files
-    if BUILD_TBTR_FILES==1:
+    if BUILD_TBTR_FILES == 1:
         # NETWORK_NAME = 'germany'
         breaker, CORES, change_time, GENERATE_LOGFILE = take_inputs()
         print(breaker)
@@ -243,7 +240,7 @@ if __name__ == "__main__":
                 if x[0] not in trip_transfer_dict_new[tid].keys():
                     trip_transfer_dict_new[tid][x[0]] = []
                 trip_transfer_dict_new[tid][x[0]].append((x[1], x[2]))
-        #Added [] for every stop of key (or cast it as default dict to avoid error keyerror in TBTR code)
+        # Added [] for every stop of key (or cast it as default dict to avoid error keyerror in TBTR code)
         for tid in trip_transfer_dict_new.keys():
             numberofstops = set(range(len(stops_dict[int(tid.split('_')[0])])))
             keys_present = set(trip_transfer_dict_new[tid].keys())

@@ -1,14 +1,19 @@
-from time import time
-from miscellaneous_func import *
-from TRANSFER_PATTERNS.transferpattern_func import *
+"""
+Builds the transfer.txt file.
+"""
 import glob
 import multiprocessing
-from tqdm import tqdm
+import os
 import pickle
+import sys
 from multiprocessing import Pool
-import sys, os
 from random import shuffle
-import psutil
+from time import time
+
+from tqdm import tqdm
+
+from TRANSFER_PATTERNS.transferpattern_func import *
+from miscellaneous_func import *
 
 
 def run_tbtr(SOURCE) -> None:
@@ -81,6 +86,7 @@ def initialize() -> tuple:
     CORES = 0
     if USE_PARALlEL != 0:
         CORES = int(input(f"Enter number of CORES (>=1). \nAvailable CORES (logical and physical):  {multiprocessing.cpu_count()}\n: "))
+    import psutil
     print(f'RAM {round(psutil.virtual_memory().total / (1024.0 ** 3))} GB (% used:{psutil.virtual_memory()[2]})')
     start_time = time()
     HUB_COUNT = int(input("Enter the number of hub stops. Else press 0. Example: 0\n: "))
@@ -96,7 +102,7 @@ def initialize() -> tuple:
     return breaker, CORES, start_time, USE_PARALlEL, HUB_COUNT, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_ITINERARY, OPTIMIZED, GENERATE_LOGFILE, USE_TBTR, CHANGE_TIME_SEC
 
 
-def remove_older_files(NETWORK_NAME, HUB_COUNT)-> None:
+def remove_older_files(NETWORK_NAME, HUB_COUNT) -> None:
     """
     Creates a new (empty) directory for saving transfer patterns.
 
@@ -118,7 +124,7 @@ def remove_older_files(NETWORK_NAME, HUB_COUNT)-> None:
     return None
 
 
-def post_process(runtime, CORES, HUB_COUNT, NETWORK_NAME)->None:
+def post_process(runtime, CORES, HUB_COUNT, NETWORK_NAME) -> None:
     """
     Post process and print the statistics realted to transfer patterns.
 

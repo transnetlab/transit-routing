@@ -28,7 +28,7 @@ def initialize_raptor(routes_by_stop_dict: dict, SOURCE: int, MAX_TRANSFER: int)
         >>> output = initialize_raptor(routes_by_stop_dict, 20775, 4)
     '''
     inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day")
-#    inf_time = pd.to_datetime('2022-01-15 19:00:00')
+    #    inf_time = pd.to_datetime('2022-01-15 19:00:00')
 
     pi_label = {x: {stop: -1 for stop in routes_by_stop_dict.keys()} for x in range(0, MAX_TRANSFER + 1)}
     label = {x: {stop: inf_time for stop in routes_by_stop_dict.keys()} for x in range(0, MAX_TRANSFER + 1)}
@@ -61,6 +61,7 @@ def check_stop_validity(stops, SOURCE: int, DESTINATION: int) -> None:
     else:
         print("incorrect inputs")
     return None
+
 
 def get_latest_trip_new(stoptimes_dict: dict, route: int, arrival_time_at_pi, pi_index: int, change_time) -> tuple:
     '''
@@ -162,12 +163,13 @@ def _print_Journey_legs(pareto_journeys: list) -> None:
         for leg in journey:
             if leg[0] == 'walking':
                 print(f'from {leg[1]} walk till  {leg[2]} for {leg[3].total_seconds()} seconds')
-#                print(f'from {leg[1]} walk till  {leg[2]} for {leg[3]} minutes and reach at {leg[4].time()}')
+            #                print(f'from {leg[1]} walk till  {leg[2]} for {leg[3]} minutes and reach at {leg[4].time()}')
             else:
                 print(
                     f'from {leg[1]} board at {leg[0].time()} and get down on {leg[2]} at {leg[3].time()} along {leg[-1]}')
         print("####################################")
     return None
+
 
 def post_processing_onetomany_rraptor(DESTINATION_LIST: list, pi_label: dict, PRINT_ITINERARY: int, label: dict, OPTIMIZED: int) -> list:
     '''
@@ -295,7 +297,7 @@ def post_processing_rraptor(DESTINATION: int, pi_label: dict, PRINT_ITINERARY: i
             rounds_inwhich_desti_reached.reverse()
             pareto_set = []
             trip_set = []
-            #rap_out = [label[k][DESTINATION] for k in rounds_inwhich_desti_reached]
+            # rap_out = [label[k][DESTINATION] for k in rounds_inwhich_desti_reached]
             for k in rounds_inwhich_desti_reached:
                 transfer_needed = k - 1
                 journey = []

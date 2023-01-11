@@ -4,8 +4,10 @@ This is done for easy/faster data lookup.
 """
 
 import pickle
+
 import pandas as pd
 from tqdm import tqdm
+
 
 def build_save_route_by_stop(stop_times_file, NETWORK_NAME: str) -> dict:
     """
@@ -29,7 +31,7 @@ def build_save_route_by_stop(stop_times_file, NETWORK_NAME: str) -> dict:
     return route_by_stop_dict
 
 
-def build_save_stops_dict(stop_times_file, trips_file, NETWORK_NAME: str)-> dict:
+def build_save_stops_dict(stop_times_file, trips_file, NETWORK_NAME: str) -> dict:
     """
     This function saves a dictionary to provide easy access to all the stops in the route.
 
@@ -93,7 +95,7 @@ def build_save_stopstimes_dict(stop_times_file, trips_file, NETWORK_NAME: str) -
     return stoptimes_dict
 
 
-def build_save_footpath_dict(transfers_file, NETWORK_NAME: str)-> dict:
+def build_save_footpath_dict(transfers_file, NETWORK_NAME: str) -> dict:
     """
     This function saves a dictionary to provide easy access to all the footpaths through a stop id.
 
@@ -118,7 +120,8 @@ def build_save_footpath_dict(transfers_file, NETWORK_NAME: str)-> dict:
     print("transfers_dict done")
     return footpath_dict
 
-def build_stop_idx_in_route(stop_times_file, NETWORK_NAME: str)-> dict:
+
+def build_stop_idx_in_route(stop_times_file, NETWORK_NAME: str) -> dict:
     """
     This function saves a dictionary to provide easy access to index of a stop in a route.
 
@@ -129,8 +132,8 @@ def build_stop_idx_in_route(stop_times_file, NETWORK_NAME: str)-> dict:
     Returns:
         idx_by_route_stop_dict (dict): Keys: (route id, stop id), value: stop index. Format {(route id, stop id): stop index in route}.
     """
-    pandas_group = stop_times_file.groupby(["route_id","stop_id"])
-    idx_by_route_stop = {route_stop_pair:details.stop_sequence.iloc[0] for route_stop_pair, details in pandas_group}
+    pandas_group = stop_times_file.groupby(["route_id", "stop_id"])
+    idx_by_route_stop = {route_stop_pair: details.stop_sequence.iloc[0] for route_stop_pair, details in pandas_group}
 
     with open(f'./dict_builder/{NETWORK_NAME}/idx_by_route_stop.pkl', 'wb') as pickle_file:
         pickle.dump(idx_by_route_stop, pickle_file)
@@ -138,7 +141,7 @@ def build_stop_idx_in_route(stop_times_file, NETWORK_NAME: str)-> dict:
     return idx_by_route_stop
 
 
-def build_routesindx_by_stop_dict(NETWORK_NAME: str)-> dict:
+def build_routesindx_by_stop_dict(NETWORK_NAME: str) -> dict:
     """
     This function saves a dictionary.
 
@@ -160,4 +163,3 @@ def build_routesindx_by_stop_dict(NETWORK_NAME: str)-> dict:
         pickle.dump(routesindx_by_stop_dict, pickle_file)
     print("routesindx_by_stop_dict done")
     return routesindx_by_stop_dict
-

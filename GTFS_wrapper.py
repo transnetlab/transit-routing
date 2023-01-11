@@ -1,13 +1,15 @@
 """
 Apply necessary filters to GTFS set. Note that this file is GTFS-specific.
 """
-import pandas as pd
-from tqdm import tqdm
+import pickle
 import zipfile
 from math import ceil
-import pickle
+
+import pandas as pd
+from tqdm import tqdm
 
 pd.options.mode.chained_assignment = None  # default='warn'
+
 
 def take_inputs() -> tuple:
     '''
@@ -22,7 +24,7 @@ def take_inputs() -> tuple:
 
     NETWORK_NAME = input("Enter Network name in small case. Example: anaheim\n: ")
     DATE_TOFILTER_ON = int(input("Enter date to filter on. Format: YYYYMMDD. Example: 20220630\n: "))
-    #TODO: display options according to dataset
+    # TODO: display options according to dataset
     VALID_ROUTE_TYPES = []
     while True:
         new_route_type = int(input("Enter route types to keep GTFS set. For example: 3 (bus routes). Press -1 when done\n: "))
@@ -112,9 +114,9 @@ def read_gtfs(READ_PATH: str, NETWORK_NAME: str):
         raise FileNotFoundError("stop_times.txt missing")
     try:
         try:
-            stops = pd.read_csv(f'{READ_PATH}/stops.txt', usecols= stops_column + ["stop_name"])
+            stops = pd.read_csv(f'{READ_PATH}/stops.txt', usecols=stops_column + ["stop_name"])
         except ValueError:
-            stops =  pd.read_csv(f'{READ_PATH}/stops.txt', usecols= stops_column)
+            stops = pd.read_csv(f'{READ_PATH}/stops.txt', usecols=stops_column)
     except FileNotFoundError:
         raise FileNotFoundError("stops.txt missing")
     print(breaker)

@@ -10,8 +10,8 @@ from TBTR.hyptbtr import hyptbtr
 from TBTR.one_many_tbtr import onetomany_rtbtr
 from TBTR.rtbtr import rtbtr
 from TBTR.tbtr import tbtr
-from miscellaneous_func import *
 from TRANSFER_PATTERNS.transferpattens import std_tp
+from miscellaneous_func import *
 
 print_logo()
 
@@ -109,6 +109,7 @@ def main() -> None:
         output = std_tp(SOURCE, DESTINATION, D_TIME, footpath_dict, NETWORK_NAME, routesindx_by_stop_dict, stoptimes_dict, hub_count, hubstops)
         print(f"Optimal arrival times are: {output}")
     return None
+
 
 if __name__ == "__main__":
     # Read network

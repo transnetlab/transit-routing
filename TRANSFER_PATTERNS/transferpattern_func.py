@@ -1,15 +1,13 @@
 """
 Module contains function related to transfer patterns, scalable transfer patterns
 """
-import collections
-from collections import Counter
-from collections import defaultdict
-from collections import deque
-from tqdm import tqdm
+import itertools
 import pickle
+from collections import Counter, defaultdict, deque
+
 import networkx as nx
 import pandas as pd
-import itertools
+from tqdm import tqdm
 
 
 def initialize_onemany_tbtr(MAX_TRANSFER, DESTINATION_LIST) -> tuple:
@@ -86,7 +84,6 @@ def update_label_tbtr(label, no_of_transfer, predecessor_label, J, MAX_TRANSFER)
     return J
 
 
-
 def initialize_from_source_range_tbtr(dep_details, MAX_TRANSFER, stoptimes_dict, R_t) -> list:
     '''
     Initialize trips segments from source in rTBTR
@@ -137,7 +134,7 @@ def enqueue_range_tbtr(connection_list, nextround, predecessor_label, R_t, Q, st
 
 
 def post_process_range_onemany_tbtr(J, Q, rounds_desti_reached, PRINT_ITINERARY, desti, SOURCE, footpath_dict,
-                               stops_dict, stoptimes_dict, d_time, MAX_TRANSFER, trip_transfer_dict) -> list:
+                                    stops_dict, stoptimes_dict, d_time, MAX_TRANSFER, trip_transfer_dict) -> list:
     '''
     Contains all the post-processing features for One-To-Many rTBTR.
     Currently supported functionality:
@@ -421,10 +418,10 @@ def onetomany_rtbtr_forhubs(SOURCE: int, DESTINATION_LIST: list, d_time_groups, 
         for desti in DESTINATION_LIST:
             if rounds_desti_reached[desti]:
                 TP_list.extend(
-                    post_process_range_onemany_tbtr(J, Q, rounds_desti_reached[desti], PRINT_ITINERARY, desti, SOURCE, footpath_dict, stops_dict, stoptimes_dict,
-                                               dep_details[1], MAX_TRANSFER, trip_transfer_dict))
+                    post_process_range_onemany_tbtr(J, Q, rounds_desti_reached[desti], PRINT_ITINERARY, desti, SOURCE, footpath_dict, stops_dict,
+                                                    stoptimes_dict,
+                                                    dep_details[1], MAX_TRANSFER, trip_transfer_dict))
     return TP_list
-
 
 
 def build_query_graph(SOURCE, NETWORK_NAME, hub_count, hubstops) -> dict:
@@ -851,6 +848,7 @@ def arrivaltme_query(stop1: int, stop2: int, deptime, routesindx_by_stop_dict: d
                 arrival_times.append(trip[iternary[1][1]][1])
                 break
     return min(arrival_times)
+
 
 def get_brutehubs(routes_by_stop_dict, NETWORK_NAME) -> list:
     """

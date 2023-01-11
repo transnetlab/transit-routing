@@ -1,17 +1,19 @@
 """
 Builds the transfer.txt file.
 """
-import networkx as nx
 import multiprocessing
+import pickle
 from multiprocessing import Pool
+from time import time
+
+import networkx as nx
+import numpy as np
+import osmnx as ox
 import pandas as pd
 import psutil
-from tqdm import tqdm
-from time import time
-import pickle
-import numpy as np
 from haversine import haversine_vector, Unit
-import osmnx as ox
+from tqdm import tqdm
+
 ox.config(use_cache=True, log_console=False)
 
 
@@ -30,7 +32,7 @@ def extract_graph(NETWORK_NAME: str, breaker: str) -> tuple:
     except (FileNotFoundError, ValueError) as error:
         print(f"Extracting OSM graph for {NETWORK_NAME}")
         G = ox.graph_from_place(f"{NETWORK_NAME}", network_type='drive')
-        #TODO: Change this to bound box + 1 km
+        # TODO: Change this to bound box + 1 km
         print(f"Number of Edges: {len(G.edges())}")
         print(f"Number of Nodes: {len(G.nodes())}")
         print(f"Saving {NETWORK_NAME}")
@@ -73,15 +75,15 @@ def find_transfer_len(source_info: tuple) -> list:
     temp_list = [(source_info[0], stopid, round(out[osm_nodet], 1)) for (stopid, osm_nodet) in stops_list if osm_nodet in reachable_osmnodes]
     return temp_list
 
+
 def transitive_closure(input_list) -> list:
     graph_object, connected_component = input_list
-    new_edges  = []
+    new_edges = []
     for source in connected_component:
         for desti in connected_component:
             if source != desti and (source, desti) not in G_new.edges():
                 new_edges.append((source, desti, nx.dijkstra_path_length(G_new, source, desti, weight="length")))
     return new_edges
-
 
 
 def post_process(G_new, NETWORK_NAME: str, ini_len: int) -> None:
@@ -134,9 +136,10 @@ def initialize() -> tuple:
     print(breaker)
     print("Building transfers file. Enter following parameters.\n")
     WALKING_LIMIT = int(input("Enter maximum allowed walking limit in seconds. Format: YYYYMMDD. Example: 180\n: "))
-    USE_PARALlEL = int(input("Transfer.txt can be built in parallel. Enter 1 to use multiprocessing in shortest path computation. Else press 0. Example: 0\n: "))
+    USE_PARALlEL = int(
+        input("Transfer.txt can be built in parallel. Enter 1 to use multiprocessing in shortest path computation. Else press 0. Example: 0\n: "))
     CORES = 0
-    if USE_PARALlEL!=0:
+    if USE_PARALlEL != 0:
         CORES = int(input(f"Enter number of CORES (>=1). \nAvailable cores (logical and physical):  {multiprocessing.cpu_count()}\n: "))
 
     print(f'RAM {round(psutil.virtual_memory().total / (1024.0 ** 3))} GB (% used:{psutil.virtual_memory()[2]})')
@@ -154,7 +157,7 @@ if __name__ == '__main__':
     # BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES = 1, "Atlanta", 1
     if BUILD_TRANSFER == 1:
         breaker, G, stops_list, CORES, WALKING_LIMIT, start_time, USE_PARALlEL = initialize()
-        if USE_PARALlEL!=0:
+        if USE_PARALlEL != 0:
             with Pool(CORES) as pool:
                 result = pool.map(find_transfer_len, stops_list)
         else:
@@ -164,7 +167,7 @@ if __name__ == '__main__':
         result = [item2 for item in result for item2 in item]
         transfer_file = pd.DataFrame(result, columns=['from_stop_id', 'to_stop_id', 'min_transfer_time'])
 
-        #Post-processing section
+        # Post-processing section
         transfer_file = transfer_file[transfer_file.from_stop_id != transfer_file.to_stop_id].drop_duplicates(subset=['from_stop_id', 'to_stop_id'])
         transfer_file = transfer_file[(transfer_file.min_transfer_time < WALKING_LIMIT) & (transfer_file.min_transfer_time > 0)].reset_index(drop=True)
         transfer_file.to_csv(f'./GTFS/{NETWORK_NAME}/gtfs_o/transfers.csv', index=False)
@@ -174,7 +177,7 @@ if __name__ == '__main__':
         edges = list(zip(transfer_file.from_stop_id, transfer_file.to_stop_id, transfer_file.min_transfer_time))
         G_new.add_weighted_edges_from(edges)
         connected_compnent_list = [(G_new, c) for c in nx.connected_components(G_new)]
-        if USE_PARALlEL!=0:
+        if USE_PARALlEL != 0:
             print("Ensuring Transitive closure in parallel...")
             with Pool(CORES) as pool:
                 new_edge_list = pool.map(transitive_closure, connected_compnent_list)
