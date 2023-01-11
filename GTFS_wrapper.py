@@ -30,8 +30,9 @@ def take_inputs() -> tuple:
             break
         else:
             VALID_ROUTE_TYPES.append(new_route_type)
-    BUILD_TRANSFER = int(input("Enter 1 to build transfers file. Else press 0\n: "))
-    BUILD_TBTR_FILES = int(input("Enter 1 to trip-transfers dict for TBTR-algorithms. Else press 0\n: "))
+    BUILD_TRANSFER = int(input("Enter 1 to build transfers file. Else press 0. Example: 0.\n: "))
+    BUILD_TBTR_FILES = int(input("Enter 1 to build for TBTR preprocessing. Else press 0. Example: 0\n: "))
+    BUILD_TRANSFER_PATTERNS_FILES = int(input("Enter 1 to build Transfer Patterns preprocessing. Else press 0. Example: 0\n: "))
 
     print(f"Parameters entered: \n Network Name: {NETWORK_NAME}\n Date to filter on: {DATE_TOFILTER_ON}"
           f"\n Valid Route types: {VALID_ROUTE_TYPES}\n")
@@ -45,6 +46,11 @@ def take_inputs() -> tuple:
         # print(f"Maximum walking limit (seconds): {WALKING_LIMIT}")
     else:
         print(" Build TBTR files?: No")
+    if BUILD_TRANSFER_PATTERNS_FILES == 1:
+        print(" Build Transfer Patterns files?: Yes")
+        # print(f"Maximum walking limit (seconds): {WALKING_LIMIT}")
+    else:
+        print(" Build Transfer Patterns files?: No")
     print(breaker)
     # BUILD_TRANSFER = 0
     # WALKING_LIMIT = 180  # Distance is in meter and assumed speed is 1m/s
@@ -53,7 +59,7 @@ def take_inputs() -> tuple:
     # VALID_ROUTE_TYPES = [3]
     READ_PATH = f'./GTFS/{NETWORK_NAME}/gtfs_o'
     SAVE_PATH = f'./GTFS/{NETWORK_NAME}/'
-    param_list = [BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES]
+    param_list = [BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES]
     with open(f'parameters_entered.txt', 'wb') as pickle_file:
         pickle.dump(param_list, pickle_file)
 
