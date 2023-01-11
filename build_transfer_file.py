@@ -34,13 +34,29 @@ def extract_graph(NETWORK_NAME: str, breaker: str) -> tuple:
     stops_db = pd.read_csv(f'./GTFS/{NETWORK_NAME}/stops.txt')
     stops_db = stops_db.sort_values(by='stop_id').reset_index(drop=True)
     stops_list = list(stops_db.stop_id)
-    osm_nodes = ox.nearest_nodes(G, stops_db.stop_lon.to_list(), stops_db.stop_lat.to_list())
+    try:
+        osm_nodes = ox.nearest_nodes(G, stops_db.stop_lon.to_list(), stops_db.stop_lat.to_list())
+    except:
+        print("Warning: OSMnx.nearest_nodes failed. Switching to Brute force for finding nearest OSM node...")
+        print("Fix the above import for faster results")
+        node_names, node_coordinates = [], []
+        for node in G.nodes(data=True):
+            node_coordinates.append((node[1]["x"], node[1]["y"]))
+            node_names.append(node[0])
+        dist_list = []
+        import numpy as np
+        from haversine import haversine_vector
+        for _, stop in tqdm(stops_db.iterrows()):
+            dist_list.append(haversine_vector(node_coordinates, len(node_coordinates) * [(stop.stop_lon, stop.stop_lat)]))
+        osm_nodes = [node_names[np.argmin(item)] for item in dist_list]
+        print(f"Unique STOPS: {len(stops_db)}")
+        print(f"Unique OSM nodes identified: {len(set(osm_nodes))}")
     stops_list = list(zip(stops_list, osm_nodes))
     print(breaker)
     return G, stops_list
 
 
-def parallel_func(source_info: tuple) -> list:
+def find_transfer_len(source_info: tuple) -> list:
     """
     Runs shortest path algorithm from source stop with cutoff limit of WALKING_LIMIT * 2
     Args:
@@ -72,9 +88,10 @@ def post_process(transfer_file, WALKING_LIMIT: int, NETWORK_NAME: str) -> None:
     transfer_file = transfer_file[(transfer_file.min_transfer_time < WALKING_LIMIT) & (transfer_file.min_transfer_time > 0)].reset_index(drop=True)
     transfer_file.to_csv(f'./GTFS/{NETWORK_NAME}/gtfs_o/transfers.csv', index=False)
     transfer_file.to_csv(f'./GTFS/{NETWORK_NAME}/gtfs_o/transfers.txt', index=False)
-
+    ini_len = len(transfer_file)
     print("Post processing transfers file")
 
+    print("Ensuring Transitive closure...")
     G = nx.Graph()  # Ensure transitive closure of footpath graph
     edges = list(zip(transfer_file.from_stop_id, transfer_file.to_stop_id, transfer_file.min_transfer_time))
     G.add_weighted_edges_from(edges)
@@ -93,6 +110,8 @@ def post_process(transfer_file, WALKING_LIMIT: int, NETWORK_NAME: str) -> None:
     transfer_file.sort_values(by=['min_transfer_time', 'from_stop_id', 'to_stop_id']).reset_index(drop=True)
     transfer_file.to_csv(f"./GTFS/{NETWORK_NAME}/transfers.csv", index=False)
     transfer_file.to_csv(f"./GTFS/{NETWORK_NAME}/transfers.txt", index=False)
+    print(f"Before Transitive closure: {ini_len}")
+    print(f"After  Transitive closure (final file): {len(transfer_file)}")
     print(f"Total transfers: {len(transfer_file)}")
     print(f"Longest transfer: {transfer_file.iloc[-1].min_transfer_time} seconds")
     print(f"Time required: {round((time() - start_time) / 60, 1)} minutes")
@@ -119,8 +138,11 @@ def initialize() -> tuple:
     print(breaker)
     print("Building transfers file. Enter following parameters.\n")
     WALKING_LIMIT = int(input("Enter maximum allowed walking limit in seconds. Format: YYYYMMDD. Example: 180\n: "))
-    CORES = int(input(
-        f"Transfer.txt can be build in parallel. Enter number of CORES (1 for serial). \nAvailable cores (logical and physical):  {multiprocessing.cpu_count()}\n: "))
+    USE_PARALlEL = int(input("Transfer.txt can be built in parallel. Enter 1 to use multiprocessing in shortest path computation. Else press 0\n: "))
+    CORES = 0
+    if USE_PARALlEL!=0:
+        CORES = int(input(
+            f"Enter number of CORES (>=1). \nAvailable cores (logical and physical):  {multiprocessing.cpu_count()}\n: "))
 
     print(f'RAM {round(psutil.virtual_memory().total / (1024.0 ** 3))} GB (% used:{psutil.virtual_memory()[2]})')
     start_time = time()
@@ -129,20 +151,23 @@ def initialize() -> tuple:
     # stops_db = stops_db.sort_values(by='stop_id').reset_index(drop=True).reset_index().rename(columns={"index": 'new_stop_id'})
     # stops_list = stops_list[:10]
     print(f"Running shortest path on {CORES} CORES")
-    return breaker, G, stops_list, CORES, WALKING_LIMIT, start_time
+    return breaker, G, stops_list, CORES, WALKING_LIMIT, start_time, USE_PARALlEL
 
 
 if __name__ == '__main__':
     with open(f'parameters_entered.txt', 'rb') as file:
         parameter_files = pickle.load(file)
     BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES = parameter_files
-    # BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES = 1, "Vancouver", 1
+    # BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES = 1, "Atlanta", 1
     if BUILD_TRANSFER == 1:
         import osmnx as ox
         ox.config(use_cache=True, log_console=False)
-        breaker, G, stops_list, CORES, WALKING_LIMIT, start_time = initialize()
-        with Pool(CORES) as pool:
-            result = pool.map(parallel_func, stops_list)
+        breaker, G, stops_list, CORES, WALKING_LIMIT, start_time, USE_PARALlEL = initialize()
+        if USE_PARALlEL!=0:
+            with Pool(CORES) as pool:
+                result = pool.map(find_transfer_len, stops_list)
+        else:
+            result = [find_transfer_len(stop_node) for stop_node in tqdm(stops_list)]
         print(breaker)
         stops_db, osm_nodes, G = 0, 0, 0
         result = [item2 for item in result for item2 in item]
