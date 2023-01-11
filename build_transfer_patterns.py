@@ -110,7 +110,7 @@ def remove_older_files(NETWORK_NAME, HUB_COUNT)-> None:
     """
     if not os.path.exists(f"./TRANSFER_PATTERNS/{NETWORK_NAME}_{HUB_COUNT}/."):
         os.makedirs(f"./TRANSFER_PATTERNS/{NETWORK_NAME}_{HUB_COUNT}/.")
-    files = glob.glob(f'./TRANSFER_PATTERNS/transfer_pattern/{NETWORK_NAME}_{HUB_COUNT}/*')
+    files = glob.glob(f'./TRANSFER_PATTERNS/{NETWORK_NAME}_{HUB_COUNT}/*')
     if files != []:
         print(f"Cleaning existing files (if any) in directory ./TRANSFER_PATTERNS/transfer_pattern/{NETWORK_NAME}_{HUB_COUNT}/")
         for f in files:
@@ -132,7 +132,7 @@ def post_process(runtime, CORES, HUB_COUNT, NETWORK_NAME)->None:
         None
 
     """
-    Folderpath = f'./transferpattern/{NETWORK_NAME}_{HUB_COUNT}'
+    Folderpath = f'./TRANSFER_PATTERNS/{NETWORK_NAME}_{HUB_COUNT}'
     total_kb_list = [os.path.getsize(ele) for ele in os.scandir(Folderpath)]
     file_count = len(total_kb_list)
     total_kb = sum(total_kb_list)
