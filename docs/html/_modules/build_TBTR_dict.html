@@ -106,7 +106,7 @@
     <span class="k">return</span> <span class="n">trip_transfer_list</span></div>
 
 
-<div class="viewcode-block" id="algorithm2_parallel"><a class="viewcode-back" href="../TBTR/build_TBTR_dict.html#build_TBTR_dict.algorithm2_parallel">[docs]</a><span class="k">def</span> <span class="nf">algorithm2_parallel</span><span class="p">(</span><span class="n">trip_transfer_</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="p">:</span>
+<div class="viewcode-block" id="algorithm2_parallel"><a class="viewcode-back" href="../TBTR/build_TBTR_dict.html#build_TBTR_dict.algorithm2_parallel">[docs]</a><span class="k">def</span> <span class="nf">algorithm2_parallel</span><span class="p">(</span><span class="n">trip_transfer_</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Removes trip transfers which cause U-turns.</span>
 
@@ -133,7 +133,7 @@
 <span class="sd">    Removes trip transfers that are not part of any optimal journey</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        trip_details: tuple of form: (route_id, trip_id, trip)</span>
+<span class="sd">        trip_details (tuple): tuple of form: (route_id, trip_id, trip)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list of non-optimal trip transfers.</span>
@@ -170,23 +170,36 @@
             <span class="k">pass</span>
     <span class="k">return</span> <span class="n">removed_trans</span></div>
 
+<div class="viewcode-block" id="take_inputs"><a class="viewcode-back" href="../TBTR/build_TBTR_dict.html#build_TBTR_dict.take_inputs">[docs]</a><span class="k">def</span> <span class="nf">take_inputs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Takes the required inputs for building TBTR preprocessing</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        breaker (str): string</span>
+<span class="sd">        CORES (int): Number of codes to be used</span>
+<span class="sd">        change_time (int): change-time in seconds.</span>
+<span class="sd">        GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">breaker</span> <span class="o">=</span> <span class="s2">&quot;________________________________&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Building trip-transfers dict for TBTR. Enter following parameters.</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="p">)</span>
+    <span class="n">CORES</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;trip-transfers can be build in parallel. Enter number of CORES (1 for serial). </span><span class="se">\n</span><span class="s2">Available CORES (logical and physical):  </span><span class="si">{</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="n">change_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;seconds&#39;</span><span class="p">)</span>
+    <span class="n">GENERATE_LOGFILE</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Press 1 to redirect output to a log file in logs folder. Else press 0. Example: 0</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">breaker</span><span class="p">,</span> <span class="n">CORES</span><span class="p">,</span> <span class="n">change_time</span><span class="p">,</span> <span class="n">GENERATE_LOGFILE</span></div>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;parameters_entered.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="n">parameter_files</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="n">BUILD_TRANSFER</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">BUILD_TBTR_FILES</span> <span class="o">=</span> <span class="n">parameter_files</span>
+    <span class="n">BUILD_TRANSFER</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">BUILD_TBTR_FILES</span><span class="p">,</span> <span class="n">BUILD_TRANSFER_PATTERNS_FILES</span> <span class="o">=</span> <span class="n">parameter_files</span>
     <span class="k">if</span> <span class="n">BUILD_TBTR_FILES</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-        <span class="c1"># NETWORK_NAME = &#39;uk&#39;</span>
         <span class="c1"># NETWORK_NAME = &#39;germany&#39;</span>
-        <span class="n">breaker</span> <span class="o">=</span> <span class="s2">&quot;________________________________&quot;</span>
+        <span class="n">breaker</span><span class="p">,</span> <span class="n">CORES</span><span class="p">,</span> <span class="n">change_time</span><span class="p">,</span> <span class="n">GENERATE_LOGFILE</span> <span class="o">=</span> <span class="n">take_inputs</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
-        <span class="n">stops_file</span><span class="p">,</span> <span class="n">trips_file</span><span class="p">,</span> <span class="n">stop_times_file</span><span class="p">,</span> <span class="n">transfers_file</span><span class="p">,</span> <span class="n">stops_dict</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">,</span> <span class="n">routes_by_stop_dict</span><span class="p">,</span> <span class="n">idx_by_route_stop_dict</span> <span class="o">=</span> <span class="n">read_testcase</span><span class="p">(</span>
+        <span class="n">stops_file</span><span class="p">,</span> <span class="n">trips_file</span><span class="p">,</span> <span class="n">stop_times_file</span><span class="p">,</span> <span class="n">transfers_file</span><span class="p">,</span> <span class="n">stops_dict</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">,</span> <span class="n">routes_by_stop_dict</span><span class="p">,</span> <span class="n">idx_by_route_stop_dict</span><span class="p">,</span> <span class="n">routesindx_by_stop_dict</span> <span class="o">=</span> <span class="n">read_testcase</span><span class="p">(</span>
             <span class="n">NETWORK_NAME</span><span class="p">)</span>
         <span class="c1"># inf_time = pd.to_datetime(&quot;today&quot;).round(freq=&#39;H&#39;) + pd.to_timedelta(&quot;365 day&quot;)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Building trip-transfers dict for TBTR. Enter following parameters.</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="p">)</span>
-        <span class="n">CORES</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trip-transfers can be build in parallel. Enter number of CORES (1 for serial). </span><span class="se">\n</span><span class="s2">Available CORES (logical and physical):  </span><span class="si">{</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
-        <span class="n">change_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;seconds&#39;</span><span class="p">)</span>
-        <span class="n">GENERATE_LOGFILE</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Press 1 to redirect output to a log file in logs folder. Else press 0</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
         <span class="c1"># GENERATE_LOGFILE = 1</span>
         <span class="k">if</span> <span class="n">GENERATE_LOGFILE</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./logs/.&#39;</span><span class="p">):</span>
@@ -282,6 +295,9 @@
         <span class="k">if</span> <span class="n">GENERATE_LOGFILE</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ###############################</span>
+<span class="sd">        Depreciated functions</span>
+<span class="sd">        ###############################</span>
 <span class="sd">        def remove_Uturns(stop_times_file, change_time, Transfer_set_db):</span>
 <span class="sd">            U_turns = Transfer_set_db.reset_index()</span>
 <span class="sd">            U_turns.from_stop_index = U_turns.from_stop_index - 1</span>

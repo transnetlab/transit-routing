@@ -14,7 +14,7 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Miscellaneous Functions" href="../miscellaneous.html" />
+    <link rel="next" title="Build Transfer Patterns" href="build_transfer_patterns.html" />
     <link rel="prev" title="Build TBTR dict" href="../TBTR/build_TBTR_dict.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -27,7 +27,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../miscellaneous.html" title="Miscellaneous Functions"
+          <a href="build_transfer_patterns.html" title="Build Transfer Patterns"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../TBTR/build_TBTR_dict.html" title="Build TBTR dict"
@@ -44,7 +44,22 @@
             
   <div class="section" id="transfer-patterns">
 <h1>Transfer Patterns<a class="headerlink" href="#transfer-patterns" title="Permalink to this headline">¶</a></h1>
-<p>To be updated soon!</p>
+<p>Transfer Patterns solves the bicriterion (travel time and transfer) optimization problem. It is the currently one of fastest bicriteria journey planning algorithm in public transit networks. It has a seperate preprocessing phase and query phase. Given a soruce stop, the preprocessing phase involves finding all optimal journeys to all other stops. Transfer patterns correspoding to these optimal journeys are extracted. The query phase then uses a multicriteria dijkstra’s algorithm on a graph constructed using the previosly computed transfer patters. Currently supported versions are:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="build_transfer_patterns.html">Build Transfer Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transferpattern_func.html">Transfer Patterns functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transferpattens.html">Standard Transfer Patterns</a></li>
+</ul>
+</div>
+<div class="section" id="refrences">
+<h2>Refrences<a class="headerlink" href="#refrences" title="Permalink to this headline">¶</a></h2>
+<p>For more information refer following:</p>
+<ul class="simple">
+<li><p>Bast, Hannah, et al. “Fast routing in very large public transportation networks using transfer patterns.” European symposium on algorithms. Springer, Berlin, Heidelberg, 2010.</p></li>
+<li><p>Bast, Hannah, Matthias Hertel, and Sabine Storandt. “Scalable transfer patterns.” 2016 Proceedings of the Eighteenth Workshop on Algorithm Engineering and Experiments (ALENEX). Society for Industrial and Applied Mathematics, 2016.</p></li>
+</ul>
+</div>
 </div>
 
 
@@ -54,12 +69,20 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Transfer Patterns</a><ul>
+<li><a class="reference internal" href="#refrences">Refrences</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="../TBTR/build_TBTR_dict.html"
                         title="previous chapter">Build TBTR dict</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../miscellaneous.html"
-                        title="next chapter">Miscellaneous Functions</a></p>
+  <p class="topless"><a href="build_transfer_patterns.html"
+                        title="next chapter">Build Transfer Patterns</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -91,7 +114,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../miscellaneous.html" title="Miscellaneous Functions"
+          <a href="build_transfer_patterns.html" title="Build Transfer Patterns"
              >next</a> |</li>
         <li class="right" >
           <a href="../TBTR/build_TBTR_dict.html" title="Build TBTR dict"

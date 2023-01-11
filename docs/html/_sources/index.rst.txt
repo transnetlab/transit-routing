@@ -41,7 +41,7 @@ Switzerland's public transit network has been provided as a test case. The figur
      - 
    * - One-To-Many rRAPTOR
      -   `link <https://arxiv.org/abs/2111.06654>`_
-     - Complete
+     - To be added soon
      - 
    * - One-To-Many rTBTR
      -   `link <https://arxiv.org/abs/2111.06654>`_
@@ -69,7 +69,7 @@ Switzerland's public transit network has been provided as a test case. The figur
      - 
    * - Scalable Transfer Patterns
      -   `link <https://epubs.siam.org/doi/abs/10.1137/1.9781611974317.2>`_
-     - Complete
+     - To be addeed soon
      - 
 
 Navigation

@@ -1,6 +1,23 @@
 Transfer Patterns
 ===========================================
 
-To be updated soon!
-   
+Transfer Patterns solves the bicriterion (travel time and transfer) optimization problem. It is the currently one of fastest bicriteria journey planning algorithm in public transit networks. It has a seperate preprocessing phase and query phase. Given a soruce stop, the preprocessing phase involves finding all optimal journeys to all other stops. Transfer patterns correspoding to these optimal journeys are extracted. The query phase then uses a multicriteria dijkstra's algorithm on a graph constructed using the previosly computed transfer patters. Currently supported versions are:
 
+
+
+.. toctree::
+   :maxdepth: 1
+
+   build_transfer_patterns
+   transferpattern_func
+   transferpattens
+
+
+Refrences
+--------------
+
+For more information refer following:
+
+- Bast, Hannah, et al. "Fast routing in very large public transportation networks using transfer patterns." European symposium on algorithms. Springer, Berlin, Heidelberg, 2010.
+
+- Bast, Hannah, Matthias Hertel, and Sabine Storandt. "Scalable transfer patterns." 2016 Proceedings of the Eighteenth Workshop on Algorithm Engineering and Experiments (ALENEX). Society for Industrial and Applied Mathematics, 2016.

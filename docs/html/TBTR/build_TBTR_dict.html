@@ -62,7 +62,7 @@
 
 <dl class="py function">
 <dt id="build_TBTR_dict.algorithm2_parallel">
-<code class="sig-prename descclassname"><span class="pre">build_TBTR_dict.</span></code><code class="sig-name descname"><span class="pre">algorithm2_parallel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trip_transfer_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/build_TBTR_dict.html#algorithm2_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#build_TBTR_dict.algorithm2_parallel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">build_TBTR_dict.</span></code><code class="sig-name descname"><span class="pre">algorithm2_parallel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trip_transfer_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/build_TBTR_dict.html#algorithm2_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#build_TBTR_dict.algorithm2_parallel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes trip transfers which cause U-turns.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -80,10 +80,27 @@
 <dd><p>Removes trip transfers that are not part of any optimal journey</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>trip_details</strong> – tuple of form: (route_id, trip_id, trip)</p>
+<dd class="field-odd"><p><strong>trip_details</strong> (<em>tuple</em>) – tuple of form: (route_id, trip_id, trip)</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of non-optimal trip transfers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="build_TBTR_dict.take_inputs">
+<code class="sig-prename descclassname"><span class="pre">build_TBTR_dict.</span></code><code class="sig-name descname"><span class="pre">take_inputs</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../_modules/build_TBTR_dict.html#take_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#build_TBTR_dict.take_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the required inputs for building TBTR preprocessing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string
+CORES (int): Number of codes to be used
+change_time (int): change-time in seconds.
+GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>breaker (str)</p>
 </dd>
 </dl>
 </dd></dl>
