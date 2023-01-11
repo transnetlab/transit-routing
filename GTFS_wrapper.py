@@ -221,6 +221,10 @@ def filter_stoptimes(valid_trips: set, trips, DATE_TOFILTER_ON: int, stop_times)
     stops_map = pd.DataFrame([t[::-1] for t in enumerate(stoplist, 1)], columns=['stop_id', 'new_stop_id'])
     stop_times = pd.merge(stop_times, stops_map, on='stop_id').drop(columns=['stop_id']).rename(columns={'new_stop_id': 'stop_id'})
     print("Applying dates")
+
+    #Correct timestamp of format 9:30:00 to 09:30:00
+    stop_times.arrival_time = [time_value if time_value.find(":")>1 else f"0{time_value}" for time_value in stop_times.arrival_time]
+
     DATE_TOFILTER_ON = f'{str(DATE_TOFILTER_ON)[:4]}-{str(DATE_TOFILTER_ON)[4:6]}-{str(DATE_TOFILTER_ON)[6:]}'
     last_stamp = stop_times.sort_values(by="arrival_time").arrival_time.iloc[-1]
     data_list = pd.date_range(DATE_TOFILTER_ON, periods=ceil(int(last_stamp[:2]) / 24))
