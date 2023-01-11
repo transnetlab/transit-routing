@@ -68,7 +68,7 @@ def algorithm1_parallel(route_details: tuple) -> list:
     return trip_transfer_list
 
 
-def algorithm2_parallel(trip_transfer_: list) :
+def algorithm2_parallel(trip_transfer_: list)-> list:
     """
     Removes trip transfers which cause U-turns.
 
@@ -95,7 +95,7 @@ def algorithm3_parallel(trip_details: tuple)-> list:
     Removes trip transfers that are not part of any optimal journey
 
     Args:
-        trip_details: tuple of form: (route_id, trip_id, trip)
+        trip_details (tuple): tuple of form: (route_id, trip_id, trip)
 
     Returns:
         list of non-optimal trip transfers.
@@ -147,20 +147,19 @@ def take_inputs() -> tuple:
     CORES = int(input(
         f"trip-transfers can be build in parallel. Enter number of CORES (1 for serial). \nAvailable CORES (logical and physical):  {multiprocessing.cpu_count()}\n: "))
     change_time = pd.to_timedelta(0, unit='seconds')
-    GENERATE_LOGFILE = int(input(f"Press 1 to redirect output to a log file in logs folder. Else press 0\n: "))
+    GENERATE_LOGFILE = int(input(f"Press 1 to redirect output to a log file in logs folder. Else press 0. Example: 0\n: "))
     return breaker, CORES, change_time, GENERATE_LOGFILE
 
 
 if __name__ == "__main__":
     with open(f'parameters_entered.txt', 'rb') as file:
         parameter_files = pickle.load(file)
-    BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES = parameter_files
+    BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES = parameter_files
     if BUILD_TBTR_FILES==1:
-        # NETWORK_NAME = 'uk'
         # NETWORK_NAME = 'germany'
         breaker, CORES, change_time, GENERATE_LOGFILE = take_inputs()
         print(breaker)
-        stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(
+        stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict = read_testcase(
             NETWORK_NAME)
         # inf_time = pd.to_datetime("today").round(freq='H') + pd.to_timedelta("365 day")
         # GENERATE_LOGFILE = 1
@@ -258,6 +257,9 @@ if __name__ == "__main__":
         if GENERATE_LOGFILE == 1: sys.stdout.close()
 
         """
+        ###############################
+        Depreciated functions
+        ###############################
         def remove_Uturns(stop_times_file, change_time, Transfer_set_db):
             U_turns = Transfer_set_db.reset_index()
             U_turns.from_stop_index = U_turns.from_stop_index - 1
