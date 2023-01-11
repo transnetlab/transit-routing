@@ -37,15 +37,16 @@ def read_testcase(NETWORK_NAME: str) -> tuple:
     if not os.path.exists(f'./dict_builder/{NETWORK_NAME}/'):
         os.makedirs(f'./dict_builder/{NETWORK_NAME}/')
     try:
-        stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = gtfs_loader.load_all_dict(NETWORK_NAME)
+        stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict = gtfs_loader.load_all_dict(NETWORK_NAME)
     except FileNotFoundError:
         print("Building required dictionaries")
         stops_dict = dict_builder_functions.build_save_stops_dict(stop_times_file, trips_file, NETWORK_NAME)
         stoptimes_dict = dict_builder_functions.build_save_stopstimes_dict(stop_times_file, trips_file, NETWORK_NAME)
         routes_by_stop_dict = dict_builder_functions.build_save_route_by_stop(stop_times_file, NETWORK_NAME)
         footpath_dict = dict_builder_functions.build_save_footpath_dict(transfers_file, NETWORK_NAME)
-        idx_by_route_stop_dict = dict_builder_functions.stop_idx_in_route(stop_times_file, NETWORK_NAME)
-    return stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict
+        idx_by_route_stop_dict = dict_builder_functions.build_stop_idx_in_route(stop_times_file, NETWORK_NAME)
+        routesindx_by_stop_dict = dict_builder_functions.build_routesindx_by_stop_dict(NETWORK_NAME)
+    return stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict
 
 
 def print_logo() -> None:
