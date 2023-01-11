@@ -135,6 +135,12 @@ def algorithm3_parallel(trip_details: tuple)-> list:
 def take_inputs() -> tuple:
     '''
     Takes the required inputs for building TBTR preprocessing
+
+    Returns:
+        breaker (str): string
+        CORES (int): Number of codes to be used
+        change_time (int): change-time in seconds.
+        GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0
     '''
     breaker = "________________________________"
     print("Building trip-transfers dict for TBTR. Enter following parameters.\n ")
