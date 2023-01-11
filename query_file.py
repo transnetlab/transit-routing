@@ -11,6 +11,7 @@ from TBTR.one_many_tbtr import onetomany_rtbtr
 from TBTR.rtbtr import rtbtr
 from TBTR.tbtr import tbtr
 from miscellaneous_func import *
+from TRANSFER_PATTERNS.transferpattens import std_tp
 
 print_logo()
 
@@ -23,18 +24,19 @@ def take_inputs() -> tuple:
     defines the use input
 
     Returns:
-        algorithm (int): algorithm type. 0 for RAPTOR and 1 for TBTR
+        algorithm (int): algorithm type. 0 for RAPTOR, 1 for TBTR, 2 for Transfer Patterns
         variant (int): variant of the algorithm. 0 for normal version,
                                                  1 for range version,
                                                  2 for One-To-Many version,
                                                  3 for Hyper version
                                                  3 for Nested Hyper version
     """
-    algorithm = int(input("Press 0 to enter RAPTOR environment \nPress 1 to enter TBTR environment \n: "))
+    algorithm = int(input("Press 0 to enter RAPTOR environment \nPress 1 to enter TBTR environment\nPress 2 to enter Transfer Patterns environment\n: "))
+    variant = -1
     print("***************")
     if algorithm == 0:
         variant = int(input(
-            "Press 0 for RAPTOR \nPress 1 for rRAPTOR \nPress 2 for One-To-Many rRAPTOR \nPress 3 for HypRAPTOR\nPress 4 for Multilevel-HypRAPTOR \n: "))
+            "Press 0 for RAPTOR \nPress 1 for rRAPTOR \nPress 2 for One-To-Many rRAPTOR \nPress 3 for HypRAPTOR\nPress 4 for Multilevel-HypRAPTOR\n: "))
     elif algorithm == 1:
         variant = int(input("Press 0: TBTR \nPress 1: rTBTR \nPress 2: One-To-Many rTBTR \nPress 3: HypTBTR \nPress 4 for Multilevel-HypTBTR \n: "))
     print("***************")
@@ -103,15 +105,18 @@ def main() -> None:
             output = hyptbtr(SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_ITINERARY, nested_stop_out, nested_trip_groups,
                              routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
             print(f"Optimal arrival times are: {output[0]}")
+    if algorithm == 2:
+        output = std_tp(SOURCE, DESTINATION, D_TIME, footpath_dict, NETWORK_NAME, routesindx_by_stop_dict, stoptimes_dict, hub_count, hubstops)
+        print(f"Optimal arrival times are: {output}")
     return None
 
 if __name__ == "__main__":
     # Read network
-    USE_TESTCASE = int(input("Press 1 to use test case (anaheim), 0 to enter values manually\n: "))
+    USE_TESTCASE = int(input("Press 1 to use test case (anaheim), 0 to enter values manually. Example: 1\n: "))
     if USE_TESTCASE == 1:
         NETWORK_NAME = './anaheim'
 
-        stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(
+        stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict = read_testcase(
             NETWORK_NAME)
         try:
             with open(f'./GTFS/{NETWORK_NAME}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
@@ -125,6 +130,7 @@ if __name__ == "__main__":
         SOURCE, DESTINATION, DESTINATION_LIST = 36, 52, [52, 43]
         D_TIME = stop_times_file.arrival_time.sort_values().iloc[0]
         MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC = 4, 1, 0
+        hub_count, hubstops = 0, {}
         PRINT_ITINERARY, OPTIMIZED = 1, 0
         # TODO add partition testcases
 
@@ -134,7 +140,7 @@ if __name__ == "__main__":
     else:
         NETWORK_NAME = input("Enter Network name in small case. Example: anaheim\n: ")
 
-        stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict = read_testcase(
+        stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict = read_testcase(
             NETWORK_NAME)
 
         try:
