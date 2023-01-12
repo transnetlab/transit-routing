@@ -82,7 +82,7 @@ def post_process_csa(SOURCE: int, DESTINATION: int, pi_label: dict, PRINT_ITINER
     if PRINT_ITINERARY == 1:
         current_stop = DESTINATION
         if pi_label[current_stop] == -1:
-                print('DESTINATION cannot be reached')
+            print('DESTINATION cannot be reached')
         else:
             journey = []
             while current_stop != SOURCE:
