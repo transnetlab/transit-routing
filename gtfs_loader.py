@@ -27,7 +27,7 @@ def load_all_dict(NETWORK_NAME: str):
         routes_by_stop_dict = pickle.load(file)
     with open(f'./dict_builder/{NETWORK_NAME}/idx_by_route_stop.pkl', 'rb') as file:
         idx_by_route_stop_dict = pickle.load(file)
-    with open(f'./dict_builder/{NETWORK_NAME}/routesindx_by_stop_dict.pkl', 'rb') as file:
+    with open(f'./dict_builder/{NETWORK_NAME}/routesindx_by_stop.pkl', 'rb') as file:
         routesindx_by_stop_dict = pickle.load(file)
     return stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict
 
