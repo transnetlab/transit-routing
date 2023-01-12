@@ -1,5 +1,5 @@
 """
-THis is the main module.
+This is the main module.
 """
 
 import os
