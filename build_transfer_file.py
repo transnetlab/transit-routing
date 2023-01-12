@@ -130,6 +130,7 @@ def initialize() -> tuple:
         CORES (int): Number of codes to be used
         WALKING_LIMIT (int): Maximum allowed walking time
         start_time: timestamp object
+        USE_PARALlEL (int): 1 for parallel and 0 for serial
 
     Warnings:
         Building Transfers file requires OSMnX module.

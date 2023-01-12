@@ -1,5 +1,5 @@
 """
-Builds the transfer.txt file.
+Builds structures related to transfer patterns
 """
 import glob
 import multiprocessing

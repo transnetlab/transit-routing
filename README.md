@@ -51,6 +51,7 @@ We welcome all suggestions from the community. If you wish to contribute or repo
 - **Prateek Agarwal**
     - Ph.D. at Indian Institute of Science (IISc) Bengaluru, India.
     - Mail Id: prateeka@iisc.ac.in
+    - <https://sites.google.com/view/prateek-agarwal/>
 
 - **Tarun Rambha**
     - Assistant Professor in the Department of Civil Engineering and the Center for Infrastructure, Sustainable Transportation and Urban Planning (CiSTUP) at Indian Institute of Science (IISc) Bengaluru, India.
