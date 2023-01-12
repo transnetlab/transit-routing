@@ -33,26 +33,32 @@ def take_inputs() -> tuple:
         else:
             VALID_ROUTE_TYPES.append(new_route_type)
     BUILD_TRANSFER = int(input("Enter 1 to build transfers file. Else press 0. Example: 0.\n: "))
-    BUILD_TBTR_FILES = int(input("Enter 1 to build for TBTR preprocessing. Else press 0. Example: 0\n: "))
+    BUILD_TBTR_FILES = int(input("Enter 1 to build for TBTR preprocessing. Else press 0. Example: 1800\n: "))
     BUILD_TRANSFER_PATTERNS_FILES = int(input("Enter 1 to build Transfer Patterns preprocessing. Else press 0. Example: 0\n: "))
+    BUILD_CSA = int(input("Enter 1 to build CSA preprocessing. Else press 0. Example: 0\n: "))
 
     print(f"Parameters entered: \n Network Name: {NETWORK_NAME}\n Date to filter on: {DATE_TOFILTER_ON}"
           f"\n Valid Route types: {VALID_ROUTE_TYPES}\n")
     if BUILD_TRANSFER == 1:
         print(" Build transfer file?: Yes")
-        # print(f"Maximum walking limit (seconds): {WALKING_LIMIT}")
     else:
         print(" Build transfer file?: No")
+
     if BUILD_TBTR_FILES == 1:
         print(" Build TBTR files?: Yes")
-        # print(f"Maximum walking limit (seconds): {WALKING_LIMIT}")
     else:
         print(" Build TBTR files?: No")
+
     if BUILD_TRANSFER_PATTERNS_FILES == 1:
         print(" Build Transfer Patterns files?: Yes")
-        # print(f"Maximum walking limit (seconds): {WALKING_LIMIT}")
     else:
         print(" Build Transfer Patterns files?: No")
+
+    if BUILD_CSA == 1:
+        print(" Build CSA files?: Yes")
+    else:
+        print(" Build CSA files?: No")
+
     print(breaker)
     # BUILD_TRANSFER = 0
     # WALKING_LIMIT = 180  # Distance is in meter and assumed speed is 1m/s
@@ -61,7 +67,7 @@ def take_inputs() -> tuple:
     # VALID_ROUTE_TYPES = [3]
     READ_PATH = f'./GTFS/{NETWORK_NAME}/gtfs_o'
     SAVE_PATH = f'./GTFS/{NETWORK_NAME}/'
-    param_list = [BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES]
+    param_list = [BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES, BUILD_CSA]
     with open(f'parameters_entered.txt', 'wb') as pickle_file:
         pickle.dump(param_list, pickle_file)
 
