@@ -14,12 +14,14 @@ import psutil
 from haversine import haversine_vector, Unit
 from tqdm import tqdm
 
-ox.config(use_cache=True, log_console=False)
+ox.settings.use_cache = True
+ox.settings.log_console = False
 
 
 def extract_graph(NETWORK_NAME: str, breaker: str) -> tuple:
     """
     Extracts the required OSM.
+
     Args:
         NETWORK_NAME (str): Network name
 
