@@ -138,14 +138,18 @@ def take_inputs() -> tuple:
         CORES (int): Number of codes to be used
         change_time (int): change-time in seconds.
         GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0
+        USE_PARALlEL (int): 1 for parallel and 0 for serial
     '''
     breaker = "________________________________"
     print("Building trip-transfers dict for TBTR. Enter following parameters.\n ")
-    CORES = int(input(
-        f"trip-transfers can be build in parallel. Enter number of CORES (1 for serial). \nAvailable CORES (logical and physical):  {multiprocessing.cpu_count()}\n: "))
+    USE_PARALlEL = int(input("TBTR can be built in parallel. Enter 1 to use multiprocessing. Else press 0. Example: 0\n: "))
+    CORES = 0
+    if USE_PARALlEL != 0:
+        CORES = int(input(f"Enter number of CORES (>=1). \nAvailable CORES (logical and physical):  {multiprocessing.cpu_count()}\n: "))
     change_time = pd.to_timedelta(0, unit='seconds')
     GENERATE_LOGFILE = int(input(f"Press 1 to redirect output to a log file in logs folder. Else press 0. Example: 0\n: "))
-    return breaker, CORES, change_time, GENERATE_LOGFILE
+
+    return breaker, CORES, change_time, GENERATE_LOGFILE, USE_PARALlEL
 
 
 if __name__ == "__main__":
@@ -154,7 +158,7 @@ if __name__ == "__main__":
     BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES = parameter_files
     if BUILD_TBTR_FILES == 1:
         # NETWORK_NAME = 'germany'
-        breaker, CORES, change_time, GENERATE_LOGFILE = take_inputs()
+        breaker, CORES, change_time, GENERATE_LOGFILE, USE_PARALlEL = take_inputs()
         print(breaker)
         stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict = read_testcase(
             NETWORK_NAME)
@@ -167,16 +171,21 @@ if __name__ == "__main__":
         print(f"Network: {NETWORK_NAME}")
         print(f'CORES used ={CORES}')
         print(breaker)
+
         ########Algorithm 1
         print("Running Algorithm 1")
-        route_details = list(stoptimes_dict.items())
-        shuffle(route_details)
+        route_details_list = list(stoptimes_dict.items())
+        shuffle(route_details_list)
         start = time_measure()
-        with Pool(CORES) as pool:
-            result = pool.map(algorithm1_parallel, route_details)
+        if USE_PARALlEL==1:
+            with Pool(CORES) as pool:
+                result = pool.map(algorithm1_parallel, route_details_list)
+        else:
+            result = [algorithm1_parallel(route_details) for route_details in route_details_list]
         A1_time = time_measure() - start
         Transfer_set_db = pd.DataFrame(list(chain(*result)), columns=["from_Trip", "from_stop_index", "to_trip", "to_stop_index"])
         print(breaker)
+
         ########Algorithm 2
         print("Running Algorithm 2")
         Transfer_set_db_temp = Transfer_set_db.reset_index()
@@ -187,8 +196,11 @@ if __name__ == "__main__":
         Transfer_set_db_temp.to_stop_index = Transfer_set_db_temp.to_stop_index + 1
         Transfer_set_db_temp = Transfer_set_db_temp[['index', 'from_routeid', 'from_tid', 'to_routeid', 'to_tid', 'from_stop_index', 'to_stop_index']]
         start = time_measure()
-        with Pool(CORES) as pool:
-            U_Turns_list = pool.map(algorithm2_parallel, Transfer_set_db_temp.values.tolist())
+        if USE_PARALlEL==1:
+            with Pool(CORES) as pool:
+                U_Turns_list = pool.map(algorithm2_parallel, Transfer_set_db_temp.values.tolist())
+        else:
+            U_Turns_list = [algorithm2_parallel(trip_transfer_) for trip_transfer_ in Transfer_set_db_temp.values.tolist()]
         A2_time = time_measure() - start
         U_Turns_list = [x for x in U_Turns_list if x]
         Transfer_set = Transfer_set_db.drop(U_Turns_list).reset_index(drop=True)
@@ -217,8 +229,11 @@ if __name__ == "__main__":
 
         init_tans = sum([len(x) for x in trip_transfer_dict.values()])
         start = time_measure()
-        with Pool(CORES) as pool:
-            non_optimal_trans = pool.map(algorithm3_parallel, trip_list)
+        if USE_PARALlEL==1:
+            with Pool(CORES) as pool:
+                non_optimal_trans = pool.map(algorithm3_parallel, trip_list)
+        else:
+            non_optimal_trans = [algorithm3_parallel(trip_details) for trip_details in trip_list]
         A3_time = time_measure() - start
         for route_level_turns in non_optimal_trans:
             for tid, trans in route_level_turns:
