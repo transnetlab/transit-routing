@@ -12,11 +12,8 @@ from TBTR.rtbtr import rtbtr
 from TBTR.tbtr import tbtr
 from TRANSFER_PATTERNS.transferpattens import std_tp
 from miscellaneous_func import *
-
+from CSA.std_csa import std_csa
 print_logo()
-
-
-# print("Reading Testcase...")
 
 
 def take_inputs() -> tuple:
@@ -31,8 +28,8 @@ def take_inputs() -> tuple:
                                                  3 for Hyper version
                                                  3 for Nested Hyper version
     """
-    algorithm = int(input("Press 0 to enter RAPTOR environment \nPress 1 to enter TBTR environment\nPress 2 to enter Transfer Patterns environment\n: "))
-    variant = -1
+    algorithm = int(input("Press 0 to enter RAPTOR environment \nPress 1 to enter TBTR environment\nPress 2 to enter Transfer Patterns environment\nPress 3 to enter CSA environment\n: "))
+    variant = 0
     print("***************")
     if algorithm == 0:
         variant = int(input(
@@ -106,8 +103,13 @@ def main() -> None:
                              routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict, trip_transfer_dict, trip_set)
             print(f"Optimal arrival times are: {output[0]}")
     if algorithm == 2:
-        output = std_tp(SOURCE, DESTINATION, D_TIME, footpath_dict, NETWORK_NAME, routesindx_by_stop_dict, stoptimes_dict, hub_count, hubstops)
-        print(f"Optimal arrival times are: {output}")
+        if variant == 0:
+            output = std_tp(SOURCE, DESTINATION, D_TIME, footpath_dict, NETWORK_NAME, routesindx_by_stop_dict, stoptimes_dict, hub_count, hubstops)
+            print(f"Optimal arrival times are: {output}")
+    if algorithm == 3:
+        if variant == 0:
+            output = std_csa(SOURCE, DESTINATION, D_TIME, connections_list, WALKING_FROM_SOURCE, footpath_dict, PRINT_ITINERARY)
+            print(f"Optimal arrival times is: {output}")
     return None
 
 
@@ -119,19 +121,30 @@ if __name__ == "__main__":
 
         stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict = read_testcase(
             NETWORK_NAME)
+
+        #Load TBTR files
         try:
             with open(f'./GTFS/{NETWORK_NAME}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
                 trip_transfer_dict = pickle.load(file)
             trip_set = set(trip_transfer_dict.keys())
         except FileNotFoundError:
-            print("TBTR preprocessing missing for Chicago.")
+            print("TBTR preprocessing missing")
+
+        #Load CSA files
+        try:
+            with open(f'./dict_builder/{NETWORK_NAME}/connections_dict_pkl.pkl', 'rb') as file:
+                connections_list = pickle.load(file)
+        except FileNotFoundError:
+            print("CSA preprocessing missing")
+
         print_network_details(transfers_file, trips_file, stops_file)
 
         # Query parameters
         SOURCE, DESTINATION, DESTINATION_LIST = 36, 52, [52, 43]
         D_TIME = stop_times_file.arrival_time.sort_values().iloc[0]
         MAX_TRANSFER, WALKING_FROM_SOURCE, CHANGE_TIME_SEC = 4, 1, 0
-        hub_count, hubstops = 0, {}
+        hub_count, hubstops = 0, set()
+
         PRINT_ITINERARY, OPTIMIZED = 1, 0
         # TODO add partition testcases
 
@@ -144,12 +157,20 @@ if __name__ == "__main__":
         stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict = read_testcase(
             NETWORK_NAME)
 
+        #Load TBTR files
         try:
             with open(f'./GTFS/{NETWORK_NAME}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
                 trip_transfer_dict = pickle.load(file)
             trip_set = set(trip_transfer_dict.keys())
         except FileNotFoundError:
-            print("TBTR preprocessing missing for Chicago.")
+            print("TBTR preprocessing missing")
+
+        #Load CSA files
+        try:
+            with open(f'./dict_builder/{NETWORK_NAME}/connections_dict_pkl.pkl', 'rb') as file:
+                connections_list = pickle.load(file)
+        except FileNotFoundError:
+            print("CSA preprocessing missing")
         print_network_details(transfers_file, trips_file, stops_file)
 
         SOURCE = int(input("Enter source stop id\n: "))
