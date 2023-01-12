@@ -27,16 +27,18 @@ def extract_graph(NETWORK_NAME: str, breaker: str) -> tuple:
         networkx graph, list of tuple [(stop id, nearest OSM node)]
     """
     try:
-        G = nx.read_gpickle(f"./GTFS/{NETWORK_NAME}/gtfs_o/{NETWORK_NAME}_G.pickle")
+        G = pickle.load(open(f"./GTFS/{NETWORK_NAME}/gtfs_o/{NETWORK_NAME}_G.pickle", 'rb'))
+        # G = nx.read_gpickle(f"./GTFS/{NETWORK_NAME}/gtfs_o/{NETWORK_NAME}_G.pickle")
         print("Graph imported from disk")
-    except (FileNotFoundError, ValueError) as error:
-        print(f"Extracting OSM graph for {NETWORK_NAME}")
+    except (FileNotFoundError, ValueError, AttributeError) as error:
+        print(f"Graph import failed {error}. Extracting OSM graph for {NETWORK_NAME}")
         G = ox.graph_from_place(f"{NETWORK_NAME}", network_type='drive')
         # TODO: Change this to bound box + 1 km
         print(f"Number of Edges: {len(G.edges())}")
         print(f"Number of Nodes: {len(G.nodes())}")
         print(f"Saving {NETWORK_NAME}")
-        nx.write_gpickle(G, f"./GTFS/{NETWORK_NAME}/gtfs_o/{NETWORK_NAME}_G.pickle")
+        pickle.dump(G, open(f"./GTFS/{NETWORK_NAME}/gtfs_o/{NETWORK_NAME}_G.pickle", 'wb'))
+        # nx.write_gpickle(G, f"./GTFS/{NETWORK_NAME}/gtfs_o/{NETWORK_NAME}_G.pickle")
     stops_db = pd.read_csv(f'./GTFS/{NETWORK_NAME}/stops.txt')
     stops_db = stops_db.sort_values(by='stop_id').reset_index(drop=True)
     stops_list = list(stops_db.stop_id)
@@ -177,7 +179,7 @@ if __name__ == '__main__':
         edges = list(zip(transfer_file.from_stop_id, transfer_file.to_stop_id, transfer_file.min_transfer_time))
         G_new.add_weighted_edges_from(edges)
         connected_compnent_list = [(G_new, c) for c in nx.connected_components(G_new)]
-        print(f"Total connected components identified: {connected_compnent_list}")
+        print(f"Total connected components identified: {len(connected_compnent_list)}")
         if USE_PARALlEL != 0:
             print("Ensuring Transitive closure in parallel...")
             with Pool(CORES) as pool:
