@@ -155,7 +155,7 @@ def take_inputs() -> tuple:
 if __name__ == "__main__":
     with open(f'parameters_entered.txt', 'rb') as file:
         parameter_files = pickle.load(file)
-    BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES = parameter_files
+    BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES, BUILD_CSA = parameter_files
     if BUILD_TBTR_FILES == 1:
         # NETWORK_NAME = 'germany'
         breaker, CORES, change_time, GENERATE_LOGFILE, USE_PARALlEL = take_inputs()

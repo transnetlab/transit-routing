@@ -158,7 +158,7 @@ def post_process(runtime, CORES, HUB_COUNT, NETWORK_NAME) -> None:
 if __name__ == "__main__":
     with open(f'parameters_entered.txt', 'rb') as file:
         parameter_files = pickle.load(file)
-    BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES = parameter_files
+    BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES, BUILD_CSA = parameter_files
     # BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TP = 1, "anaheim", 1, 1
     if BUILD_TRANSFER_PATTERNS_FILES == 1:
         breaker, CORES, start_time, USE_PARALlEL, HUB_COUNT, MAX_TRANSFER, WALKING_FROM_SOURCE, PRINT_ITINERARY, OPTIMIZED, GENERATE_LOGFILE, USE_TBTR, CHANGE_TIME_SEC = initialize()

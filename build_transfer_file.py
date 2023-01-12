@@ -158,7 +158,7 @@ def initialize() -> tuple:
 if __name__ == '__main__':
     with open(f'parameters_entered.txt', 'rb') as file:
         parameter_files = pickle.load(file)
-    BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES = parameter_files
+    BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES, BUILD_CSA = parameter_files
     # BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES = 1, "Atlanta", 1
     if BUILD_TRANSFER == 1:
         breaker, G, stops_list, CORES, WALKING_LIMIT, start_time, USE_PARALlEL = initialize()
