@@ -5,7 +5,8 @@ Module contains transfer patterns implementation.
 from TRANSFER_PATTERNS.transferpattern_func import *
 
 
-def std_tp(SOURCE: int, DESTINATION: int, D_TIME, footpath_dict: dict, NETWORK_NAME: str, routesindx_by_stop_dict, stoptimes_dict: dict, hub_count: int = 0, hubstops: set = {})-> list:
+def std_tp(SOURCE: int, DESTINATION: int, D_TIME, footpath_dict: dict, NETWORK_NAME: str, routesindx_by_stop_dict, stoptimes_dict: dict, hub_count: int = 0,
+           hubstops: set = set) -> list:
     """
     Standard implementation of trasnfer patterns algorithms. Following functionality is supported regarding hubs:
     1. Build hubs using brute force method. See transferpattern_func
@@ -25,7 +26,7 @@ def std_tp(SOURCE: int, DESTINATION: int, D_TIME, footpath_dict: dict, NETWORK_N
         pareto optimal journeys
 
     Examples:
-        >>> output = std_tp(36, 52, pd.to_datetime('2022-06-30 05:41:00'), footpath_dict, './anaheim', routesindx_by_stop_dict, stoptimes_dict, 0, [])
+        >>> output = std_tp(36, 52, pd.to_datetime('2022-06-30 05:41:00'), footpath_dict, './anaheim', routesindx_by_stop_dict, stoptimes_dict, 0, set())
 
     TODO: Add backtracking
     """
@@ -37,4 +38,3 @@ def std_tp(SOURCE: int, DESTINATION: int, D_TIME, footpath_dict: dict, NETWORK_N
     except FileNotFoundError:
         print("transfer pattern preprocessing incomplete not found")
         return [None]
-
