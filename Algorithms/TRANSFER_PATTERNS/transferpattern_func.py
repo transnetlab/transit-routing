@@ -430,7 +430,7 @@ def build_query_graph(SOURCE, NETWORK_NAME, hub_count, hubstops) -> dict:
 
     Args:
         SOURCE (int): stop id of source stop.
-        NETWORK_NAME (str): GTFS path
+        NETWORK_NAME (str): name of the network
         hub_count (int):  Number of hub stops
         hubstops (set): set containing id's of stop that are hubs
 
@@ -458,7 +458,7 @@ def build_query_graph_forSTP(SOURCE, DESTINATION, NETWORK_NAME, cluster_info) ->
     Args:
         SOURCE (int): stop id of source stop.
         DESTINATION (int): stop id of destination stop.
-        NETWORK_NAME (str): GTFS path
+                NETWORK_NAME (str): name of the network
         cluster_info:
 
     Returns:
@@ -557,7 +557,7 @@ def multicriteria_dij_alternate(SOURCE: int, DESTINATION: int, D_TIME, footpath_
         DESTINATION (int): stop id of destination stop.
         D_TIME (pandas.datetime): departure time.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
-        NETWORK_NAME (str): GTFS path
+                NETWORK_NAME (str): name of the network
         routesindx_by_stop_dict (dict): Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         hub_count (int):  Number of hub stops
@@ -651,7 +651,7 @@ def multicriteria_dij(SOURCE: int, DESTINATION: int, D_TIME, footpath_dict: dict
         DESTINATION (int): stop id of destination stop.
         D_TIME (pandas.datetime): departure time.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
-        NETWORK_NAME (str): GTFS path
+                NETWORK_NAME (str): name of the network
         routesindx_by_stop_dict (dict): Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         hub_count (int):  Number of hub stops
@@ -744,7 +744,7 @@ def multicriteria_dij_forSTP(SOURCE: int, DESTINATION: int, D_TIME, footpath_dic
         DESTINATION (int): stop id of destination stop.
         D_TIME (pandas.datetime): departure time.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
-        NETWORK_NAME (str): GTFS path
+                NETWORK_NAME (str): name of the network
         routesindx_by_stop_dict (dict): Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]
         stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.
         cluster_info:
@@ -857,7 +857,7 @@ def get_brutehubs(routes_by_stop_dict, NETWORK_NAME) -> list:
 
     Args:
         routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.
-        NETWORK_NAME (str): GTFS path
+                NETWORK_NAME (str): name of the network
 
     Returns:
         global_count (list): list of tuples of format: (stop_id, number of optimal paths it stop_id is belongs to)
