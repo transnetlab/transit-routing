@@ -2,7 +2,7 @@
 Module contains transfer patterns implementation.
 """
 
-from TRANSFER_PATTERNS.transferpattern_func import *
+from Algorithms.TRANSFER_PATTERNS.transferpattern_func import *
 
 
 def std_tp(SOURCE: int, DESTINATION: int, D_TIME, footpath_dict: dict, NETWORK_NAME: str, routesindx_by_stop_dict, stoptimes_dict: dict, hub_count: int = 0,
@@ -16,8 +16,8 @@ def std_tp(SOURCE: int, DESTINATION: int, D_TIME, footpath_dict: dict, NETWORK_N
         DESTINATION (int): stop id of destination stop.
         D_TIME (pandas.datetime): departure time.
         footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.
-        NETWORK_NAME (str): GTFS path
-        routesindx_by_stop_dict:
+        NETWORK_NAME (str): name of the network
+        routesindx_by_stop_dict (dict): Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]
         stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.
         hub_count (int):  Number of hub stops
         hubstops (set): set containing id's of stop that are hubs
