@@ -4,7 +4,7 @@ Module contains standard Connection Scan Algorithm (CSA) implementation.
 
 from tqdm import tqdm
 
-from CSA.csa_functions import *
+from Algorithms.CSA.csa_functions import *
 
 
 def std_csa(SOURCE: int, DESTINATION: int, D_TIME, connections_list: list, WALKING_FROM_SOURCE: int, footpath_dict: dict, PRINT_ITINERARY: int) -> tuple:

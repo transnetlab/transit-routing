@@ -1,7 +1,7 @@
 """
 Module contains TBTR implementation
 """
-from TBTR.TBTR_functions import *
+from Algorithms.TBTR.TBTR_functions import *
 
 
 def tbtr(SOURCE: int, DESTINATION: int, D_TIME, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, PRINT_ITINERARY: int,
