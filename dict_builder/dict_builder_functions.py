@@ -15,8 +15,7 @@ def build_save_route_by_stop(stop_times_file, NETWORK_NAME: str) -> dict:
 
     Args:
         stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.
-        NETWORK_NAME (str): path to network NETWORK_NAME.
-
+        NETWORK_NAME (str): name of the network
     Returns:
         route_by_stop_dict_new (dict): keys: stop_id, values: list of routes passing through the stop_id. Format-> dict[stop_id] = [route_id]
     """
@@ -38,8 +37,7 @@ def build_save_stops_dict(stop_times_file, trips_file, NETWORK_NAME: str) -> dic
     Args:
         stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.
         trips_file (pandas.dataframe): trips.txt file in GTFS.
-        NETWORK_NAME (str): path to network NETWORK_NAME.
-
+        NETWORK_NAME (str): name of the network
     Returns:
         stops_dict (dict): keys: route_id, values: list of stop id in the route_id. Format-> dict[route_id] = [stop_id]
     """
@@ -72,8 +70,7 @@ def build_save_stopstimes_dict(stop_times_file, trips_file, NETWORK_NAME: str) -
     Args:
         stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.
         trips_file (pandas.dataframe): dataframe with transfers (footpath) details.
-        NETWORK_NAME (str): path to network NETWORK_NAME.
-
+        NETWORK_NAME (str): name of the network
     Returns:
         stoptimes_dict (dict): keys: route ID, values: list of trips in the increasing order of start time. Format-> dict[route_ID] = [trip_1, trip_2] where trip_1 = [(stop id, arrival time), (stop id, arrival time)]
     """
@@ -101,8 +98,7 @@ def build_save_footpath_dict(transfers_file, NETWORK_NAME: str) -> dict:
 
     Args:
         transfers_file (pandas.dataframe): dataframe with transfers (footpath) details.
-        NETWORK_NAME (str): path to network NETWORK_NAME.
-
+        NETWORK_NAME (str): name of the network
     Returns:
         footpath_dict (dict): keys: from stop_id, values: list of tuples of form (to stop id, footpath duration). Format-> dict[stop_id]=[(stop_id, footpath_duration)]
     """
@@ -127,8 +123,7 @@ def build_stop_idx_in_route(stop_times_file, NETWORK_NAME: str) -> dict:
 
     Args:
         stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.
-        NETWORK_NAME (str): path to network NETWORK_NAME.
-
+        NETWORK_NAME (str): name of the network
     Returns:
         idx_by_route_stop_dict (dict): Keys: (route id, stop id), value: stop index. Format {(route id, stop id): stop index in route}.
     """
@@ -146,8 +141,7 @@ def build_routesindx_by_stop_dict(NETWORK_NAME: str) -> dict:
     This function saves a dictionary.
 
     Args:
-        NETWORK_NAME (str): path to network NETWORK_NAME.
-
+        NETWORK_NAME (str): name of the network
     Returns:
         routesindx_by_stop_dict (dict): Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]
     """
