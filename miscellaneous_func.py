@@ -14,7 +14,7 @@ def read_testcase(NETWORK_NAME: str) -> tuple:
     Reads the GTFS network and preprocessed dict. If the dicts are not present, dict_builder_functions are called to construct them.
 
     Args:
-        NETWORK_NAME (str): GTFS path
+        NETWORK_NAME (str): name of the network
 
     Returns:
         stops_file (pandas.dataframe):  stops.txt file in GTFS.
@@ -76,12 +76,13 @@ def print_network_details(transfers_file, trips_file, stops_file) -> None:
     Prints the network details like number of routes, trips, stops, footpath
 
     Args:
-        transfers_file (pandas.dataframe):
-        trips_file (pandas.dataframe):
-        stops_file (pandas.dataframe):
+        transfers_file (pandas.dataframe): dataframe with transfers (footpath) details.
+        trips_file (pandas.dataframe): dataframe with trip details.
+        stops_file (pandas.dataframe): dataframe with stop details.
 
     Returns:
         None
+
     """
     print("___________________________Network Details__________________________")
     print("| No. of Routes |  No. of Trips | No. of Stops | No. of Footapths  |")
@@ -91,8 +92,7 @@ def print_network_details(transfers_file, trips_file, stops_file) -> None:
     return None
 
 
-def print_query_parameters(NETWORK_NAME: str, SOURCE: int, DESTINATION, D_TIME, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, variant: int,
-                           no_of_partitions=None, weighting_scheme=None, partitioning_algorithm=None) -> None:
+def print_query_parameters(NETWORK_NAME: str, SOURCE: int, DESTINATION, D_TIME, MAX_TRANSFER: int, WALKING_FROM_SOURCE: int, variant: int, no_of_partitions=None, weighting_scheme=None, partitioning_algorithm=None) -> None:
     """
     Prints the input parameters related to the shortest path query
 
@@ -112,6 +112,10 @@ def print_query_parameters(NETWORK_NAME: str, SOURCE: int, DESTINATION, D_TIME, 
 
     Returns:
         None
+
+    Examples:
+        >>> overlap = print_query_parameters('anaheim', 36, 52, pd.to_datetime('2022-06-30 06:30:00'), 4, 1, 0, None, None, None)
+
     """
     print("___________________Query Parameters__________________")
     print(f"Network: {NETWORK_NAME}")
@@ -137,8 +141,7 @@ def read_partitions(stop_times_file, NETWORK_NAME: str, no_of_partitions: int, w
 
     Args:
         stop_times_file (pandas.dataframe): dataframe with stoptimes details
-        NETWORK_NAME (str): path to network NETWORK_NAME.
-        no_of_partitions (int): number of partitions network has been divided into.
+        NETWORK_NAME (str): name of the network        no_of_partitions (int): number of partitions network has been divided into.
         weighting_scheme (str): which weighing scheme has been used to generate partitions.
         partitioning_algorithm (str):which algorithm has been used to generate partitions. Currently supported arguments are hmetis or kahypar.
 
@@ -200,8 +203,7 @@ def read_nested_partitions(stop_times_file, NETWORK_NAME: str, no_of_partitions:
 
     Args:
         stop_times_file (pandas.dataframe): dataframe with stoptimes details
-        NETWORK_NAME (str): path to network NETWORK_NAME.
-        no_of_partitions (int): number of partitions network has been divided into.
+        NETWORK_NAME (str): name of the network        no_of_partitions (int): number of partitions network has been divided into.
         weighting_scheme (str): which weighing scheme has been used to generate partitions.
 
     Returns:
@@ -272,6 +274,10 @@ def check_nonoverlap(stoptimes_dict: dict, stops_dict: dict) -> set:
 
     Returns:
         overlap (set): set of routes with overlapping trips.
+
+    Examples:
+        >>> overlap = check_nonoverlap(stoptimes_dict, stops_dict)
+
     '''
     for x in stops_dict.items():
         if len(x[1]) != len(set(x[1])):
@@ -317,9 +323,12 @@ def get_full_trans(NETWORK_NAME: str, time_limit) -> None:
 
     Returns:
         None
+
+    Examples:
+        >>> get_full_trans('anaheim', 180)
     '''
     #    print('editing transfers')
-    transfers_file = pd.read_csv(f'./GTFS/{NETWORK_NAME[2:]}/transfers.txt', sep=',')
+    transfers_file = pd.read_csv(f'Data/GTFS/{NETWORK_NAME[2:]}/transfers.txt', sep=',')
     ini_len = len(transfers_file)
     # print(f"initial graph transfer {len(transfers_file)}")
     if time_limit != "full":
@@ -365,6 +374,9 @@ def check_footpath(footpath_dict: dict) -> None:
 
     Returns:
         None
+
+    Examples:
+        >>> check_footpath(footpath_dict)
     '''
     edges = []
     for from_s, to_s in footpath_dict.items():
@@ -393,6 +405,10 @@ def get_random_od(routes_by_stop_dict: dict, NETWORK_NAME: str) -> None:
 
     Returns:
         None
+
+    Examples:
+        >>> get_random_od(routes_by_stop_dict, 'anaheim')
+
     """
     random_od_db = pd.DataFrame(columns=["SOURCE", "DESTINATION"])
     desired_len = 100000
@@ -405,3 +421,75 @@ def get_random_od(routes_by_stop_dict: dict, NETWORK_NAME: str) -> None:
     random_od_db.iloc[:desired_len].to_csv(f"./GTFS/{NETWORK_NAME[2:]}_randomOD.csv", index=False)
     print(f"{NETWORK_NAME} random OD saved")
     return None
+
+def load_TE_graph(NETWORK_NAME: str, stop_times_file)-> tuple:
+    """
+    Loads the Time expanded Graph
+
+    Args:
+        NETWORK_NAME (str): name of the network
+        stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.
+
+    Returns:
+        G: NetworkX graph object. Time exapnded graph
+        stops_group: pandas.groupby object.
+        stopevent_mapping (dict): mapping dictionary. Format: {(stop id, arrival time): new node id}
+
+    Examples:
+        >>> G, stops_group, stopevent_mapping = load_TE_graph('anaheim', stop_times_file)
+
+    """
+    try:
+        with open(f"./Data/time_expanded/graph_{NETWORK_NAME[2:]}", 'rb') as file:
+            G = pickle.load(file)
+        stops_group = stop_times_file.groupby('stop_id')
+        temp = stop_times_file[['stop_id', 'arrival_time']].drop_duplicates().reset_index(drop=True)
+        stopevent_mapping = {x[1]: x[0] for x in enumerate(list(zip(temp['stop_id'], temp['arrival_time'])), 1)}
+
+        return G, stops_group, stopevent_mapping
+    except FileNotFoundError:
+        print("Time expanded files missing")
+
+
+def load_CSA(NETWORK_NAME: str):
+    """
+    Loads the connection list for CSA
+
+    Args:
+        NETWORK_NAME (str): name of the network
+
+    Returns:
+        connections_list (list): list of tuples. format: [(from stop, to stop, from time, to time, trip id)].
+
+    Examples:
+        >>> connections_list = load_CSA('anaheim')
+    """
+    try:
+        with open(f'./Data/CSA/{NETWORK_NAME}/connections_list_pkl.pkl', 'rb') as file:
+            connections_list = pickle.load(file)
+        return connections_list
+    except FileNotFoundError:
+        print("CSA preprocessing missing")
+
+def load_TBTR(NETWORK_NAME: str)-> tuple:
+    """
+    Loads the trip-transfer dict for TBTR
+
+    Args:
+        NETWORK_NAME (str): name of the network
+
+    Returns:
+        trip_transfer_dict (nested dict): keys: id of trip we are transferring from, value: {stop number: list of tuples
+        trip_set (set): set of trip ids from which trip-transfers are available.
+
+    Examples:
+        >>> trip_transfer_dict, trip_set = load_TBTR('anaheim')
+
+    """
+    try:
+        with open(f'./Data/TBTR/{NETWORK_NAME}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
+            trip_transfer_dict = pickle.load(file)
+        trip_set = set(trip_transfer_dict.keys())
+        return trip_transfer_dict, trip_set
+    except FileNotFoundError:
+        print("TBTR preprocessing missing")

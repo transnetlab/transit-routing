@@ -14,7 +14,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Transfer Patterns" href="Transfer_patterns/index.html" /> 
+    <link rel="prev" title="Functions related to Dijktra’s Algorithm" href="Algorithms/TIME_EXPANDED/TE_DIJ_functions.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -26,7 +26,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Transfer_patterns/index.html" title="Transfer Patterns"
+          <a href="Algorithms/TIME_EXPANDED/TE_DIJ_functions.html" title="Functions related to Dijktra’s Algorithm"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Transit-routing Pending documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Miscellaneous Functions</a></li> 
@@ -38,10 +38,9 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="miscellaneous-functions">
-<h1>Miscellaneous Functions<a class="headerlink" href="#miscellaneous-functions" title="Permalink to this headline">¶</a></h1>
-<p>RAPTOR  computes  Pareto-optimal  journeys  byincreasing the number of allowable transfers in each round.  It works directly on a timetable and does not requireany  preprocessing. Currently supported varients of RAPTOR are:</p>
-<span class="target" id="module-miscellaneous_func"></span><p>Module contains miscellaneous functions used for reading data, printing logo etc.</p>
+  <div class="section" id="module-miscellaneous_func">
+<span id="miscellaneous-functions"></span><h1>Miscellaneous Functions<a class="headerlink" href="#module-miscellaneous_func" title="Permalink to this headline">¶</a></h1>
+<p>Module contains miscellaneous functions used for reading data, printing logo etc.</p>
 <dl class="py function">
 <dt id="miscellaneous_func.check_footpath">
 <code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">check_footpath</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">footpath_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/miscellaneous_func.html#check_footpath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.check_footpath" title="Permalink to this definition">¶</a></dt>
@@ -54,6 +53,10 @@
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">check_footpath</span><span class="p">(</span><span class="n">footpath_dict</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -76,6 +79,10 @@ due to timestamp correction.</p>
 <dd class="field-odd"><p>overlap (set)</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">overlap</span> <span class="o">=</span> <span class="n">check_nonoverlap</span><span class="p">(</span><span class="n">stoptimes_dict</span><span class="p">,</span> <span class="n">stops_dict</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -94,6 +101,10 @@ Note: time_limit=”full” means consider all footpaths</p>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_full_trans</span><span class="p">(</span><span class="s1">&#39;anaheim&#39;</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -111,6 +122,79 @@ Note: time_limit=”full” means consider all footpaths</p>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_random_od</span><span class="p">(</span><span class="n">routes_by_stop_dict</span><span class="p">,</span> <span class="s1">&#39;anaheim&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.load_CSA">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">load_CSA</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/miscellaneous_func.html#load_CSA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.load_CSA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the connection list for CSA</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples. format: [(from stop, to stop, from time, to time, trip id)].</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>connections_list (list)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">connections_list</span> <span class="o">=</span> <span class="n">load_CSA</span><span class="p">(</span><span class="s1">&#39;anaheim&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.load_TBTR">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">load_TBTR</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="_modules/miscellaneous_func.html#load_TBTR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.load_TBTR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the trip-transfer dict for TBTR</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>keys: id of trip we are transferring from, value: {stop number: list of tuples
+trip_set (set): set of trip ids from which trip-transfers are available.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>trip_transfer_dict (nested dict)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">trip_transfer_dict</span><span class="p">,</span> <span class="n">trip_set</span> <span class="o">=</span> <span class="n">load_TBTR</span><span class="p">(</span><span class="s1">&#39;anaheim&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="miscellaneous_func.load_TE_graph">
+<code class="sig-prename descclassname"><span class="pre">miscellaneous_func.</span></code><code class="sig-name descname"><span class="pre">load_TE_graph</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="_modules/miscellaneous_func.html#load_TE_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#miscellaneous_func.load_TE_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the Time expanded Graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – stop_times.txt file in GTFS.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>NetworkX graph object. Time exapnded graph
+stops_group: pandas.groupby object.
+stopevent_mapping (dict): mapping dictionary. Format: {(stop id, arrival time): new node id}</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>G</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="p">,</span> <span class="n">stops_group</span><span class="p">,</span> <span class="n">stopevent_mapping</span> <span class="o">=</span> <span class="n">load_TE_graph</span><span class="p">(</span><span class="s1">&#39;anaheim&#39;</span><span class="p">,</span> <span class="n">stop_times_file</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -134,9 +218,9 @@ Note: time_limit=”full” means consider all footpaths</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>transfers_file</strong> (<em>pandas.dataframe</em>) – </p></li>
-<li><p><strong>trips_file</strong> (<em>pandas.dataframe</em>) – </p></li>
-<li><p><strong>stops_file</strong> (<em>pandas.dataframe</em>) – </p></li>
+<li><p><strong>transfers_file</strong> (<em>pandas.dataframe</em>) – dataframe with transfers (footpath) details.</p></li>
+<li><p><strong>trips_file</strong> (<em>pandas.dataframe</em>) – dataframe with trip details.</p></li>
+<li><p><strong>stops_file</strong> (<em>pandas.dataframe</em>) – dataframe with stop details.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -170,6 +254,10 @@ Note: time_limit=”full” means consider all footpaths</p>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">overlap</span> <span class="o">=</span> <span class="n">print_query_parameters</span><span class="p">(</span><span class="s1">&#39;anaheim&#39;</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2022-06-30 06:30:00&#39;</span><span class="p">),</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -180,8 +268,7 @@ Note: time_limit=”full” means consider all footpaths</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – dataframe with stoptimes details</p></li>
-<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – path to network NETWORK_NAME.</p></li>
-<li><p><strong>no_of_partitions</strong> (<em>int</em>) – number of partitions network has been divided into.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network        no_of_partitions (int): number of partitions network has been divided into.</p></li>
 <li><p><strong>weighting_scheme</strong> (<em>str</em>) – which weighing scheme has been used to generate partitions.</p></li>
 </ul>
 </dd>
@@ -205,8 +292,7 @@ trip_groups (dict): key: tuple of all possible combinations of stop cell id, val
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – dataframe with stoptimes details</p></li>
-<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – path to network NETWORK_NAME.</p></li>
-<li><p><strong>no_of_partitions</strong> (<em>int</em>) – number of partitions network has been divided into.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network        no_of_partitions (int): number of partitions network has been divided into.</p></li>
 <li><p><strong>weighting_scheme</strong> (<em>str</em>) – which weighing scheme has been used to generate partitions.</p></li>
 <li><p><strong>partitioning_algorithm</strong> (<em>str</em>) – which algorithm has been used to generate partitions. Currently supported arguments are hmetis or kahypar.</p></li>
 </ul>
@@ -229,7 +315,7 @@ trip_groups (dict): key: tuple of all possible combinations of stop cell id, val
 <dd><p>Reads the GTFS network and preprocessed dict. If the dicts are not present, dict_builder_functions are called to construct them.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>NETWORK_NAME</strong> (<em>str</em>) – GTFS path</p>
+<dd class="field-odd"><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>stops.txt file in GTFS.
@@ -263,8 +349,8 @@ idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): s
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Transfer_patterns/index.html"
-                        title="previous chapter">Transfer Patterns</a></p>
+  <p class="topless"><a href="Algorithms/TIME_EXPANDED/TE_DIJ_functions.html"
+                        title="previous chapter">Functions related to Dijktra’s Algorithm</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -296,14 +382,14 @@ idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): s
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Transfer_patterns/index.html" title="Transfer Patterns"
+          <a href="Algorithms/TIME_EXPANDED/TE_DIJ_functions.html" title="Functions related to Dijktra’s Algorithm"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Transit-routing Pending documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Miscellaneous Functions</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
   </body>

@@ -1,0 +1,14 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color,route_sort_order,continuous_pickup,continuous_drop_off
+bc404235-c139-4efb-90fb-798fbbddc35c,,Grove,Grove District Line (3),,3,,96307B,,,1,1
+a9322ef7-f7de-4bfc-8388-77ffe3694adb,,Manchester,Manchester Line (12),,3,,38DEFF,,,1,1
+4aa40176-ef3c-47a4-87d8-7efb84e09308,,Clementine,Clementine Line (7),,3,,B469FF,,,1,1
+39e12dc7-9f2d-4974-8593-79c1c5ab76b7,,Grand Plaza,Grand Plaza Line (5),,3,,FF213F,,,1,1
+e0421594-0ff0-4f26-91dc-61e9727b96f2,,,Staff Shuttle Route,,3,,000000,,,1,1
+62ecd8b9-18fb-4b62-9ef7-d9abec27fab9,,Katella Line,Katella Line (9),,3,,000000,,,1,1
+eb71ec26-dabb-4704-97a6-b851a1d06eb2,,Harbor,Harbor Line (4),,3,,441FFF,,,1,1
+9f38a05f-6eea-47f4-bf42-992a789e7b49,,15X,ARTIC Express Line (15),,3,,3853FF,,,1,1
+8f305689-4315-445e-abea-920dbbf0be5e,,TOY STORY,Toy Story Line,,3,,52BFFF,,,1,1
+8726c033-2d11-4351-b4c4-bcd15d90316f,,Ball,Ball Road Line (11),,3,,443DFF,,,1,1
+f17cd7a6-d88c-4e61-a6a6-fe87a775d3c8,,Hotel Circle,Hotel Circle Line (8),,3,,63FF83,,,1,1
+ddab055c-8523-472b-b29f-58f7bebd2f56,,17,Disneyland Resort to Canyon Metrolink (17),,3,,BA9C22,,,1,1
+bf59bdaf-2bdf-45ad-ba93-adc1d37f5cd7,,17,Canyon Metrolink to Disneyland Resort (17),,3,,13BA29,,,1,1

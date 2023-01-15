@@ -1,0 +1,24 @@
+CSA
+===========================================
+
+Currently supported varients of CSA are:
+
+
+.. toctree::
+   :maxdepth: 1
+
+   build_CSA
+   std_csa
+   csa_functions
+
+
+Refrences
+----------------------------
+
+For more information refer following:
+
+- Dibbelt, Julian, et al. "Connection scan algorithm." Journal of Experimental Algorithmics (JEA) 23 (2018): 1-56.
+
+
+
+   

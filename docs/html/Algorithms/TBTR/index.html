@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trip-based Public Transit Routing &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Build TBTR dict" href="../../builders/build_TBTR_dict.html" />
+    <link rel="prev" title="Raptor Functions" href="../RAPTOR/raptor_functions.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../builders/build_TBTR_dict.html" title="Build TBTR dict"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../RAPTOR/raptor_functions.html" title="Raptor Functions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" accesskey="U">List of Algoirthms</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Trip-based Public Transit Routing</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="trip-based-public-transit-routing">
+<h1>Trip-based Public Transit Routing<a class="headerlink" href="#trip-based-public-transit-routing" title="Permalink to this headline">¶</a></h1>
+<p>TBTR solves the bicriterion (travel time and transfer) optimization problem using trips and trip-transfersas building blocks. TBTR’s search pattern is similarto RAPTOR, but unlike RAPTOR, it does not maintain multi-labels for all stops). TBTR involves a preprocessing and query phase. In its preprocessing  phase, using the GTFS set, we collect all optimal  trip-transfers. The query phase then uses these trip-transfers to answer bicriterion shortest path queries. The codes below only contain the query phase. Currently supported versions are:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../builders/build_TBTR_dict.html">Build TBTR dict</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tbtr.html">Standard Trip-based Public Transit Routing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rraptor.html">rtbtr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="one_many_tbtr.html">One-To-Many rTBTR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hyptbtr.html">Hyptbtr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TBTR_functions.html">TBTR Functions</a></li>
+</ul>
+</div>
+<div class="section" id="refrences">
+<h2>Refrences<a class="headerlink" href="#refrences" title="Permalink to this headline">¶</a></h2>
+<p>For more information refer following:</p>
+<ul class="simple">
+<li><p>Agarwal, P., &amp; Rambha, T., 2021. Scalable Algorithms for Bicriterion Trip-Based Transit Routing (Under Review).(<a class="reference external" href="https://arxiv.org/abs/2111.06654">https://arxiv.org/abs/2111.06654</a>)</p></li>
+<li><p>Witt, S., 2015. Trip-based public transit routing. In Algorithms-ESA 2015 (pp. 1025-1036). Springer, Berlin, Heidelberg.(<a class="reference external" href="https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85">https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85</a>)</p></li>
+</ul>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Trip-based Public Transit Routing</a><ul>
+<li><a class="reference internal" href="#refrences">Refrences</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../RAPTOR/raptor_functions.html"
+                        title="previous chapter">Raptor Functions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../builders/build_TBTR_dict.html"
+                        title="next chapter">Build TBTR dict</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Algorithms/TBTR/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../builders/build_TBTR_dict.html" title="Build TBTR dict"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../RAPTOR/raptor_functions.html" title="Raptor Functions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Trip-based Public Transit Routing</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

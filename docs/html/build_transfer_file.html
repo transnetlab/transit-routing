@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Functions realted to building transfers file. &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Functions realted to building transfers file." href="dict_builder_functions.html" />
+    <link rel="prev" title="Functions realted to GTFS Wrapper" href="GTFS_wrapper.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dict_builder_functions.html" title="Functions realted to building transfers file."
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="GTFS_wrapper.html" title="Functions realted to GTFS Wrapper"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="GTFS_preprocessing.html" accesskey="U">GTFS preprocessing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Functions realted to building transfers file.</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="functions-realted-to-building-transfers-file">
+<h1>Functions realted to building transfers file.<a class="headerlink" href="#functions-realted-to-building-transfers-file" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/build_transfer_file.py">build_transfer_file.py</a>. has been provided to transfers_file.txt. This module requires OSMNX package. Following inputs are required:</dt><dd><ul>
+<li><p>The graph (if not found on disk) is extracted using <a class="reference external" href="https://www.openstreetmap.org/#map=4/21.84/82.79">OpenStreetMaps</a></p></li>
+<li><p>For every stop, shortest path comutation is performaed within a radius maximum walking limit.</p></li>
+<li><p>Ensures the transitive closure of footpaths.</p></li>
+</ul>
+</dd>
+<dt>Following additional inputs are required.</dt><dd><ul>
+<li><p>WALKING_LIMIT (int)- Maximum allowed walking time. Note that the final transfers file can have longer transfers due to transitive closure.</p></li>
+<li><p>CORES (int): Number of codes to be used. Shortest path computation can be done in parallel.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="GTFS_wrapper.html"
+                        title="previous chapter">Functions realted to GTFS Wrapper</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="dict_builder_functions.html"
+                        title="next chapter">Functions realted to building transfers file.</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/build_transfer_file.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dict_builder_functions.html" title="Functions realted to building transfers file."
+             >next</a> |</li>
+        <li class="right" >
+          <a href="GTFS_wrapper.html" title="Functions realted to GTFS Wrapper"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="GTFS_preprocessing.html" >GTFS preprocessing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Functions realted to building transfers file.</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Raptor Functions &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Trip-based Public Transit Routing" href="../TBTR/index.html" />
+    <link rel="prev" title="Hypraptor" href="hypraptor.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../TBTR/index.html" title="Trip-based Public Transit Routing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hypraptor.html" title="Hypraptor"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">RAPTOR</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Raptor Functions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-Algorithms.RAPTOR.raptor_functions">
+<span id="raptor-functions"></span><h1>Raptor Functions<a class="headerlink" href="#module-Algorithms.RAPTOR.raptor_functions" title="Permalink to this headline">¶</a></h1>
+<p>Module contains function related to RAPTOR, rRAPTOR, One-To-Many rRAPTOR, HypRAPTOR</p>
+<dl class="py function">
+<dt id="Algorithms.RAPTOR.raptor_functions.check_stop_validity">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.RAPTOR.raptor_functions.</span></code><code class="sig-name descname"><span class="pre">check_stop_validity</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../../_modules/Algorithms/RAPTOR/raptor_functions.html#check_stop_validity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.RAPTOR.raptor_functions.check_stop_validity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the entered SOURCE and DESTINATION stop id are present in stop list or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stops</strong> – GTFS stops.txt</p></li>
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">check_stop_validity</span><span class="p">(</span><span class="n">stops</span><span class="p">,</span> <span class="mi">20775</span><span class="p">,</span> <span class="mi">1482</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.RAPTOR.raptor_functions.get_latest_trip_new">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.RAPTOR.raptor_functions.</span></code><code class="sig-name descname"><span class="pre">get_latest_trip_new</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrival_time_at_pi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pi_index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">change_time</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../../_modules/Algorithms/RAPTOR/raptor_functions.html#get_latest_trip_new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.RAPTOR.raptor_functions.get_latest_trip_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get latest trip after a certain timestamp from the given stop of a route.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+<li><p><strong>route</strong> (<em>int</em>) – id of route.</p></li>
+<li><p><strong>arrival_time_at_pi</strong> (<em>pandas.datetime</em>) – arrival time at stop pi.</p></li>
+<li><p><strong>pi_index</strong> (<em>int</em>) – index of the stop from which route was boarded.</p></li>
+<li><p><strong>change_time</strong> (<em>pandas.datetime</em>) – change time at stop (set to 0).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>trip index, trip
+else:</p>
+<blockquote>
+<div><p>-1,-1   (e.g. when there is no trip after the given timestamp)</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>If a trip exists</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">get_latest_trip_new</span><span class="p">(</span><span class="n">stoptimes_dict</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2019-06-10 17:40:00&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;seconds&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.RAPTOR.raptor_functions.initialize_raptor">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.RAPTOR.raptor_functions.</span></code><code class="sig-name descname"><span class="pre">initialize_raptor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routes_by_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TRANSFER</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../../_modules/Algorithms/RAPTOR/raptor_functions.html#initialize_raptor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.RAPTOR.raptor_functions.initialize_raptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize values for RAPTOR.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routes_by_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {stop_id: [id of routes passing through stop]}.</p></li>
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>MAX_TRANSFER</strong> (<em>int</em>) – maximum transfer limit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>deque to store marked stop.
+marked_stop_dict (dict): Binary variable indicating if a stop is marked. Keys: stop Id, value: 0 or 1.
+label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
+pi_label (dict): Nested dict used for backtracking labels. Format {round : {stop_id: pointer_label}}
+if stop is reached by walking, pointer_label= (‘walking’, from stop id, to stop id, time, arrival time)}} else pointer_label= (trip boarding time, boarding_point, stop id, arr_by_trip, trip id)
+star_label (dict): dict to maintain best arrival label {stop id: pandas.datetime}.
+inf_time (pandas.datetime): Variable indicating infinite time (pandas.datetime).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>marked_stop (deque)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">initialize_raptor</span><span class="p">(</span><span class="n">routes_by_stop_dict</span><span class="p">,</span> <span class="mi">20775</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.RAPTOR.raptor_functions.post_processing">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.RAPTOR.raptor_functions.</span></code><code class="sig-name descname"><span class="pre">post_processing</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pi_label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PRINT_ITINERARY</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../../_modules/Algorithms/RAPTOR/raptor_functions.html#post_processing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.RAPTOR.raptor_functions.post_processing" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Post processing for std_RAPTOR. Currently supported functionality:</dt><dd><ol class="arabic simple">
+<li><p>Rounds in which DESTINATION is reached</p></li>
+<li><p>Trips for covering pareto optimal set</p></li>
+<li><p>Pareto optimal timestamps.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+<li><p><strong>pi_label</strong> (<em>dict</em>) – Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}</p></li>
+<li><p><strong>PRINT_ITINERARY</strong> (<em>int</em>) – 1 or 0. 1 means print complete path.</p></li>
+<li><p><strong>label</strong> (<em>dict</em>) – nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of rounds in which DESTINATION is reached. Format - [int]
+trip_set (list): list of trips ids required to cover optimal journeys. Format - [char]
+rap_out (list): list of pareto-optimal arrival timestamps. Format = [(pandas.datetime)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>rounds_inwhich_desti_reached (list)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">post_processing</span><span class="p">(</span><span class="mi">1482</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.RAPTOR.raptor_functions.post_processing_onetomany_rraptor">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.RAPTOR.raptor_functions.</span></code><code class="sig-name descname"><span class="pre">post_processing_onetomany_rraptor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DESTINATION_LIST</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pi_label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PRINT_ITINERARY</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OPTIMIZED</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../../_modules/Algorithms/RAPTOR/raptor_functions.html#post_processing_onetomany_rraptor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.RAPTOR.raptor_functions.post_processing_onetomany_rraptor" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>post processing for Ont-To-Many rRAPTOR. Currently supported functionality:</dt><dd><ol class="arabic simple">
+<li><p>Print the output</p></li>
+<li><p>Routes required for covering pareto-optimal set.</p></li>
+<li><p>Trips required for covering pareto-optimal set.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DESTINATION_LIST</strong> (<em>list</em>) – list of stop ids of destination stop.</p></li>
+<li><p><strong>pi_label</strong> (<em>dict</em>) – Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}</p></li>
+<li><p><strong>PRINT_ITINERARY</strong> (<em>int</em>) – 1 or 0. 1 means print complete path.</p></li>
+<li><p><strong>label</strong> (<em>dict</em>) – nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.</p></li>
+<li><p><strong>OPTIMIZED</strong> (<em>int</em>) – 1 or 0. 1 means collect trips and 0 means collect routes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>final_trips (list): list of trips required to cover all pareto-optimal journeys. format - [trip_id]
+elif OPTIMIZED==0:</p>
+<blockquote>
+<div><p>final_routes (list): list of routes required to cover all pareto-optimal journeys. format - [route_id]</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>if OPTIMIZED==1</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">post_processing_onetomany_rraptor</span><span class="p">([</span><span class="mi">1482</span><span class="p">],</span> <span class="n">pi_label</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.RAPTOR.raptor_functions.post_processing_rraptor">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.RAPTOR.raptor_functions.</span></code><code class="sig-name descname"><span class="pre">post_processing_rraptor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pi_label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PRINT_ITINERARY</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OPTIMIZED</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../../_modules/Algorithms/RAPTOR/raptor_functions.html#post_processing_rraptor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.RAPTOR.raptor_functions.post_processing_rraptor" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Full post processing for rRAPTOR. Currently supported functionality:</dt><dd><ol class="arabic simple">
+<li><p>Print the output</p></li>
+<li><p>Routes required for covering pareto-optimal journeys.</p></li>
+<li><p>Trips required for covering pareto-optimal journeys.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+<li><p><strong>pi_label</strong> (<em>dict</em>) – Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}</p></li>
+<li><p><strong>PRINT_ITINERARY</strong> (<em>int</em>) – 1 or 0. 1 means print complete path.</p></li>
+<li><p><strong>label</strong> (<em>dict</em>) – nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.</p></li>
+<li><p><strong>OPTIMIZED</strong> (<em>int</em>) – 1 or 0. 1 means collect trips and 0 means collect routes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>final_trips (list): List of trips required to cover all pareto-optimal journeys. Format - [trip_id]
+elif OPTIMIZED==0:</p>
+<blockquote>
+<div><p>final_routes (list): List of routes required to cover all pareto-optimal journeys. Format - [route_id]</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>if OPTIMIZED==1</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">post_processing_onetomany_rraptor</span><span class="p">([</span><span class="mi">1482</span><span class="p">],</span> <span class="n">pi_label</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hypraptor.html"
+                        title="previous chapter">Hypraptor</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../TBTR/index.html"
+                        title="next chapter">Trip-based Public Transit Routing</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Algorithms/RAPTOR/raptor_functions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../TBTR/index.html" title="Trip-based Public Transit Routing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hypraptor.html" title="Hypraptor"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >RAPTOR</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Raptor Functions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

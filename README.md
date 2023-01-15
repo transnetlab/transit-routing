@@ -12,7 +12,11 @@
 - [Copyright and license](#Copyright-and-license)
 
 ### Introduction 
-This repository provides various efficient algorithms to solve bicriteria shortest path problems in public transit routing. For documentation refer the link below
+Conventional approaches model the transit network as a time-expanded or time-dependent graph and run a variant of the Dijkstra’s algorithm. However, this method
+turns out to be too slow for large networks. Furthermore, while planning a journey using public transit, the number of transfers is equally important besides travel 
+time. Popular techniques developed for PTR in the past decade include—Transfer Patterns algorithm, Connection Scan Algorithm (CSA), Round based Public Transit
+Routing algorithm (RAPTOR), and Trip-Based public Transit Routing (TBTR) algorithm. This repository provides various efficient algorithms to solve bicriteria 
+shortest path problems in public transit routing. For documentation refer the link below
 
 - Website: [https://transnetlab.github.io/transit-routing/html/index.html](https://transnetlab.github.io/transit-routing/html/index.html)
 
@@ -26,20 +30,23 @@ outperform the existing approach for location-based queries (as a location can h
 Switzerland's public transit network has been provided as a test case. The figure below shows the transit stop location (left) and 4-way partitioning using [KaHyPar](https://github.com/kahypar/kahypar) (right).
 ![plot](documentation/location.png)
 ### List of Algorithms
-|  Algorithm                 | SOURCE | Status             | Comments |
-|----------------------------|---|--------------------|---|
-| RAPTOR                     | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) | Complete           |
-| TBTR                       | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) | Complete           |
-| rRAPTOR                    | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) | Complete           |
-| rTBTR                      | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) | Complete           |
-| One-To-Many rRAPTOR        | [link](https://arxiv.org/abs/2111.06654) | To be updated soon |
-| One-To-Many rTBTR          | [link](https://arxiv.org/abs/2111.06654) | Complete           |
-| HypRAPTOR                  | [link](https://drops.dagstuhl.de/opus/volltexte/2017/7896/) | Complete           |
-| HypTBTR                    |  [link](https://arxiv.org/abs/2111.06654) | Complete           |
-| MHypTBTR                   | [link](https://arxiv.org/abs/2111.06654) | Complete           |
-| MHypTBTR                   | [link](https://arxiv.org/abs/2111.06654) | Complete           |
-| Transfer Patterns          | [link](https://link.springer.com/chapter/10.1007/978-3-642-15775-2_25) | Complete           |
-| Scalable Transfer Patterns | [link](https://epubs.siam.org/doi/abs/10.1137/1.9781611974317.2) | To be updated soon |
+
+| Algorithm              | Varient                    | SOURCE | Status             | Comments |
+|------------------------|----------------------------|---|--------------------|---|
+| Time-Expanded Dijkstra | Dijkstra                   | [link](https://arxiv.org/abs/2111.06654) | Complete           |
+| RAPTOR                 | Standard RAPTOR            | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) | Complete           |
+| RAPTOR                 | HypRAPTOR                  | [link](https://drops.dagstuhl.de/opus/volltexte/2017/7896/) | Complete           |
+| RAPTOR                 | rRAPTOR                    | [link](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534) | Complete           |
+| RAPTOR                 | One-To-All rRAPTOR         | [link](https://arxiv.org/abs/2111.06654) | To be updated soon |
+| TBTR                   | Standard TBTR              | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) | Complete           |
+| TBTR                   | rTBTR                      | [link](https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85) | Complete           |
+| TBTR                   | One-To-Many rTBTR          | [link](https://arxiv.org/abs/2111.06654) | Complete           |
+| TBTR                   | HypTBTR                    |  [link](https://arxiv.org/abs/2111.06654) | Complete           |
+| TBTR                   | MHypTBTR                   | [link](https://arxiv.org/abs/2111.06654) | Complete           |
+| Transfer Patterns      | Transfer Patterns          | [link](https://link.springer.com/chapter/10.1007/978-3-642-15775-2_25) | Complete           |
+| Transfer Patterns      | Scalable Transfer Patterns | [link](https://epubs.siam.org/doi/abs/10.1137/1.9781611974317.2) | To be updated soon |
+| CSA                    | Standard CSA               | [link](https://dl.acm.org/doi/abs/10.1145/3274661) | Complete           |
+| CSA                    | One-To-Many CSA            | [link](https://dl.acm.org/doi/abs/10.1145/3274661) | To be updated soon |
 
 ### Usage Instructions
 Refer [https://transnetlab.github.io/transit-routing/html/index.html](https://transnetlab.github.io/transit-routing/html/index.html). 

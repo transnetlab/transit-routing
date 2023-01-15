@@ -2,17 +2,19 @@
 Runs the query algorithm
 """
 
-from RAPTOR.hypraptor import hypraptor
+from Algorithms.CSA.std_csa import std_csa
+from Algorithms.RAPTOR.hypraptor import hypraptor
 # from RAPTOR.one_to_many_rraptor import onetomany_rraptor
-from RAPTOR.rraptor import rraptor
-from RAPTOR.std_raptor import raptor
-from TBTR.hyptbtr import hyptbtr
-from TBTR.one_many_tbtr import onetomany_rtbtr
-from TBTR.rtbtr import rtbtr
-from TBTR.tbtr import tbtr
-from TRANSFER_PATTERNS.transferpattens import std_tp
+from Algorithms.RAPTOR.rraptor import rraptor
+from Algorithms.RAPTOR.std_raptor import raptor
+from Algorithms.TBTR.hyptbtr import hyptbtr
+from Algorithms.TBTR.one_many_tbtr import onetomany_rtbtr
+from Algorithms.TBTR.rtbtr import rtbtr
+from Algorithms.TBTR.tbtr import tbtr
+from Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ import custom_dij
+from Algorithms.TRANSFER_PATTERNS.transferpattens import std_tp
 from miscellaneous_func import *
-from CSA.std_csa import std_csa
+
 print_logo()
 
 
@@ -28,7 +30,9 @@ def take_inputs() -> tuple:
                                                  3 for Hyper version
                                                  3 for Nested Hyper version
     """
-    algorithm = int(input("Press 0 to enter RAPTOR environment \nPress 1 to enter TBTR environment\nPress 2 to enter Transfer Patterns environment\nPress 3 to enter CSA environment\n: "))
+    algorithm = int(input(
+        "Press 0 to enter RAPTOR environment \nPress 1 to enter TBTR environment\nPress 2 to enter Transfer Patterns environment\nPress 3 to enter CSA environment"
+        "\nPress 4 to enter Time Expanded Dijkstra\n: "))
     variant = 0
     print("***************")
     if algorithm == 0:
@@ -110,6 +114,10 @@ def main() -> None:
         if variant == 0:
             output = std_csa(SOURCE, DESTINATION, D_TIME, connections_list, WALKING_FROM_SOURCE, footpath_dict, PRINT_ITINERARY)
             print(f"Optimal arrival times is: {output}")
+    if algorithm == 4:
+        if variant == 0:
+            output = custom_dij(SOURCE, D_TIME, DESTINATION, G, stops_group, stopevent_mapping, stop_times_file)
+            print(f"Optimal arrival times is: {output}")
     return None
 
 
@@ -122,20 +130,9 @@ if __name__ == "__main__":
         stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict = read_testcase(
             NETWORK_NAME)
 
-        #Load TBTR files
-        try:
-            with open(f'./GTFS/{NETWORK_NAME}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
-                trip_transfer_dict = pickle.load(file)
-            trip_set = set(trip_transfer_dict.keys())
-        except FileNotFoundError:
-            print("TBTR preprocessing missing")
-
-        #Load CSA files
-        try:
-            with open(f'./dict_builder/{NETWORK_NAME}/connections_dict_pkl.pkl', 'rb') as file:
-                connections_list = pickle.load(file)
-        except FileNotFoundError:
-            print("CSA preprocessing missing")
+        trip_transfer_dict, trip_set = load_TBTR(NETWORK_NAME)
+        connections_list = load_CSA(NETWORK_NAME)
+        G, stops_group, stopevent_mapping = load_TE_graph(NETWORK_NAME, stop_times_file)
 
         print_network_details(transfers_file, trips_file, stops_file)
 
@@ -157,20 +154,10 @@ if __name__ == "__main__":
         stops_file, trips_file, stop_times_file, transfers_file, stops_dict, stoptimes_dict, footpath_dict, routes_by_stop_dict, idx_by_route_stop_dict, routesindx_by_stop_dict = read_testcase(
             NETWORK_NAME)
 
-        #Load TBTR files
-        try:
-            with open(f'./GTFS/{NETWORK_NAME}/TBTR_trip_transfer_dict.pkl', 'rb') as file:
-                trip_transfer_dict = pickle.load(file)
-            trip_set = set(trip_transfer_dict.keys())
-        except FileNotFoundError:
-            print("TBTR preprocessing missing")
+        trip_transfer_dict, trip_set = load_TBTR(NETWORK_NAME)
+        connections_list = load_CSA(NETWORK_NAME)
+        G, stops_group, stopevent_mapping = load_TE_graph(NETWORK_NAME, stop_times_file)
 
-        #Load CSA files
-        try:
-            with open(f'./dict_builder/{NETWORK_NAME}/connections_dict_pkl.pkl', 'rb') as file:
-                connections_list = pickle.load(file)
-        except FileNotFoundError:
-            print("CSA preprocessing missing")
         print_network_details(transfers_file, trips_file, stops_file)
 
         SOURCE = int(input("Enter source stop id\n: "))

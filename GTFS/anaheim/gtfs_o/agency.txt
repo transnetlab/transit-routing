@@ -1,0 +1,2 @@
+agency_id,agency_name,agency_url,agency_timezone,agency_lang,agency_phone,agency_fare_url,agency_email
+254_ca558ddc-d7f2-4b48-9cac-deea1134f820,Anaheim Regional Transportation,https://rideart.org/,America/Los_Angeles,en,7145635287,,artinfo@atnetwork.org

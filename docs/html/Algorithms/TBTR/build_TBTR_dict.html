@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Build TBTR dict &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Transfer Patterns" href="../Transfer_patterns/index.html" />
+    <link rel="prev" title="TBTR Functions" href="TBTR_functions.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../Transfer_patterns/index.html" title="Transfer Patterns"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="TBTR_functions.html" title="TBTR Functions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Trip-based Public Transit Routing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Build TBTR dict</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-builders.build_TBTR_dict">
+<span id="build-tbtr-dict"></span><h1>Build TBTR dict<a class="headerlink" href="#module-builders.build_TBTR_dict" title="Permalink to this headline">¶</a></h1>
+<p>Builds data structure for TBTR related algorithms</p>
+<dl class="py function">
+<dt id="builders.build_TBTR_dict.algorithm1_parallel">
+<code class="sig-prename descclassname"><span class="pre">builders.build_TBTR_dict.</span></code><code class="sig-name descname"><span class="pre">algorithm1_parallel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route_details</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../../_modules/builders/build_TBTR_dict.html#algorithm1_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_TBTR_dict.algorithm1_parallel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collects all possible trip transfers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>route_details</strong> (<em>list</em>) – tuple of format: (route id, list of trips)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of trip-transfers  format [(from trip id, from stop id, to strip id, to stop id)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_TBTR_dict.algorithm2_parallel">
+<code class="sig-prename descclassname"><span class="pre">builders.build_TBTR_dict.</span></code><code class="sig-name descname"><span class="pre">algorithm2_parallel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trip_transfer_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../../_modules/builders/build_TBTR_dict.html#algorithm2_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_TBTR_dict.algorithm2_parallel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes trip transfers which cause U-turns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>trip_transfer</strong> (<em>list</em>) – trip transfers. Format : [‘index’, ‘from_routeid’, ‘from_tid’, ‘to_routeid’, ‘to_tid’, ‘from_stop_index’, ‘to_stop_index’]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns the index if the trip-transfer is optimal. Else empty list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_TBTR_dict.algorithm3_parallel">
+<code class="sig-prename descclassname"><span class="pre">builders.build_TBTR_dict.</span></code><code class="sig-name descname"><span class="pre">algorithm3_parallel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trip_details</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../../_modules/builders/build_TBTR_dict.html#algorithm3_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_TBTR_dict.algorithm3_parallel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes trip transfers that are not part of any optimal journey</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>trip_details</strong> (<em>tuple</em>) – tuple of form: (route_id, trip_id, trip)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of non-optimal trip transfers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_TBTR_dict.initialize">
+<code class="sig-prename descclassname"><span class="pre">builders.build_TBTR_dict.</span></code><code class="sig-name descname"><span class="pre">initialize</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../../_modules/builders/build_TBTR_dict.html#initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_TBTR_dict.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the required inputs for building TBTR preprocessing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string
+CORES (int): Number of codes to be used
+change_time (int): change-time in seconds.
+GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0
+USE_PARALlEL (int): 1 for parallel and 0 for serial</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>breaker (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="TBTR_functions.html"
+                        title="previous chapter">TBTR Functions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../Transfer_patterns/index.html"
+                        title="next chapter">Transfer Patterns</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Algorithms/TBTR/build_TBTR_dict.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../Transfer_patterns/index.html" title="Transfer Patterns"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="TBTR_functions.html" title="TBTR Functions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Trip-based Public Transit Routing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Build TBTR dict</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

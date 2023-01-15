@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Implementation of Dijkstra&#39;s algorithm on a Time expanded Graph.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="custom_dij"><a class="viewcode-back" href="../../../Algorithms/TIME_EXPANDED/TE_DIJ.html#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ.custom_dij">[docs]</a><span class="k">def</span> <span class="nf">custom_dij</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">stops_group</span><span class="p">,</span> <span class="n">stopevent_mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">stop_times_file</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom dijkstra&#39;s algorithm. This functions builds on top of networkx implementation of Dijkstra&#39;s algorithm.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        SOURCE (int): stop id of source stop.</span>
+<span class="sd">        DESTINATION (int): stop id of destination stop.</span>
+<span class="sd">        D_TIME (pandas.datetime): departure time.</span>
+<span class="sd">        G: Time expanded graph. Foramt: Networkx Digraph.</span>
+<span class="sd">        stops_group: stoptimes file group by stopid</span>
+<span class="sd">        stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.</span>
+<span class="sd">        stopevent_mapping (dict): Format: {sequence_no: (stop_id, stop event)}</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; output = custom_dij(36, 52, pd.to_datetime(&#39;2022-06-30 05:41:00&#39;), G, stops_group, stopevent_mapping, stop_times_file)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_node</span> <span class="o">=</span> <span class="n">get_sourcenode</span><span class="p">(</span><span class="n">stops_group</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">,</span> <span class="n">stopevent_mapping</span><span class="p">)</span>
+    <span class="n">idx</span><span class="p">,</span> <span class="n">target_list</span> <span class="o">=</span> <span class="n">get_possible_targets</span><span class="p">(</span><span class="n">stops_group</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">,</span> <span class="n">stopevent_mapping</span><span class="p">)</span>
+
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">weight_function</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">)</span>
+    <span class="n">out_dist</span> <span class="o">=</span> <span class="n">edited_dijkstra_multitarget</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">source_node</span><span class="p">,</span> <span class="n">target_list</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
+
+    <span class="n">stop_reached</span><span class="p">,</span> <span class="n">time_reached</span> <span class="o">=</span> <span class="n">post_process_TE_DIJ</span><span class="p">(</span><span class="n">out_dist</span><span class="p">,</span> <span class="n">target_list</span><span class="p">,</span> <span class="n">stop_times_file</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stop_reached</span><span class="p">,</span> <span class="n">time_reached</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

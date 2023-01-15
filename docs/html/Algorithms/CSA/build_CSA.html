@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Build CSA preprocessing &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Standard CSA" href="std_csa.html" />
+    <link rel="prev" title="Connection Scan Algorithm" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="std_csa.html" title="Standard CSA"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Connection Scan Algorithm"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Connection Scan Algorithm</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Build CSA preprocessing</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-builders.build_CSA">
+<span id="build-csa-preprocessing"></span><h1>Build CSA preprocessing<a class="headerlink" href="#module-builders.build_CSA" title="Permalink to this headline">¶</a></h1>
+<p>Builds structures related to transfer patterns</p>
+<dl class="py function">
+<dt id="builders.build_CSA.extract_connections">
+<code class="sig-prename descclassname"><span class="pre">builders.build_CSA.</span></code><code class="sig-name descname"><span class="pre">extract_connections</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">route_trips</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../../_modules/builders/build_CSA.html#extract_connections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_CSA.extract_connections" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a given route id, extract all connections form its trips.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>route_trips</strong> (<em>tuple</em>) – Format: route id, list of trips.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples. format: [(from stop, to stop, from time, to time, trip id)].</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>route_connections (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_CSA.initialize">
+<code class="sig-prename descclassname"><span class="pre">builders.build_CSA.</span></code><code class="sig-name descname"><span class="pre">initialize</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../../_modules/builders/build_CSA.html#initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_CSA.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize variables for building transfers file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>print line breaker
+start_time: timestamp object
+USE_PARALlEL (int): 1 for parallel and 0 for serial
+CORES (int): Number of codes to be used
+start_time = time()</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>breaker (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_CSA.process_csa_array">
+<code class="sig-prename descclassname"><span class="pre">builders.build_CSA.</span></code><code class="sig-name descname"><span class="pre">process_csa_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connections_list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../../_modules/builders/build_CSA.html#process_csa_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_CSA.process_csa_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processing function for CSA build. Currently supported functionality are:
+1. Filter connections with from stop == to stop and departure time == arrival time
+2. Sort the connection array
+#TODO: Better sort function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>connections_list</strong> (<em>list</em>) – list of tuples. format: [(from stop, to stop, from time, to time, trip id)].</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples. format: [(from stop, to stop, from time, to time, trip id)].</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>connections_list (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_CSA.save_csa">
+<code class="sig-prename descclassname"><span class="pre">builders.build_CSA.</span></code><code class="sig-name descname"><span class="pre">save_csa</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">final_connections</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../../_modules/builders/build_CSA.html#save_csa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_CSA.save_csa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save structures related to CSA</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>final_connections</strong> (<em>list</em>) – list of tuples. format: [(from stop, to stop, from time, to time, trip id)].</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – Network name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Connection Scan Algorithm</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="std_csa.html"
+                        title="next chapter">Standard CSA</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Algorithms/CSA/build_CSA.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="std_csa.html" title="Standard CSA"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Connection Scan Algorithm"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Connection Scan Algorithm</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Build CSA preprocessing</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

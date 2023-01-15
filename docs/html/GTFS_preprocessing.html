@@ -14,7 +14,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="RAPTOR" href="RAPTOR/index.html" />
+    <link rel="next" title="Functions realted to GTFS Wrapper" href="GTFS_wrapper.html" />
     <link rel="prev" title="Quickstart" href="quickstart.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -27,7 +27,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="RAPTOR/index.html" title="RAPTOR"
+          <a href="GTFS_wrapper.html" title="Functions realted to GTFS Wrapper"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="quickstart.html" title="Quickstart"
@@ -44,51 +44,16 @@
             
   <div class="section" id="gtfs-preprocessing">
 <h1>GTFS preprocessing<a class="headerlink" href="#gtfs-preprocessing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="navigation">
+<h2>Navigation<a class="headerlink" href="#navigation" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
 <ul>
-<li><p>Sample GTFS set source - <a class="reference external" href="https://transitfeeds.com/">https://transitfeeds.com/</a></p></li>
-<li><dl class="simple">
-<dt>Due to the irregularities in the GTFS set, several preprocessing filters were applied. E.g.</dt><dd><ul class="simple">
-<li><p>Route Ids are integer and start from 1000.</p></li>
-<li><p>Trip Ids string of format a_b, where a is route Id and b is the sequence number of the trip when arranged in ascending order (according to departure time from the first stop).</p></li>
-<li><p>Stop Ids are integer and start from 1.</p></li>
-<li><p>Stop sequence in stoptimes.txt file is made continuous.</p></li>
-<li><p>Overlapping trips along a route are removed</p></li>
-<li><p>Disjoint routes (i.e., routes which cannot be reached from any other route in the network) are removed. These generally include waterways, airways.</p></li>
-<li><p>The timetable provided is for a day. All the timestamps are converted into pandas.datetime format.</p></li>
-<li><p>calendar_dates can be used in two sense. In the first case, it acts as a supplement to calendar.txt by defining listing the service id removed or added on a particular day (recommended usage).In the second case, it acts independently by listing all the service active on the particular day. See  GTFS reference for more details. Currently only first type of functionality is supported.</p></li>
+<li class="toctree-l1"><a class="reference internal" href="GTFS_wrapper.html">Functions realted to GTFS Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builders/build_transfer_file.html">Functions realted to building transfers file.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dict_builder/dict_builder_functions.html">Dictionaries for faster lookup.</a></li>
 </ul>
-</dd>
-</dl>
-<p>For implementation details, see <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/GTFS_wrapper.py">GTFS_wrapper.py</a>.</p>
-</li>
-<li><dl class="simple">
-<dt><a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/build_transfer_file.py">build_transfer_file.py</a>. has been provided to transfers_file.txt. This module requires OSMNX package. Following inputs are required:</dt><dd><ul class="simple">
-<li><p>The graph (if not found on disk) is extracted using <a class="reference external" href="https://www.openstreetmap.org/#map=4/21.84/82.79">OpenStreetMaps</a></p></li>
-<li><p>For every stop, shortest path comutation is performaed within a radius maximum walking limit.</p></li>
-<li><p>Ensures the transitive closure of footpaths.</p></li>
-</ul>
-</dd>
-<dt>Following additional inputs are required.</dt><dd><ul class="simple">
-<li><p>WALKING_LIMIT (int)- Maximum allowed walking time. Note that the final transfers file can have longer transfers due to transitive closure.</p></li>
-<li><p>CORES (int): Number of codes to be used. Shortest path computation can be done in parallel.</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>For faster lookup, the GTFS set is post-processed into several dictionaries and provided as pickle files.</dt><dd><ul class="simple">
-<li><p>stops_dict_pkl: Contains stops along the route. Format: {route_id: list of stops}</p></li>
-<li><p>stoptimes_dict_pkl: Contains trips along a route. Format: {route_id: [trip_1, trip_2]}</p></li>
-<li><p>transfers_dict_full: Contains footpath details. Format: {stop_id: [(stop_id, time)]}</p></li>
-<li><p>routes_by_stop: All routes passing from a given stop id. Format: {stop_id: list of routes}</p></li>
-<li><p>idx_by_route_stop: Gives the index of a stop along a route. Format: {(route_id, stop_id): index}</p></li>
-</ul>
-</dd>
-</dl>
-<p>Functions for building these dicts from the GTFS set are present in <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/dict_builder/dict_builder_functions.py">dict_builder.py</a>.</p>
-</li>
-<li><p>For algorithms working in TBTR environment, an additional TBTR_trip_transfer_dict is defined. For a given trip Id, it stores the list of trip-transfers available from it. Code for same will be updated soon</p></li>
-</ul>
+</div>
+</div>
 </div>
 
 
@@ -98,12 +63,20 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GTFS preprocessing</a><ul>
+<li><a class="reference internal" href="#navigation">Navigation</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="quickstart.html"
                         title="previous chapter">Quickstart</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="RAPTOR/index.html"
-                        title="next chapter">RAPTOR</a></p>
+  <p class="topless"><a href="GTFS_wrapper.html"
+                        title="next chapter">Functions realted to GTFS Wrapper</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -135,7 +108,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="RAPTOR/index.html" title="RAPTOR"
+          <a href="GTFS_wrapper.html" title="Functions realted to GTFS Wrapper"
              >next</a> |</li>
         <li class="right" >
           <a href="quickstart.html" title="Quickstart"
@@ -145,7 +118,7 @@
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
   </body>

@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSA Functions &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Time Expanded Dijkstra" href="../TIME_EXPANDED/index.html" />
+    <link rel="prev" title="Standard CSA" href="std_csa.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../TIME_EXPANDED/index.html" title="Time Expanded Dijkstra"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="std_csa.html" title="Standard CSA"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Connection Scan Algorithm</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CSA Functions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-Algorithms.CSA.csa_functions">
+<span id="csa-functions"></span><h1>CSA Functions<a class="headerlink" href="#module-Algorithms.CSA.csa_functions" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="Algorithms.CSA.csa_functions.initialize_csa">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.CSA.csa_functions.</span></code><code class="sig-name descname"><span class="pre">initialize_csa</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WALKING_FROM_SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">footpath_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_TIME</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../../_modules/Algorithms/CSA/csa_functions.html#initialize_csa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.CSA.csa_functions.initialize_csa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize values for CSA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>WALKING_FROM_SOURCE</strong> (<em>int</em>) – 1 or 0. 1 indicates walking from SOURCE is allowed.</p></li>
+<li><p><strong>footpath_dict</strong> (<em>dict</em>) – preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict to maintain best arrival label {stop id: pandas.datetime}.
+trip_set(dict): dict to check if a trip has been scanned or not{ trip id: boolean}.
+pi_label(dict): dict used for backtracking labels. Format {stop id : label}. label is (“walking”, from stop, to_stop, footpath duration)
+or (‘connection’, connection id)
+inf_time (pandas.datetime): Variable indicating infinite time.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>stop_label(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.CSA.csa_functions.load_connections_dict">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.CSA.csa_functions.</span></code><code class="sig-name descname"><span class="pre">load_connections_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../../_modules/Algorithms/CSA/csa_functions.html#load_connections_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.CSA.csa_functions.load_connections_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>loads connection array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>NETWORK_NAME</strong> (<em>str</em>) – Network name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of connections. Format: [[connection id, fro stop, to stop, from time, to time, trip id]]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>connections_list (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.CSA.csa_functions.post_process_csa">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.CSA.csa_functions.</span></code><code class="sig-name descname"><span class="pre">post_process_csa</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pi_label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PRINT_ITINERARY</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connections_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inf_time</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../../_modules/Algorithms/CSA/csa_functions.html#post_process_csa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.CSA.csa_functions.post_process_csa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post processing functions for CSA. Currently supported functionality are
+1. Print complete journey</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
+<li><p><strong>pi_label</strong> (<em>dict</em>) – dict used for backtracking labels. Format {stop id : label}. label is (“walking”, from stop, to_stop, footpath duration)</p></li>
+<li><p><strong>PRINT_ITINERARY</strong> (<em>int</em>) – 1 or 0. 1 means print complete path.</p></li>
+<li><p><strong>connections_list</strong> (<em>list</em>) – list of connections. Format: [[connection id, fro stop, to stop, from time, to time, trip id]]</p></li>
+<li><p><strong>stop_label</strong> (<em>dict</em>) – dict to maintain best arrival label {stop id: pandas.datetime}.</p></li>
+<li><p><strong>inf_time</strong> (<em>pandas.datetime</em>) – Variable indicating infinite time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If the destination is not reachable (None), else tuple containing the best arrival time.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>output (tuple)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="std_csa.html"
+                        title="previous chapter">Standard CSA</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../TIME_EXPANDED/index.html"
+                        title="next chapter">Time Expanded Dijkstra</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Algorithms/CSA/csa_functions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../TIME_EXPANDED/index.html" title="Time Expanded Dijkstra"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="std_csa.html" title="Standard CSA"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Connection Scan Algorithm</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CSA Functions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

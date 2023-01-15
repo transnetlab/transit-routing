@@ -1,0 +1,6 @@
+Standard Transfer Patterns
+===========================================
+
+.. automodule:: TRANSFER_PATTERNS.transferpattens
+   :members:
+
