@@ -20,10 +20,14 @@ def extract_graph(NETWORK_NAME: str, breaker: str) -> tuple:
     Extracts the required OSM.
 
     Args:
-        NETWORK_NAME (str): Network name
+        NETWORK_NAME (str): name of the network
+        stops_list (list):
 
     Returns:
         networkx graph, list of tuple [(stop id, nearest OSM node)]
+
+    Examples:
+        >>> G, stops_list = extract_graph("anaheim", breaker)
     """
     try:
         G = pickle.load(open(f"./Data/GTFS/{NETWORK_NAME}/gtfs_o/{NETWORK_NAME}_G.pickle", 'rb'))
@@ -64,11 +68,15 @@ def extract_graph(NETWORK_NAME: str, breaker: str) -> tuple:
 def find_transfer_len(source_info: tuple) -> list:
     """
     Runs shortest path algorithm from source stop with cutoff limit of WALKING_LIMIT * 2
+
     Args:
         source_info (tuple): Format (stop id, nearest OSM node)
 
     Returns:
-        list of
+        temp_list (list): list of format: [(bus stop id, osm node id, distance between the two nodes)]
+
+    Examples:
+        >>> temp_list = find_transfer_len(source_info)
     """
     # print(source_info[0])
     out = nx.single_source_dijkstra_path_length(G, source_info[1], cutoff=WALKING_LIMIT * 2, weight='length')
@@ -77,7 +85,17 @@ def find_transfer_len(source_info: tuple) -> list:
     return temp_list
 
 
-def transitive_closure(input_list) -> list:
+def transitive_closure(input_list: tuple) -> list:
+    """
+    Ensures transitive closure of footpath graph
+
+    Args:
+        input_list (tuple): list of format [(network graph object)]
+
+    Returns:
+        new_edges (list):
+
+    """
     graph_object, connected_component = input_list
     new_edges = []
     for source in connected_component:
@@ -134,6 +152,11 @@ def initialize() -> tuple:
 
     Warnings:
         Building Transfers file requires OSMnX module.
+
+    Examples:
+    >>> breaker, G, stops_list, CORES, WALKING_LIMIT, start_time, USE_PARALlEL, GENERATE_LOGFILE = initialize()
+
+
     """
     breaker = "________________________________________________________________"
     print(breaker)

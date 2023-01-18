@@ -22,6 +22,10 @@ def initialize() -> tuple:
         CORES (int): Number of codes to be used
         start_time = time()
 
+
+    Examples:
+        >>> breaker, USE_PARALlEL, CORES, start_time, GENERATE_LOGFILE = initialize()
+
     """
     breaker = "________________________________________________________________"
     print(breaker)
@@ -53,6 +57,8 @@ def extract_connections(route_trips: tuple) -> list:
     Returns:
         route_connections (list): list of tuples. format: [(from stop, to stop, from time, to time, trip id)].
 
+    Examples:
+        >>> route_connections = extract_connections(route_trips)
     """
     route, trip_list = route_trips
     route_connections = []
@@ -75,6 +81,9 @@ def process_csa_array(connections_list) -> list:
 
     Returns:
         connections_list (list): list of tuples. format: [(from stop, to stop, from time, to time, trip id)].
+
+    Examples:
+        >>> connections_list = process_csa_array(connections_list)
 
     """
     print("Applying sanity checks...")

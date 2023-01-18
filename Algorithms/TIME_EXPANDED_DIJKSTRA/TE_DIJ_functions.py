@@ -225,6 +225,9 @@ def post_process_TE_DIJ(out_dist: dict, target_list: tuple, stop_times_file, D_T
         stop_reached (tuple): Stop event that is reached
         time_reached (pandas.timestamp): arrival time at the stop event
 
+    Examples:
+        >>> stop_reached, time_reached = post_process_TE_DIJ(out_dist, target_list, stop_times_file, pd.to_datetime('2019-06-10 00:00:00'), idx)
+
     """
     out_dist1 = [(node, out_dist[node]) for node in target_list if node in out_dist.keys()]
     if len(out_dist1) == 0:

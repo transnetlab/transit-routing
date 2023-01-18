@@ -29,6 +29,10 @@ def take_inputs() -> tuple:
                                                  2 for One-To-Many version,
                                                  3 for Hyper version
                                                  3 for Nested Hyper version
+
+    Examples:
+        >>> algorithm, variant = take_inputs()
+
     """
     algorithm = int(input(
         "Press 0 to enter RAPTOR environment \nPress 1 to enter TBTR environment\nPress 2 to enter Transfer Patterns environment\nPress 3 to enter CSA environment"
@@ -47,6 +51,10 @@ def take_inputs() -> tuple:
 def main() -> None:
     """
     Runs the test case depending upon the values of algorithm, variant
+
+    Examples:
+        >>> main()
+
     """
     algorithm, variant = take_inputs()
     print_query_parameters(NETWORK_NAME, SOURCE, DESTINATION, D_TIME, MAX_TRANSFER, WALKING_FROM_SOURCE, variant, no_of_partitions=4,
@@ -123,7 +131,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     # Read network
-    USE_TESTCASE = int(input("Press 1 to use test case (anaheim), 0 to enter values manually. Example: 1\n: "))
+    USE_TESTCASE = int(input("Press 1 to use test case (anaheim), 0 to enter values manually. Example: 1\n: " ))
     if USE_TESTCASE == 1:
         NETWORK_NAME = './anaheim'
 
