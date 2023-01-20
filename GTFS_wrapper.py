@@ -1,5 +1,6 @@
 """
-Apply necessary filters to GTFS set. Note that this file is GTFS-specific.
+Apply necessary filters to GTFS set. 
+Note that this file is GTFS-specific.
 """
 import pickle
 import zipfile
