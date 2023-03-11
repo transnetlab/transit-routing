@@ -58,6 +58,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        source_node (int): Source node Id corresponding to TE graph</span>
 
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; source_node = get_sourcenode(stops_group, 36, pd.to_datetime(&#39;2019-06-10 00:00:00&#39;), stopevent_mapping)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">source_node_db</span> <span class="o">=</span> <span class="n">stops_group</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;arrival_time&#39;</span><span class="p">)</span>
     <span class="n">source_node</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">source_node_db</span><span class="p">[</span><span class="n">source_node_db</span><span class="o">.</span><span class="n">arrival_time</span> <span class="o">&gt;</span> <span class="n">D_TIME</span><span class="p">][[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;arrival_time&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -78,6 +81,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        idx (tuple): tuple containing Indexes of the reachable event of target node in stoptimes file</span>
 <span class="sd">        target_list (tuple): tuple containing node Id corresponding reachable target nodes of to TE graph</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; idx, target_list = get_possible_targets(stops_group, 52, pd.to_datetime(&#39;2019-06-10 00:00:00&#39;), stopevent_mapping)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">desti_nodes</span> <span class="o">=</span> <span class="n">stops_group</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">DESTINATION</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;arrival_time&#39;</span><span class="p">)</span>
@@ -160,6 +166,9 @@
 <span class="sd">        distance : dictionary</span>
 <span class="sd">            A mapping from node to shortest distance to that node from one</span>
 <span class="sd">            of the SOURCE nodes.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; dist = edited_dijkstra_multitarget(G, SOURCE, target_list, weight)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">G_succ</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">_succ</span> <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">is_directed</span><span class="p">()</span> <span class="k">else</span> <span class="n">G</span><span class="o">.</span><span class="n">_adj</span>
@@ -253,6 +262,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        stop_reached (tuple): Stop event that is reached</span>
 <span class="sd">        time_reached (pandas.timestamp): arrival time at the stop event</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; stop_reached, time_reached = post_process_TE_DIJ(out_dist, target_list, stop_times_file, pd.to_datetime(&#39;2019-06-10 00:00:00&#39;), idx)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">out_dist1</span> <span class="o">=</span> <span class="p">[(</span><span class="n">node</span><span class="p">,</span> <span class="n">out_dist</span><span class="p">[</span><span class="n">node</span><span class="p">])</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">target_list</span> <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">out_dist</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>

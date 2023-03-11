@@ -60,6 +60,10 @@
 <span class="sd">        CORES (int): Number of codes to be used</span>
 <span class="sd">        start_time = time()</span>
 
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; breaker, USE_PARALlEL, CORES, start_time, GENERATE_LOGFILE = initialize()</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">breaker</span> <span class="o">=</span> <span class="s2">&quot;________________________________________________________________&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
@@ -91,6 +95,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        route_connections (list): list of tuples. format: [(from stop, to stop, from time, to time, trip id)].</span>
 
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; route_connections = extract_connections(route_trips)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">route</span><span class="p">,</span> <span class="n">trip_list</span> <span class="o">=</span> <span class="n">route_trips</span>
     <span class="n">route_connections</span> <span class="o">=</span> <span class="p">[]</span>
@@ -113,6 +119,9 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        connections_list (list): list of tuples. format: [(from stop, to stop, from time, to time, trip id)].</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; connections_list = process_csa_array(connections_list)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Applying sanity checks...&quot;</span><span class="p">)</span>

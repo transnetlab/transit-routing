@@ -60,7 +60,7 @@
 <li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
 <li><p><strong>footpath_dict</strong> (<em>dict</em>) – preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</p></li>
 <li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
-<li><p><strong>routesindx_by_stop_dict</strong> – </p></li>
+<li><p><strong>routesindx_by_stop_dict</strong> (<em>dict</em>) – Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]</p></li>
 <li><p><strong>stops_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [ids of stops in the route]}.</p></li>
 <li><p><strong>hub_count</strong> (<em>int</em>) – Number of hub stops</p></li>
 <li><p><strong>hubstops</strong> (<em>set</em>) – set containing id’s of stop that are hubs</p></li>

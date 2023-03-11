@@ -58,10 +58,14 @@
 <span class="sd">    Extracts the required OSM.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        NETWORK_NAME (str): Network name</span>
+<span class="sd">        NETWORK_NAME (str): name of the network</span>
+<span class="sd">        stops_list (list):</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        networkx graph, list of tuple [(stop id, nearest OSM node)]</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; G, stops_list = extract_graph(&quot;anaheim&quot;, breaker)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">G</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./Data/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">/gtfs_o/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">_G.pickle&quot;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">))</span>
@@ -102,11 +106,15 @@
 <div class="viewcode-block" id="find_transfer_len"><a class="viewcode-back" href="../../builders/build_transfer_file.html#builders.build_transfer_file.find_transfer_len">[docs]</a><span class="k">def</span> <span class="nf">find_transfer_len</span><span class="p">(</span><span class="n">source_info</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Runs shortest path algorithm from source stop with cutoff limit of WALKING_LIMIT * 2</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        source_info (tuple): Format (stop id, nearest OSM node)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        list of</span>
+<span class="sd">        temp_list (list): list of format: [(bus stop id, osm node id, distance between the two nodes)]</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; temp_list = find_transfer_len(source_info)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># print(source_info[0])</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">single_source_dijkstra_path_length</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">source_info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">WALKING_LIMIT</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
@@ -115,14 +123,24 @@
     <span class="k">return</span> <span class="n">temp_list</span></div>
 
 
-<span class="k">def</span> <span class="nf">transitive_closure</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<div class="viewcode-block" id="transitive_closure"><a class="viewcode-back" href="../../builders/build_transfer_file.html#builders.build_transfer_file.transitive_closure">[docs]</a><span class="k">def</span> <span class="nf">transitive_closure</span><span class="p">(</span><span class="n">input_list</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensures transitive closure of footpath graph</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_list (tuple): list of format [(network graph object)]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        new_edges (list):</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">graph_object</span><span class="p">,</span> <span class="n">connected_component</span> <span class="o">=</span> <span class="n">input_list</span>
     <span class="n">new_edges</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">connected_component</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">desti</span> <span class="ow">in</span> <span class="n">connected_component</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">source</span> <span class="o">!=</span> <span class="n">desti</span> <span class="ow">and</span> <span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">desti</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">G_new</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
                 <span class="n">new_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">source</span><span class="p">,</span> <span class="n">desti</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">dijkstra_path_length</span><span class="p">(</span><span class="n">G_new</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">desti</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;length&quot;</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="n">new_edges</span>
+    <span class="k">return</span> <span class="n">new_edges</span></div>
 
 
 <div class="viewcode-block" id="post_process"><a class="viewcode-back" href="../../builders/build_transfer_file.html#builders.build_transfer_file.post_process">[docs]</a><span class="k">def</span> <span class="nf">post_process</span><span class="p">(</span><span class="n">G_new</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ini_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -172,6 +190,11 @@
 
 <span class="sd">    Warnings:</span>
 <span class="sd">        Building Transfers file requires OSMnX module.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    &gt;&gt;&gt; breaker, G, stops_list, CORES, WALKING_LIMIT, start_time, USE_PARALlEL, GENERATE_LOGFILE = initialize()</span>
+
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">breaker</span> <span class="o">=</span> <span class="s2">&quot;________________________________________________________________&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>

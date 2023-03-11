@@ -79,6 +79,10 @@ of the SOURCE nodes.</p>
 <dd class="field-odd"><p>distance</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dist</span> <span class="o">=</span> <span class="n">edited_dijkstra_multitarget</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">,</span> <span class="n">target_list</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -102,6 +106,10 @@ target_list (tuple): tuple containing node Id corresponding reachable target nod
 <dd class="field-odd"><p>idx (tuple)</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span><span class="p">,</span> <span class="n">target_list</span> <span class="o">=</span> <span class="n">get_possible_targets</span><span class="p">(</span><span class="n">stops_group</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2019-06-10 00:00:00&#39;</span><span class="p">),</span> <span class="n">stopevent_mapping</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -125,6 +133,10 @@ This serves as source stop for Dijkstra’s algorithm.</p>
 <dd class="field-odd"><p>source_node (int)</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source_node</span> <span class="o">=</span> <span class="n">get_sourcenode</span><span class="p">(</span><span class="n">stops_group</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2019-06-10 00:00:00&#39;</span><span class="p">),</span> <span class="n">stopevent_mapping</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -161,6 +173,10 @@ time_reached (pandas.timestamp): arrival time at the stop event</p>
 <dd class="field-odd"><p>stop_reached (tuple)</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stop_reached</span><span class="p">,</span> <span class="n">time_reached</span> <span class="o">=</span> <span class="n">post_process_TE_DIJ</span><span class="p">(</span><span class="n">out_dist</span><span class="p">,</span> <span class="n">target_list</span><span class="p">,</span> <span class="n">stop_times_file</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2019-06-10 00:00:00&#39;</span><span class="p">),</span> <span class="n">idx</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">

@@ -70,25 +70,40 @@
 <dd><p>Extracts the required OSM.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>NETWORK_NAME</strong> (<em>str</em>) – Network name</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
+<li><p><strong>stops_list</strong> (<em>list</em>) – </p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>networkx graph, list of tuple [(stop id, nearest OSM node)]</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="p">,</span> <span class="n">stops_list</span> <span class="o">=</span> <span class="n">extract_graph</span><span class="p">(</span><span class="s2">&quot;anaheim&quot;</span><span class="p">,</span> <span class="n">breaker</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt id="builders.build_transfer_file.find_transfer_len">
 <code class="sig-prename descclassname"><span class="pre">builders.build_transfer_file.</span></code><code class="sig-name descname"><span class="pre">find_transfer_len</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/builders/build_transfer_file.html#find_transfer_len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_file.find_transfer_len" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs shortest path algorithm from source stop with cutoff limit of WALKING_LIMIT * 2
-:param source_info: Format (stop id, nearest OSM node)
-:type source_info: tuple</p>
+<dd><p>Runs shortest path algorithm from source stop with cutoff limit of WALKING_LIMIT * 2</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>list of</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>source_info</strong> (<em>tuple</em>) – Format (stop id, nearest OSM node)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of format: [(bus stop id, osm node id, distance between the two nodes)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>temp_list (list)</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">temp_list</span> <span class="o">=</span> <span class="n">find_transfer_len</span><span class="p">(</span><span class="n">source_info</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -114,6 +129,8 @@ GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0</p>
 <p class="admonition-title">Warning</p>
 <p>Building Transfers file requires OSMnX module.</p>
 </div>
+<p>Examples:
+&gt;&gt;&gt; breaker, G, stops_list, CORES, WALKING_LIMIT, start_time, USE_PARALlEL, GENERATE_LOGFILE = initialize()</p>
 </dd></dl>
 
 <dl class="py function">
@@ -135,6 +152,23 @@ GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_transfer_file.transitive_closure">
+<code class="sig-prename descclassname"><span class="pre">builders.build_transfer_file.</span></code><code class="sig-name descname"><span class="pre">transitive_closure</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/builders/build_transfer_file.html#transitive_closure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_file.transitive_closure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensures transitive closure of footpath graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_list</strong> (<em>tuple</em>) – list of format [(network graph object)]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>new_edges (list)</p>
 </dd>
 </dl>
 </dd></dl>
