@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Algorithms.RAPTOR.std_raptor &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.RAPTOR.std_raptor</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Algorithms.RAPTOR.std_raptor</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module contains RAPTOR implementation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">Algorithms.RAPTOR.raptor_functions</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="raptor"><a class="viewcode-back" href="../../../Algorithms/RAPTOR/std_raptor.html#Algorithms.RAPTOR.std_raptor.raptor">[docs]</a><span class="k">def</span> <span class="nf">raptor</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">,</span> <span class="n">MAX_TRANSFER</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">WALKING_FROM_SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">CHANGE_TIME_SEC</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+           <span class="n">routes_by_stop_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">stops_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">idx_by_route_stop_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Standard Raptor implementation</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        SOURCE (int): stop id of source stop.</span>
+<span class="sd">        DESTINATION (int): stop id of destination stop.</span>
+<span class="sd">        D_TIME (pandas.datetime): departure time.</span>
+<span class="sd">        MAX_TRANSFER (int): maximum transfer limit.</span>
+<span class="sd">        WALKING_FROM_SOURCE (int): 1 or 0. 1 indicates walking from SOURCE is allowed.</span>
+<span class="sd">        CHANGE_TIME_SEC (int): change-time in seconds.</span>
+<span class="sd">        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.</span>
+<span class="sd">        routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.</span>
+<span class="sd">        stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.</span>
+<span class="sd">        stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</span>
+<span class="sd">        footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</span>
+<span class="sd">        idx_by_route_stop_dict (dict): preprocessed dict. Format {(route id, stop id): stop index in route}.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        out (list): list of pareto-optimal arrival timestamps.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; output = raptor(36, 52, pd.to_datetime(&#39;2022-06-30 05:41:00&#39;), 4, 1, 0, 1, routes_by_stop_dict, stops_dict, stoptimes_dict, footpath_dict, idx_by_route_stop_dict)</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Optimal arrival time are: {output}&quot;)</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        HypRAPTOR, Tip-based Public Transit Routing (TBTR)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Initialization</span>
+    <span class="n">marked_stop</span><span class="p">,</span> <span class="n">marked_stop_dict</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">,</span> <span class="n">star_label</span><span class="p">,</span> <span class="n">inf_time</span> <span class="o">=</span> <span class="n">initialize_raptor</span><span class="p">(</span><span class="n">routes_by_stop_dict</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">,</span> <span class="n">MAX_TRANSFER</span><span class="p">)</span>
+    <span class="n">change_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">CHANGE_TIME_SEC</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;seconds&#39;</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">SOURCE</span><span class="p">],</span> <span class="n">star_label</span><span class="p">[</span><span class="n">SOURCE</span><span class="p">])</span> <span class="o">=</span> <span class="p">(</span><span class="n">D_TIME</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">)</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Format of Q is {route:stop index}</span>
+    <span class="k">if</span> <span class="n">WALKING_FROM_SOURCE</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">trans_info</span> <span class="o">=</span> <span class="n">footpath_dict</span><span class="p">[</span><span class="n">SOURCE</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trans_info</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">p_dash</span><span class="p">,</span> <span class="n">to_pdash_time</span><span class="p">)</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">p_dash</span><span class="p">]</span> <span class="o">=</span> <span class="n">D_TIME</span> <span class="o">+</span> <span class="n">to_pdash_time</span>
+                <span class="n">star_label</span><span class="p">[</span><span class="n">p_dash</span><span class="p">]</span> <span class="o">=</span> <span class="n">D_TIME</span> <span class="o">+</span> <span class="n">to_pdash_time</span>
+                <span class="n">pi_label</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">p_dash</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;walking&#39;</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">,</span> <span class="n">p_dash</span><span class="p">,</span> <span class="n">to_pdash_time</span><span class="p">,</span> <span class="n">D_TIME</span> <span class="o">+</span> <span class="n">to_pdash_time</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">marked_stop_dict</span><span class="p">[</span><span class="n">p_dash</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">marked_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_dash</span><span class="p">)</span>
+                    <span class="n">marked_stop_dict</span><span class="p">[</span><span class="n">p_dash</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># Main Code</span>
+    <span class="c1"># Main code part 1</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">MAX_TRANSFER</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">Q</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">marked_stop</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">marked_stop</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">marked_stop_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">routes_serving_p</span> <span class="o">=</span> <span class="n">routes_by_stop_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">route</span> <span class="ow">in</span> <span class="n">routes_serving_p</span><span class="p">:</span>
+                    <span class="n">stp_idx</span> <span class="o">=</span> <span class="n">idx_by_route_stop_dict</span><span class="p">[(</span><span class="n">route</span><span class="p">,</span> <span class="n">p</span><span class="p">)]</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">Q</span><span class="p">[</span><span class="n">route</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">stp_idx</span><span class="p">,</span> <span class="n">Q</span><span class="p">[</span><span class="n">route</span><span class="p">])</span>
+                    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                        <span class="n">Q</span><span class="p">[</span><span class="n">route</span><span class="p">]</span> <span class="o">=</span> <span class="n">stp_idx</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+        <span class="c1"># Main code part 2</span>
+        <span class="k">for</span> <span class="n">route</span><span class="p">,</span> <span class="n">current_stopindex_by_route</span> <span class="ow">in</span> <span class="n">Q</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">current_trip_t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="n">stops_dict</span><span class="p">[</span><span class="n">route</span><span class="p">][</span><span class="n">current_stopindex_by_route</span><span class="p">:]:</span>
+                <span class="k">if</span> <span class="n">current_trip_t</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">current_trip_t</span><span class="p">[</span><span class="n">current_stopindex_by_route</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">star_label</span><span class="p">[</span><span class="n">p_i</span><span class="p">],</span> <span class="n">star_label</span><span class="p">[</span><span class="n">DESTINATION</span><span class="p">]):</span>
+                    <span class="n">arr_by_t_at_pi</span> <span class="o">=</span> <span class="n">current_trip_t</span><span class="p">[</span><span class="n">current_stopindex_by_route</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">p_i</span><span class="p">],</span> <span class="n">star_label</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr_by_t_at_pi</span><span class="p">,</span> <span class="n">arr_by_t_at_pi</span>
+                    <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">p_i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">boarding_time</span><span class="p">,</span> <span class="n">boarding_point</span><span class="p">,</span> <span class="n">p_i</span><span class="p">,</span> <span class="n">arr_by_t_at_pi</span><span class="p">,</span> <span class="n">tid</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">marked_stop_dict</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">marked_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_i</span><span class="p">)</span>
+                        <span class="n">marked_stop_dict</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">current_trip_t</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">label</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">p_i</span><span class="p">]</span> <span class="o">+</span> <span class="n">change_time</span> <span class="o">&lt;</span> <span class="n">current_trip_t</span><span class="p">[</span><span class="n">current_stopindex_by_route</span><span class="p">][</span>
+                    <span class="mi">1</span><span class="p">]:</span>  <span class="c1"># assuming arrival_time = departure_time</span>
+                    <span class="n">tid</span><span class="p">,</span> <span class="n">current_trip_t</span> <span class="o">=</span> <span class="n">get_latest_trip_new</span><span class="p">(</span><span class="n">stoptimes_dict</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">label</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">p_i</span><span class="p">],</span> <span class="n">current_stopindex_by_route</span><span class="p">,</span> <span class="n">change_time</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">current_trip_t</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">boarding_time</span><span class="p">,</span> <span class="n">boarding_point</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">boarding_point</span> <span class="o">=</span> <span class="n">p_i</span>
+                        <span class="n">boarding_time</span> <span class="o">=</span> <span class="n">current_trip_t</span><span class="p">[</span><span class="n">current_stopindex_by_route</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">current_stopindex_by_route</span> <span class="o">=</span> <span class="n">current_stopindex_by_route</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># Main code part 3</span>
+        <span class="n">marked_stop_copy</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">marked_stop</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">marked_stop_copy</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">trans_info</span> <span class="o">=</span> <span class="n">footpath_dict</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trans_info</span><span class="p">:</span>
+                    <span class="p">(</span><span class="n">p_dash</span><span class="p">,</span> <span class="n">to_pdash_time</span><span class="p">)</span> <span class="o">=</span> <span class="n">i</span>
+                    <span class="n">new_p_dash_time</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">p</span><span class="p">]</span> <span class="o">+</span> <span class="n">to_pdash_time</span>
+                    <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">p_dash</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">new_p_dash_time</span> <span class="ow">and</span> <span class="n">new_p_dash_time</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">star_label</span><span class="p">[</span><span class="n">p_dash</span><span class="p">],</span> <span class="n">star_label</span><span class="p">[</span><span class="n">DESTINATION</span><span class="p">]):</span>
+                        <span class="n">label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">p_dash</span><span class="p">],</span> <span class="n">star_label</span><span class="p">[</span><span class="n">p_dash</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_p_dash_time</span><span class="p">,</span> <span class="n">new_p_dash_time</span>
+                        <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">p_dash</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;walking&#39;</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">p_dash</span><span class="p">,</span> <span class="n">to_pdash_time</span><span class="p">,</span> <span class="n">new_p_dash_time</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">marked_stop_dict</span><span class="p">[</span><span class="n">p_dash</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">marked_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_dash</span><span class="p">)</span>
+                            <span class="n">marked_stop_dict</span><span class="p">[</span><span class="n">p_dash</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="c1"># Main code End</span>
+        <span class="k">if</span> <span class="n">marked_stop</span> <span class="o">==</span> <span class="n">deque</span><span class="p">([]):</span>
+            <span class="k">if</span> <span class="n">PRINT_ITINERARY</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># print(&#39;code ended with termination condition&#39;)</span>
+                <span class="k">pass</span>
+            <span class="k">break</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">rap_out</span> <span class="o">=</span> <span class="n">post_processing</span><span class="p">(</span><span class="n">DESTINATION</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rap_out</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.RAPTOR.std_raptor</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

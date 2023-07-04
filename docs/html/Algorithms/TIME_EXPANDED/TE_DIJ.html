@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dijktra’s Algorithm &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Functions related to Dijktra’s Algorithm" href="TE_DIJ_functions.html" />
+    <link rel="prev" title="Build Time expanded Graph" href="../../builders/build_TE.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="TE_DIJ_functions.html" title="Functions related to Dijktra’s Algorithm"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../../builders/build_TE.html" title="Build Time expanded Graph"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Time Expanded Dijkstra</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Dijktra’s Algorithm</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ">
+<span id="dijktra-s-algorithm"></span><h1>Dijktra’s Algorithm<a class="headerlink" href="#module-Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ" title="Permalink to this headline">¶</a></h1>
+<p>Implementation of Dijkstra’s algorithm on a Time expanded Graph.</p>
+<dl class="py function">
+<dt id="Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ.custom_dij">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ.</span></code><code class="sig-name descname"><span class="pre">custom_dij</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_TIME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops_group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopevent_mapping</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../../_modules/Algorithms/TIME_EXPANDED_DIJKSTRA/TE_DIJ.html#custom_dij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ.custom_dij" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom dijkstra’s algorithm. This functions builds on top of networkx implementation of Dijkstra’s algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
+<li><p><strong>G</strong> – Time expanded graph. Foramt: Networkx Digraph.</p></li>
+<li><p><strong>stops_group</strong> – stoptimes file group by stopid</p></li>
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – stop_times.txt file in GTFS.</p></li>
+<li><p><strong>stopevent_mapping</strong> (<em>dict</em>) – Format: {sequence_no: (stop_id, stop event)}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">custom_dij</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2022-06-30 05:41:00&#39;</span><span class="p">),</span> <span class="n">G</span><span class="p">,</span> <span class="n">stops_group</span><span class="p">,</span> <span class="n">stopevent_mapping</span><span class="p">,</span> <span class="n">stop_times_file</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../../builders/build_TE.html"
+                        title="previous chapter">Build Time expanded Graph</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="TE_DIJ_functions.html"
+                        title="next chapter">Functions related to Dijktra’s Algorithm</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Algorithms/TIME_EXPANDED/TE_DIJ.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="TE_DIJ_functions.html" title="Functions related to Dijktra’s Algorithm"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../../builders/build_TE.html" title="Build Time expanded Graph"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Time Expanded Dijkstra</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Dijktra’s Algorithm</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

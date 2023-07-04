@@ -1,0 +1,647 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transfer Patterns functions &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Standard Transfer Patterns" href="transferpattens.html" />
+    <link rel="prev" title="Build Transfer Patterns" href="build_transfer_patterns.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="transferpattens.html" title="Standard Transfer Patterns"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="build_transfer_patterns.html" title="Build Transfer Patterns"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Transfer Patterns</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Transfer Patterns functions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-TRANSFER_PATTERNS.transferpattern_func">
+<span id="transfer-patterns-functions"></span><h1>Transfer Patterns functions<a class="headerlink" href="#module-TRANSFER_PATTERNS.transferpattern_func" title="Permalink to this headline">¶</a></h1>
+<p>Module contains function related to transfer patterns, scalable transfer patterns</p>
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.arrivaltme_query">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">arrivaltme_query</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop1</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop2</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deptime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routesindx_by_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#arrivaltme_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.arrivaltme_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the earliest trip departing from stop 1 after deptime and going to stop 2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop1</strong> (<em>int</em>) – Stop id</p></li>
+<li><p><strong>stop2</strong> (<em>int</em>) – Stop id</p></li>
+<li><p><strong>deptime</strong> (<em>pandas.datetime</em>) – </p></li>
+<li><p><strong>routesindx_by_stop_dict</strong> (<em>dict</em>) – Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]</p></li>
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pandas.datetime object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.build_query_graph">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">build_query_graph</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hub_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubstops</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#build_query_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.build_query_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds the query graph for transfer patterns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – GTFS path</p></li>
+<li><p><strong>hub_count</strong> (<em>int</em>) – Number of hub stops</p></li>
+<li><p><strong>hubstops</strong> (<em>set</em>) – set containing id’s of stop that are hubs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>adjacency list for the query graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>adj_list (dist)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.build_query_graph_forSTP">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">build_query_graph_forSTP</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_info</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#build_query_graph_forSTP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.build_query_graph_forSTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds the query graph for scalable transfer patterns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – GTFS path</p></li>
+<li><p><strong>cluster_info</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>adjacency list for the query graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>adj_list (dist)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.check_dominance">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">check_dominance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjlist_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#check_dominance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.check_dominance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the best values in both the criteria is dominated by destination</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t_l</strong> (<em>list</em>) – list of tuples of format: (arrival time, number of transfer, predecessor node id, index of label updated from, self node_id)</p></li>
+<li><p><strong>adj_list</strong> (<em>dist</em>) – adjacency list for the query graph</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True or False (boolean)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.enqueue_range_tbtr">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">enqueue_range_tbtr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nextround</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TRANSFER</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#enqueue_range_tbtr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.enqueue_range_tbtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>adds trips-segments to next round round and update R_t. Used in range queries</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>connection_list</strong> (<em>list</em>) – list of connections to be added. Format: [(to_trip_id, to_trip_id_stop_index)].</p></li>
+<li><p><strong>nextround</strong> (<em>int</em>) – next round/transfer number to which trip-segments are added</p></li>
+<li><p><strong>predecessor_label</strong> (<em>tuple</em>) – predecessor_label for backtracking journey ( To be developed ).</p></li>
+<li><p><strong>R_t</strong> (<em>nested dict</em>) – Nested_Dict with primary keys as trip id and secondary keys as number of transfers. Format {trip_id: {[round]: first reached stop}}</p></li>
+<li><p><strong>Q</strong> (<em>list</em>) – list of trips segments</p></li>
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+<li><p><strong>MAX_TRANSFER</strong> (<em>int</em>) – maximum transfer limit.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.extract_transferpattern">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">extract_transferpattern</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pareto_journeys</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#extract_transferpattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.extract_transferpattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract transfer patterns from pareto_journeys</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pareto_journeys</strong> (<em>list</em>) – pareto optimal set.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of stop sequence transfer patterns</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pareto_journeys (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.get_brutehubs">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">get_brutehubs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routes_by_stop_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#get_brutehubs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.get_brutehubs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select hubs using brute force. This is Naive implementation that can be used to test the effectiveness of the hubs. The idea is to generate
+full transfer patterns (without hubs) and then use optimal paths to find hub stops.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routes_by_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {stop_id: [id of routes passing through stop]}.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – GTFS path</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples of format: (stop_id, number of optimal paths it stop_id is belongs to)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>global_count (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.get_latest_trip_new">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">get_latest_trip_new</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">route</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrival_time_at_pi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pi_index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">change_time</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#get_latest_trip_new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.get_latest_trip_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get latest trip after a certain timestamp from the given stop of a route.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+<li><p><strong>route</strong> (<em>int</em>) – id of route.</p></li>
+<li><p><strong>arrival_time_at_pi</strong> (<em>pandas.datetime</em>) – arrival time at stop pi.</p></li>
+<li><p><strong>pi_index</strong> (<em>int</em>) – index of the stop from which route was boarded.</p></li>
+<li><p><strong>change_time</strong> (<em>pandas.datetime</em>) – change time at stop (set to 0).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>trip index, trip
+else:</p>
+<blockquote>
+<div><p>-1,-1   (e.g. when there is no trip after the given timestamp)</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>If a trip exists</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">get_latest_trip_new</span><span class="p">(</span><span class="n">stoptimes_dict</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2019-06-10 17:40:00&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;seconds&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.initialize_from_desti_onemany_tbtr">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">initialize_from_desti_onemany_tbtr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routes_by_stop_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION_LIST</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">footpath_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_by_route_stop_dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#initialize_from_desti_onemany_tbtr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.initialize_from_desti_onemany_tbtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize routes/footpath to leading to destination stop in case of one-to-many rTBTR</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routes_by_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {stop_id: [id of routes passing through stop]}.</p></li>
+<li><p><strong>stops_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [ids of stops in the route]}.</p></li>
+<li><p><strong>DESTINATION_LIST</strong> (<em>list</em>) – list of stop ids of destination stop.</p></li>
+<li><p><strong>footpath_dict</strong> (<em>dict</em>) – preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</p></li>
+<li><p><strong>idx_by_route_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {(route id, stop id): stop index in route}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dict to track routes/leading to destination stops. Key: route_id, value: {destination_stop_id: [(from_stop_idx, travel time, stop id)]}</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>L (nested dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.initialize_from_source_range_tbtr">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">initialize_from_source_range_tbtr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dep_details</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TRANSFER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_t</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#initialize_from_source_range_tbtr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.initialize_from_source_range_tbtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize trips segments from source in rTBTR</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dep_details</strong> (<em>list</em>) – list of format [trip id, departure time, source index]</p></li>
+<li><p><strong>MAX_TRANSFER</strong> (<em>int</em>) – maximum transfer limit.</p></li>
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+<li><p><strong>R_t</strong> (<em>nested dict</em>) – Nested_Dict with primary keys as trip id and secondary keys as number of transfers. Format {trip_id: {[round]: first reached stop}}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of trips segments</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Q (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.initialize_onemany_tbtr">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">initialize_onemany_tbtr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MAX_TRANSFER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION_LIST</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#initialize_onemany_tbtr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.initialize_onemany_tbtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize values for one-to-many TBTR.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>MAX_TRANSFER</strong> (<em>int</em>) – maximum transfer limit.</p></li>
+<li><p><strong>DESTINATION_LIST</strong> (<em>list</em>) – list of stop ids of destination stop.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict to store arrival timestamps. Keys: number of transfer, Values: arrival time.
+inf_time (pandas.datetime): Variable indicating infinite time.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>J (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.initialize_raptor">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">initialize_raptor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routes_by_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TRANSFER</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#initialize_raptor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.initialize_raptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize values for RAPTOR.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routes_by_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {stop_id: [id of routes passing through stop]}.</p></li>
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>MAX_TRANSFER</strong> (<em>int</em>) – maximum transfer limit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>deque to store marked stop.
+marked_stop_dict (dict): Binary variable indicating if a stop is marked. Keys: stop Id, value: 0 or 1.
+label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.
+pi_label (dict): Nested dict used for backtracking labels. Format {round : {stop_id: pointer_label}}
+if stop is reached by walking, pointer_label= (‘walking’, from stop id, to stop id, time, arrival time)}} else pointer_label= (trip boarding time, boarding_point, stop id, arr_by_trip, trip id)
+star_label (dict): dict to maintain best arrival label {stop id: pandas.datetime}.
+inf_time (pd.timestamp): Variable indicating infinite time (pandas.datetime).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>marked_stop (deque)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">initialize_raptor</span><span class="p">(</span><span class="n">routes_by_stop_dict</span><span class="p">,</span> <span class="mi">20775</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.multicriteria_dij">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">multicriteria_dij</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_TIME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">footpath_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routesindx_by_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hub_count</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubstops</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#multicriteria_dij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.multicriteria_dij" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multicriteria Dijkstra’s algorithm to be used in transfer patterns query phase. The implementation has been borrowed from NetworkX.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
+<li><p><strong>footpath_dict</strong> (<em>dict</em>) – preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – GTFS path</p></li>
+<li><p><strong>routesindx_by_stop_dict</strong> (<em>dict</em>) – Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]</p></li>
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+<li><p><strong>hub_count</strong> (<em>int</em>) – Number of hub stops</p></li>
+<li><p><strong>hubstops</strong> (<em>set</em>) – set containing id’s of stop that are hubs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>adjacency list for the query graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>adj_list (dist)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.multicriteria_dij_alternate">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">multicriteria_dij_alternate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_TIME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">footpath_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routesindx_by_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hub_count</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubstops</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#multicriteria_dij_alternate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.multicriteria_dij_alternate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multicriteria Dijkstra’s algorithm to be used in transfer patterns query phase. The implementation has been borrowed from NetworkX.
+This is untested-varient of Martin’s algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
+<li><p><strong>footpath_dict</strong> (<em>dict</em>) – preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – GTFS path</p></li>
+<li><p><strong>routesindx_by_stop_dict</strong> (<em>dict</em>) – Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]</p></li>
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+<li><p><strong>hub_count</strong> (<em>int</em>) – Number of hub stops</p></li>
+<li><p><strong>hubstops</strong> (<em>set</em>) – set containing id’s of stop that are hubs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>adjacency list for the query graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>adj_list (dist)</p>
+</dd>
+</dl>
+<p>#TODO: Check correctness and efficiency</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.multicriteria_dij_forSTP">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">multicriteria_dij_forSTP</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_TIME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">footpath_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routesindx_by_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_info</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#multicriteria_dij_forSTP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.multicriteria_dij_forSTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multicriteria Dijkstra’s algorithm to be used in scalable transfer patterns query phase. The implementation has been borrowed from NetworkX.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
+<li><p><strong>footpath_dict</strong> (<em>dict</em>) – preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – GTFS path</p></li>
+<li><p><strong>routesindx_by_stop_dict</strong> (<em>dict</em>) – Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]</p></li>
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+<li><p><strong>cluster_info</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>adjacency list for the query graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>adj_list (dist)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.new_label_is_dominated">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">new_label_is_dominated</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjlist_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#new_label_is_dominated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.new_label_is_dominated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the new_label dominates the destination label</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_label</strong> (<em>list</em>) – list of tuples of format: (arrival time, number of transfer, predecessor node id, index of label updated from, self node_id)</p></li>
+<li><p><strong>adj_list</strong> (<em>dist</em>) – adjacency list for the query graph</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True or False (boolean)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.onetoall_rraptor_forhubs">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">onetoall_rraptor_forhubs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION_LIST</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_time_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TRANSFER</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WALKING_FROM_SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CHANGE_TIME_SEC</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PRINT_ITINERARY</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OPTIMIZED</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routes_by_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">footpath_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_by_route_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubstops</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#onetoall_rraptor_forhubs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.onetoall_rraptor_forhubs" title="Permalink to this definition">¶</a></dt>
+<dd><p>One-To-Many rRAPTOR implementation. Trips are not scanned from the stops in hubstops set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>DESTINATION_LIST</strong> (<em>list</em>) – list of stop ids of destination stop.</p></li>
+<li><p><strong>d_time_groups</strong> (<em>pandas.group</em>) – all possible departures times from all stops.</p></li>
+<li><p><strong>MAX_TRANSFER</strong> (<em>int</em>) – maximum transfer limit.</p></li>
+<li><p><strong>WALKING_FROM_SOURCE</strong> (<em>int</em>) – 1 or 0. 1 means walking from SOURCE is allowed.</p></li>
+<li><p><strong>CHANGE_TIME_SEC</strong> (<em>int</em>) – change-time in seconds.</p></li>
+<li><p><strong>PRINT_ITINERARY</strong> (<em>int</em>) – 1 or 0. 1 means print complete path.</p></li>
+<li><p><strong>OPTIMIZED</strong> (<em>int</em>) – 1 or 0. 1 means collect trips and 0 means collect routes.</p></li>
+<li><p><strong>routes_by_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {stop_id: [id of routes passing through stop]}.</p></li>
+<li><p><strong>stops_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [ids of stops in the route]}.</p></li>
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+<li><p><strong>footpath_dict</strong> (<em>dict</em>) – preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</p></li>
+<li><p><strong>idx_by_route_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {(route id, stop id): stop index in route}.</p></li>
+<li><p><strong>hubstops</strong> (<em>set</em>) – set containing id’s of stop that are hubs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
+elif OPTIMIZED==0:</p>
+<blockquote>
+<div><p>out (list):  list of routes required to cover all optimal journeys. Format: [route_id]</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>if OPTIMIZED==1</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">onetomany_rraptor</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="p">[</span><span class="mi">52</span><span class="p">,</span> <span class="mi">43</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2019-06-10 00:00:00&#39;</span><span class="p">),</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">routes_by_stop_dict</span><span class="p">,</span> <span class="n">stops_dict</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">,</span> <span class="n">idx_by_route_stop_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.onetomany_rtbtr_forhubs">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">onetomany_rtbtr_forhubs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION_LIST</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_time_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TRANSFER</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WALKING_FROM_SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PRINT_ITINERARY</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OPTIMIZED</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routes_by_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">footpath_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_by_route_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trip_transfer_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trip_set</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubstops</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#onetomany_rtbtr_forhubs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.onetomany_rtbtr_forhubs" title="Permalink to this definition">¶</a></dt>
+<dd><p>One to many rTBTR implementation. Connections are not added from the stops in hubstops set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>DESTINATION_LIST</strong> (<em>list</em>) – list of stop ids of destination stop.</p></li>
+<li><p><strong>d_time_groups</strong> (<em>pandas.group</em>) – all possible departures times from all stops.</p></li>
+<li><p><strong>MAX_TRANSFER</strong> (<em>int</em>) – maximum transfer limit.</p></li>
+<li><p><strong>WALKING_FROM_SOURCE</strong> (<em>int</em>) – 1 or 0. 1 means walking from SOURCE is allowed.</p></li>
+<li><p><strong>PRINT_ITINERARY</strong> (<em>int</em>) – 1 or 0. 1 means print complete path.</p></li>
+<li><p><strong>OPTIMIZED</strong> (<em>int</em>) – 1 or 0. 1 means collect trips and 0 means collect routes.</p></li>
+<li><p><strong>routes_by_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {stop_id: [id of routes passing through stop]}.</p></li>
+<li><p><strong>stops_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [ids of stops in the route]}.</p></li>
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+<li><p><strong>footpath_dict</strong> (<em>dict</em>) – preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</p></li>
+<li><p><strong>idx_by_route_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {(route id, stop id): stop index in route}.</p></li>
+<li><p><strong>trip_transfer_dict</strong> (<em>nested dict</em>) – keys: id of trip we are transferring from, value: {stop number: list of tuples</p></li>
+<li><p><strong>form</strong> (<em>of</em>) – </p></li>
+<li><p><strong>trip_set</strong> (<em>set</em>) – set of trip ids from which trip-transfers are available.</p></li>
+<li><p><strong>hubstops</strong> (<em>set</em>) – set containing id’s of stop that are hubs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>out (list):  list of trips required to cover all optimal journeys Format: [trip_id]
+elif OPTIMIZED==0:</p>
+<blockquote>
+<div><p>out (list):  list of routes required to cover all optimal journeys. Format: [route_id]</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>if OPTIMIZED==1</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.post_process_range_onemany_tbtr">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">post_process_range_onemany_tbtr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounds_desti_reached</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PRINT_ITINERARY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desti</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">footpath_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TRANSFER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trip_transfer_dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#post_process_range_onemany_tbtr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.post_process_range_onemany_tbtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains all the post-processing features for One-To-Many rTBTR.
+Currently supported functionality:</p>
+<blockquote>
+<div><p>Collect list of trips needed to cover pareto-optimal journeys.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>J</strong> (<em>dict</em>) – dict to store arrival timestamps. Keys: number of transfer, Values: arrival time</p></li>
+<li><p><strong>Q</strong> (<em>list</em>) – list of trips segments.</p></li>
+<li><p><strong>rounds_desti_reached</strong> (<em>list</em>) – Rounds in which DESTINATION is reached.</p></li>
+<li><p><strong>desti</strong> (<em>int</em>) – destination stop id.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Trips needed to cover pareto-optimal journeys.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>TBTR_out (set)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.post_processing_onetoall_rraptor">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">post_processing_onetoall_rraptor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DESTINATION_LIST</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pi_label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PRINT_ITINERARY</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OPTIMIZED</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#post_processing_onetoall_rraptor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.post_processing_onetoall_rraptor" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>post processing for Ont-To-Many rRAPTOR. Currently supported functionality:</dt><dd><ol class="arabic simple">
+<li><p>Print the output</p></li>
+<li><p>Routes required for covering pareto-optimal set.</p></li>
+<li><p>Trips required for covering pareto-optimal set.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DESTINATION_LIST</strong> (<em>list</em>) – list of stop ids of destination stop.</p></li>
+<li><p><strong>pi_label</strong> (<em>dict</em>) – Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}</p></li>
+<li><p><strong>PRINT_ITINERARY</strong> (<em>int</em>) – 1 or 0. 1 means print complete path.</p></li>
+<li><p><strong>label</strong> (<em>dict</em>) – nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.</p></li>
+<li><p><strong>OPTIMIZED</strong> (<em>int</em>) – 1 or 0. 1 means collect trips and 0 means collect routes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>final_trips (list): list of trips required to cover all pareto-optimal journeys. format - [trip_id]
+elif OPTIMIZED==0:</p>
+<blockquote>
+<div><p>final_routes (list): list of routes required to cover all pareto-optimal journeys. format - [route_id]</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>if OPTIMIZED==1</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">post_processing_onetomany_rraptor</span><span class="p">([</span><span class="mi">1482</span><span class="p">],</span> <span class="n">pi_label</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="TRANSFER_PATTERNS.transferpattern_func.update_label_tbtr">
+<code class="sig-prename descclassname"><span class="pre">TRANSFER_PATTERNS.transferpattern_func.</span></code><code class="sig-name descname"><span class="pre">update_label_tbtr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_of_transfer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TRANSFER</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/TRANSFER_PATTERNS/transferpattern_func.html#update_label_tbtr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TRANSFER_PATTERNS.transferpattern_func.update_label_tbtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates and returns destination pareto set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<em>pandas.datetime</em>) – optimal arrival time .</p></li>
+<li><p><strong>no_of_transfer</strong> (<em>int</em>) – number of transfer.</p></li>
+<li><p><strong>predecessor_label</strong> (<em>tuple</em>) – predecessor_label for backtracking (To be developed)</p></li>
+<li><p><strong>J</strong> (<em>dict</em>) – dict to store arrival timestamps. Keys: number of transfer, Values: arrival time</p></li>
+<li><p><strong>MAX_TRANSFER</strong> (<em>int</em>) – maximum transfer limit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict to store arrival timestamps. Keys: number of transfer, Values: arrival time</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>J (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="build_transfer_patterns.html"
+                        title="previous chapter">Build Transfer Patterns</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="transferpattens.html"
+                        title="next chapter">Standard Transfer Patterns</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/Transfer_patterns/transferpattern_func.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="transferpattens.html" title="Standard Transfer Patterns"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="build_transfer_patterns.html" title="Build Transfer Patterns"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Transfer Patterns</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Transfer Patterns functions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

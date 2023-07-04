@@ -1,0 +1,256 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dictionaries for faster lookup. &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="List of Algoirthms" href="../Algorithms.html" />
+    <link rel="prev" title="Functions realted to building transfers file." href="../builders/build_transfer_file.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../Algorithms.html" title="List of Algoirthms"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../builders/build_transfer_file.html" title="Functions realted to building transfers file."
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../GTFS_preprocessing.html" accesskey="U">GTFS preprocessing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Dictionaries for faster lookup.</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="dictionaries-for-faster-lookup">
+<h1>Dictionaries for faster lookup.<a class="headerlink" href="#dictionaries-for-faster-lookup" title="Permalink to this headline">¶</a></h1>
+<ul>
+<li><dl class="simple">
+<dt>For faster lookup, the GTFS set is post-processed into several dictionaries and provided as pickle files.</dt><dd><ul class="simple">
+<li><p>stops_dict_pkl: Contains stops along the route. Format: {route_id: list of stops}</p></li>
+<li><p>stoptimes_dict_pkl: Contains trips along a route. Format: {route_id: [trip_1, trip_2]}</p></li>
+<li><p>transfers_dict_full: Contains footpath details. Format: {stop_id: [(stop_id, time)]}</p></li>
+<li><p>routes_by_stop: All routes passing from a given stop id. Format: {stop_id: list of routes}</p></li>
+<li><p>idx_by_route_stop: Gives the index of a stop along a route. Format: {(route_id, stop_id): index}</p></li>
+</ul>
+</dd>
+</dl>
+<p>Functions for building these dicts from the GTFS set are present in <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/dict_builder/dict_builder_functions.py">dict_builder.py</a>.</p>
+</li>
+</ul>
+<div class="section" id="module-dict_builder.dict_builder_functions">
+<span id="description"></span><h2>Description<a class="headerlink" href="#module-dict_builder.dict_builder_functions" title="Permalink to this headline">¶</a></h2>
+<p>Module defines a function to save (using pickling) the GTFS information in the form of a dictionary.
+This is done for easy/faster data lookup.</p>
+<dl class="py function">
+<dt id="dict_builder.dict_builder_functions.build_routesindx_by_stop_dict">
+<code class="sig-prename descclassname"><span class="pre">dict_builder.dict_builder_functions.</span></code><code class="sig-name descname"><span class="pre">build_routesindx_by_stop_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/dict_builder/dict_builder_functions.html#build_routesindx_by_stop_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dict_builder.dict_builder_functions.build_routesindx_by_stop_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function saves a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>routesindx_by_stop_dict (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dict_builder.dict_builder_functions.build_save_footpath_dict">
+<code class="sig-prename descclassname"><span class="pre">dict_builder.dict_builder_functions.</span></code><code class="sig-name descname"><span class="pre">build_save_footpath_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transfers_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/dict_builder/dict_builder_functions.html#build_save_footpath_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dict_builder.dict_builder_functions.build_save_footpath_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function saves a dictionary to provide easy access to all the footpaths through a stop id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transfers_file</strong> (<em>pandas.dataframe</em>) – dataframe with transfers (footpath) details.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>keys: from stop_id, values: list of tuples of form (to stop id, footpath duration). Format-&gt; dict[stop_id]=[(stop_id, footpath_duration)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>footpath_dict (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dict_builder.dict_builder_functions.build_save_route_by_stop">
+<code class="sig-prename descclassname"><span class="pre">dict_builder.dict_builder_functions.</span></code><code class="sig-name descname"><span class="pre">build_save_route_by_stop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/dict_builder/dict_builder_functions.html#build_save_route_by_stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dict_builder.dict_builder_functions.build_save_route_by_stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function saves a dictionary to provide easy access to all the routes passing through a stop_id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – stop_times.txt file in GTFS.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>keys: stop_id, values: list of routes passing through the stop_id. Format-&gt; dict[stop_id] = [route_id]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>route_by_stop_dict_new (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dict_builder.dict_builder_functions.build_save_stops_dict">
+<code class="sig-prename descclassname"><span class="pre">dict_builder.dict_builder_functions.</span></code><code class="sig-name descname"><span class="pre">build_save_stops_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trips_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/dict_builder/dict_builder_functions.html#build_save_stops_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dict_builder.dict_builder_functions.build_save_stops_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function saves a dictionary to provide easy access to all the stops in the route.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – stop_times.txt file in GTFS.</p></li>
+<li><p><strong>trips_file</strong> (<em>pandas.dataframe</em>) – trips.txt file in GTFS.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>keys: route_id, values: list of stop id in the route_id. Format-&gt; dict[route_id] = [stop_id]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>stops_dict (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dict_builder.dict_builder_functions.build_save_stopstimes_dict">
+<code class="sig-prename descclassname"><span class="pre">dict_builder.dict_builder_functions.</span></code><code class="sig-name descname"><span class="pre">build_save_stopstimes_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trips_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/dict_builder/dict_builder_functions.html#build_save_stopstimes_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dict_builder.dict_builder_functions.build_save_stopstimes_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function saves a dictionary to provide easy access to all the trips passing along a route id. Trips are sorted
+in the increasing order of departure time. A trip is list of tuple of form (stop id, arrival time)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – stop_times.txt file in GTFS.</p></li>
+<li><p><strong>trips_file</strong> (<em>pandas.dataframe</em>) – dataframe with transfers (footpath) details.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>keys: route ID, values: list of trips in the increasing order of start time. Format-&gt; dict[route_ID] = [trip_1, trip_2] where trip_1 = [(stop id, arrival time), (stop id, arrival time)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>stoptimes_dict (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dict_builder.dict_builder_functions.build_stop_idx_in_route">
+<code class="sig-prename descclassname"><span class="pre">dict_builder.dict_builder_functions.</span></code><code class="sig-name descname"><span class="pre">build_stop_idx_in_route</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/dict_builder/dict_builder_functions.html#build_stop_idx_in_route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dict_builder.dict_builder_functions.build_stop_idx_in_route" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function saves a dictionary to provide easy access to index of a stop in a route.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – stop_times.txt file in GTFS.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Keys: (route id, stop id), value: stop index. Format {(route id, stop id): stop index in route}.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>idx_by_route_stop_dict (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Dictionaries for faster lookup.</a><ul>
+<li><a class="reference internal" href="#module-dict_builder.dict_builder_functions">Description</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../builders/build_transfer_file.html"
+                        title="previous chapter">Functions realted to building transfers file.</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../Algorithms.html"
+                        title="next chapter">List of Algoirthms</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/dict_builder/dict_builder_functions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../Algorithms.html" title="List of Algoirthms"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../builders/build_transfer_file.html" title="Functions realted to building transfers file."
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../GTFS_preprocessing.html" >GTFS preprocessing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Dictionaries for faster lookup.</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>build_transfer_patterns &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">build_transfer_patterns</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for build_transfer_patterns</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Builds structures related to transfer patterns</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">shuffle</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">TRANSFER_PATTERNS.transferpattern_func</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">miscellaneous_func</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="run_tbtr"><a class="viewcode-back" href="../Transfer_patterns/build_transfer_patterns.html#build_transfer_patterns.run_tbtr">[docs]</a><span class="k">def</span> <span class="nf">run_tbtr</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate transfer patterns in parallel using TBTR. Transfer patterns are saved locally.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        SOURCE (int): stop id of source stop.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DESTINATION_LIST</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">routes_by_stop_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="c1"># print(SOURCE, psutil.Process().cpu_num())</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">onetomany_rtbtr_forhubs</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">,</span> <span class="n">DESTINATION_LIST</span><span class="p">,</span> <span class="n">d_time_groups</span><span class="p">,</span> <span class="n">MAX_TRANSFER</span><span class="p">,</span> <span class="n">WALKING_FROM_SOURCE</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">,</span>
+                                     <span class="n">OPTIMIZED</span><span class="p">,</span> <span class="n">routes_by_stop_dict</span><span class="p">,</span> <span class="n">stops_dict</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">,</span> <span class="n">idx_by_route_stop_dict</span><span class="p">,</span> <span class="n">trip_transfer_dict</span><span class="p">,</span>
+                                     <span class="n">trip_set</span><span class="p">,</span> <span class="n">hubstops</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./TRANSFER_PATTERNS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">HUB_COUNT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">SOURCE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="run_raptor"><a class="viewcode-back" href="../Transfer_patterns/build_transfer_patterns.html#build_transfer_patterns.run_raptor">[docs]</a><span class="k">def</span> <span class="nf">run_raptor</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate transfer patterns in parallel using RAPTOR. Transfer patterns are saved locally.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        SOURCE (int): stop id of source stop.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DESTINATION_LIST</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">routes_by_stop_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="c1"># print(SOURCE, psutil.Process().cpu_num())</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">onetoall_rraptor_forhubs</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">,</span> <span class="n">DESTINATION_LIST</span><span class="p">,</span> <span class="n">d_time_groups</span><span class="p">,</span> <span class="n">MAX_TRANSFER</span><span class="p">,</span> <span class="n">WALKING_FROM_SOURCE</span><span class="p">,</span> <span class="n">CHANGE_TIME_SEC</span><span class="p">,</span>
+                                      <span class="n">PRINT_ITINERARY</span><span class="p">,</span> <span class="n">OPTIMIZED</span><span class="p">,</span> <span class="n">routes_by_stop_dict</span><span class="p">,</span> <span class="n">stops_dict</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">,</span>
+                                      <span class="n">footpath_dict</span><span class="p">,</span> <span class="n">idx_by_route_stop_dict</span><span class="p">,</span> <span class="n">hubstops</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./TRANSFER_PATTERNS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">HUB_COUNT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">SOURCE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="initialize"><a class="viewcode-back" href="../Transfer_patterns/build_transfer_patterns.html#build_transfer_patterns.initialize">[docs]</a><span class="k">def</span> <span class="nf">initialize</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize variables for building transfer patterns file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        breaker (str): print line breaker</span>
+<span class="sd">        G: Network graph of NETWORK NAME</span>
+<span class="sd">        stops_list (list):</span>
+<span class="sd">        CORES (int): Number of codes to be used</span>
+<span class="sd">        WALKING_LIMIT (int): Maximum allowed walking time</span>
+<span class="sd">        start_time: timestamp object</span>
+<span class="sd">        USE_PARALlEL (int): 1 for parallel and 0 for serial</span>
+<span class="sd">        MAX_TRANSFER (int): maximum transfer limit for which transfer patterns will be built.</span>
+<span class="sd">        WALKING_FROM_SOURCE (int): 1 or 0. 1 indicates walking from SOURCE is allowed.</span>
+<span class="sd">        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.</span>
+<span class="sd">        OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.</span>
+<span class="sd">        GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0</span>
+<span class="sd">        USE_TBTR (int): 1 to use TBTR for generating transfer patterns. 0 for RAPTOR</span>
+<span class="sd">        CHANGE_TIME_SEC (int): change-time in seconds.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">breaker</span> <span class="o">=</span> <span class="s2">&quot;________________________________________________________________&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Building transfer patterns file. Enter following parameters.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">USE_PARALlEL</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Transfer patterns.txt can be built in parallel. Enter 1 to use multiprocessing. Else press 0. Example: 0</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="n">CORES</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">USE_PARALlEL</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">CORES</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Enter number of CORES (&gt;=1). </span><span class="se">\n</span><span class="s2">Available CORES (logical and physical):  </span><span class="si">{</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="kn">import</span> <span class="nn">psutil</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RAM </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">total</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1024.0</span> <span class="o">**</span> <span class="mi">3</span><span class="p">))</span><span class="si">}</span><span class="s1"> GB (% used:</span><span class="si">{</span><span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    <span class="n">HUB_COUNT</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter the number of hub stops. Else press 0. Example: 0</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="n">MAX_TRANSFER</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter maximum transfer limit for which transfer patterns would be built. Example: 4</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="n">WALKING_FROM_SOURCE</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press 1 to allow walking from source stop else press 0. Example: 1</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="n">GENERATE_LOGFILE</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press 1 to generate logfile else press 0. Example: 0</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">GENERATE_LOGFILE</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All outputs will be redirected to log file&quot;</span><span class="p">)</span>
+    <span class="n">USE_TBTR</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press 1 to use TBTR to build Transfer Patterns.</span><span class="se">\n</span><span class="s2">Press 2 to use RAPTOR to build Transfer Patterns. Example: 2</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="n">PRINT_ITINERARY</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">OPTIMIZED</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">CHANGE_TIME_SEC</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">breaker</span><span class="p">,</span> <span class="n">CORES</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">USE_PARALlEL</span><span class="p">,</span> <span class="n">HUB_COUNT</span><span class="p">,</span> <span class="n">MAX_TRANSFER</span><span class="p">,</span> <span class="n">WALKING_FROM_SOURCE</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">,</span> <span class="n">OPTIMIZED</span><span class="p">,</span> <span class="n">GENERATE_LOGFILE</span><span class="p">,</span> <span class="n">USE_TBTR</span><span class="p">,</span> <span class="n">CHANGE_TIME_SEC</span></div>
+
+
+<div class="viewcode-block" id="remove_older_files"><a class="viewcode-back" href="../Transfer_patterns/build_transfer_patterns.html#build_transfer_patterns.remove_older_files">[docs]</a><span class="k">def</span> <span class="nf">remove_older_files</span><span class="p">(</span><span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">HUB_COUNT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new (empty) directory for saving transfer patterns.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        NETWORK_NAME (str): GTFS path</span>
+<span class="sd">        HUB_COUNT (int):  Number of hub stops</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./TRANSFER_PATTERNS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">HUB_COUNT</span><span class="si">}</span><span class="s2">/.&quot;</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./TRANSFER_PATTERNS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">HUB_COUNT</span><span class="si">}</span><span class="s2">/.&quot;</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./TRANSFER_PATTERNS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">HUB_COUNT</span><span class="si">}</span><span class="s1">/*&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">files</span> <span class="o">!=</span> <span class="p">[]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cleaning existing files (if any) in directory ./TRANSFER_PATTERNS/transfer_pattern/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">HUB_COUNT</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="post_process"><a class="viewcode-back" href="../Transfer_patterns/build_transfer_patterns.html#build_transfer_patterns.post_process">[docs]</a><span class="k">def</span> <span class="nf">post_process</span><span class="p">(</span><span class="n">runtime</span><span class="p">,</span> <span class="n">CORES</span><span class="p">,</span> <span class="n">HUB_COUNT</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Post process and print the statistics realted to transfer patterns.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        runtime (float): total runtime in minutes</span>
+<span class="sd">        CORES (int): Number of codes to be used</span>
+<span class="sd">        HUB_COUNT (int):  number of hub stops</span>
+<span class="sd">        NETWORK_NAME (str): GTFS path</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Folderpath</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;./TRANSFER_PATTERNS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">HUB_COUNT</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">total_kb_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">ele</span><span class="p">)</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">Folderpath</span><span class="p">)]</span>
+    <span class="n">file_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">total_kb_list</span><span class="p">)</span>
+    <span class="n">total_kb</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_kb_list</span><span class="p">)</span>
+    <span class="n">Gb_size</span> <span class="o">=</span> <span class="n">total_kb</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">MB_size</span> <span class="o">=</span> <span class="n">total_kb</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Time required: </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s1"> minutes&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CORES USED: </span><span class="si">{</span><span class="n">CORES</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;HUB_COUNT: </span><span class="si">{</span><span class="n">HUB_COUNT</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Space: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">Gb_size</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s1"> GB (</span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">MB_size</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s1"> MB)&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Total files saved: </span><span class="si">{</span><span class="n">file_count</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transfer Patterns preprocessing complete&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;parameters_entered.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">parameter_files</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">BUILD_TRANSFER</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">BUILD_TBTR_FILES</span><span class="p">,</span> <span class="n">BUILD_TRANSFER_PATTERNS_FILES</span><span class="p">,</span> <span class="n">BUILD_CSA</span> <span class="o">=</span> <span class="n">parameter_files</span>
+    <span class="c1"># BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TP = 1, &quot;anaheim&quot;, 1, 1</span>
+    <span class="k">if</span> <span class="n">BUILD_TRANSFER_PATTERNS_FILES</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">breaker</span><span class="p">,</span> <span class="n">CORES</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">USE_PARALlEL</span><span class="p">,</span> <span class="n">HUB_COUNT</span><span class="p">,</span> <span class="n">MAX_TRANSFER</span><span class="p">,</span> <span class="n">WALKING_FROM_SOURCE</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">,</span> <span class="n">OPTIMIZED</span><span class="p">,</span> <span class="n">GENERATE_LOGFILE</span><span class="p">,</span> <span class="n">USE_TBTR</span><span class="p">,</span> <span class="n">CHANGE_TIME_SEC</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+        <span class="n">stops_file</span><span class="p">,</span> <span class="n">trips_file</span><span class="p">,</span> <span class="n">stop_times_file</span><span class="p">,</span> <span class="n">transfers_file</span><span class="p">,</span> <span class="n">stops_dict</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">,</span> <span class="n">routes_by_stop_dict</span><span class="p">,</span> <span class="n">idx_by_route_stop_dict</span><span class="p">,</span> <span class="n">routesindx_by_stop_dict</span> <span class="o">=</span> <span class="n">read_testcase</span><span class="p">(</span>
+            <span class="n">NETWORK_NAME</span><span class="p">)</span>
+        <span class="n">print_network_details</span><span class="p">(</span><span class="n">transfers_file</span><span class="p">,</span> <span class="n">trips_file</span><span class="p">,</span> <span class="n">stops_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">GENERATE_LOGFILE</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./logs/.&#39;</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./logs/.&#39;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./logs/transfer_patterns_</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">HUB_COUNT</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network: </span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CORES used =</span><span class="si">{</span><span class="n">CORES</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+        <span class="c1"># Import Hub information</span>
+        <span class="n">hubs_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">HUB_COUNT</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;brute&quot;</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./TRANSFER_PATTERNS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">_hub_</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s1">.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">hubs_dict</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="n">hubs_dict</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">hubstops</span> <span class="o">=</span> <span class="n">hubs_dict</span><span class="p">[</span><span class="n">HUB_COUNT</span><span class="p">]</span>
+        <span class="n">remove_older_files</span><span class="p">(</span><span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">HUB_COUNT</span><span class="p">)</span>
+        <span class="c1"># Main code</span>
+        <span class="n">source_LIST</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">routes_by_stop_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="c1"># source_LIST = source_LIST[:50]</span>
+        <span class="n">shuffle</span><span class="p">(</span><span class="n">source_LIST</span><span class="p">)</span>
+        <span class="n">d_time_groups</span> <span class="o">=</span> <span class="n">stop_times_file</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;stop_id&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating transfer patterns...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">USE_TBTR</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/TBTR_trip_transfer_dict.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                    <span class="n">trip_transfer_dict</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                <span class="n">trip_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">trip_transfer_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TBTR files not found. Either build TBTR or reinitialize using RAPTOR&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">USE_PARALlEL</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">CORES</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">run_tbtr</span><span class="p">,</span> <span class="n">source_LIST</span><span class="p">)</span>
+                <span class="n">runtime</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">run_tbtr</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">source_LIST</span><span class="p">)]</span>
+                <span class="n">runtime</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">USE_PARALlEL</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">CORES</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">run_raptor</span><span class="p">,</span> <span class="n">source_LIST</span><span class="p">)</span>
+                <span class="n">runtime</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># source = 36</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">run_raptor</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">source_LIST</span><span class="p">)]</span>
+                <span class="n">runtime</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">post_process</span><span class="p">(</span><span class="n">runtime</span><span class="p">,</span> <span class="n">CORES</span><span class="p">,</span> <span class="n">HUB_COUNT</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">)</span>
+
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">build_transfer_patterns</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

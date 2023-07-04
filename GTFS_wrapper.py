@@ -1,5 +1,6 @@
 """
-Apply necessary filters to GTFS set. Note that this file is GTFS-specific.
+Apply necessary filters to GTFS set. 
+Note that this file is GTFS-specific.
 """
 import pickle
 import zipfile
@@ -10,13 +11,17 @@ from tqdm import tqdm
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
-
 def take_inputs() -> tuple:
     '''
     Takes the required inputs for building GTFS wrapper
 
     Returns:
         NETWORK_NAME, DATE_TOFILTER_ON, VALID_ROUTE_TYPES, BUILD_TRANSFER, breaker, READ_PATH, SAVE_PATH
+
+    Examples:
+        >>> NETWORK_NAME, DATE_TOFILTER_ON, VALID_ROUTE_TYPES, BUILD_TRANSFER, breaker, READ_PATH, SAVE_PATH = take_inputs()
+
+
     '''
     print("Rename the gtfs.zip to network_gtfs.zip and place it in main directory."
           " For example, for anaheim, place the anaheim_gtfs.zip in the main directory.")
@@ -65,10 +70,10 @@ def take_inputs() -> tuple:
     # DATE_TOFILTER_ON = 20220815
     # NETWORK_NAME = './chicago'
     # VALID_ROUTE_TYPES = [3]
-    READ_PATH = f'./GTFS/{NETWORK_NAME}/gtfs_o'
-    SAVE_PATH = f'./GTFS/{NETWORK_NAME}/'
+    READ_PATH = f'./Data/GTFS/{NETWORK_NAME}/gtfs_o'
+    SAVE_PATH = f'./Data/GTFS/{NETWORK_NAME}/'
     param_list = [BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES, BUILD_TRANSFER_PATTERNS_FILES, BUILD_CSA]
-    with open(f'parameters_entered.txt', 'wb') as pickle_file:
+    with open(f'./builders/parameters_entered.txt', 'wb') as pickle_file:
         pickle.dump(param_list, pickle_file)
 
     return NETWORK_NAME, DATE_TOFILTER_ON, VALID_ROUTE_TYPES, BUILD_TRANSFER, breaker, READ_PATH, SAVE_PATH
@@ -84,9 +89,14 @@ def read_gtfs(READ_PATH: str, NETWORK_NAME: str):
 
     Returns:
         GTFS files
+
+
+    Examples:
+        >>> calendar_dates, route, trips, stop_times, stops, calendar, transfer = read_gtfs(READ_PATH, 'anaheim')
+
     """
     with zipfile.ZipFile(f'./{NETWORK_NAME}_gtfs.zip', 'r') as zip_ref:
-        zip_ref.extractall(f'./GTFS/{NETWORK_NAME}/gtfs_o')
+        zip_ref.extractall(f'./Data/GTFS/{NETWORK_NAME}/gtfs_o')
 
     print("Reading GTFS data")
     print(f"Network: {NETWORK_NAME}")
@@ -139,6 +149,10 @@ def remove_unwanted_route(VALID_ROUTE_TYPES: list, route) -> tuple:
 
     Returns:
         Filters route file and a set containing all routes ids.
+
+    Examples:
+        >>> valid_routes_set, route = remove_unwanted_route([3], route)
+
     """
     print("Removing unwanted routes")
     print(f"Total routes: {len(route)}")

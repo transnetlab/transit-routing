@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains functions related to Time-expanded Dijkstra&#39;s algorithm</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">count</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="get_sourcenode"><a class="viewcode-back" href="../../../Algorithms/TIME_EXPANDED/TE_DIJ_functions.html#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.get_sourcenode">[docs]</a><span class="k">def</span> <span class="nf">get_sourcenode</span><span class="p">(</span><span class="n">stops_group</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">,</span> <span class="n">stopevent_mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Using the earliest arrival event from the source node (after D_TIME), find the ID of the node in TE graph.</span>
+<span class="sd">    This serves as source stop for Dijkstra&#39;s algorithm.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stops_group: pandas group object on stoptimes file using stop id column.</span>
+<span class="sd">        SOURCE (int): stop id of source stop.</span>
+<span class="sd">        D_TIME (pandas.datetime): departure time.</span>
+<span class="sd">        stopevent_mapping (dict): mapping dictionary. Format: {(stop id, arrival time): new node id}</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        source_node (int): Source node Id corresponding to TE graph</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; source_node = get_sourcenode(stops_group, 36, pd.to_datetime(&#39;2019-06-10 00:00:00&#39;), stopevent_mapping)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_node_db</span> <span class="o">=</span> <span class="n">stops_group</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;arrival_time&#39;</span><span class="p">)</span>
+    <span class="n">source_node</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">source_node_db</span><span class="p">[</span><span class="n">source_node_db</span><span class="o">.</span><span class="n">arrival_time</span> <span class="o">&gt;</span> <span class="n">D_TIME</span><span class="p">][[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;arrival_time&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">source_node</span> <span class="o">=</span> <span class="n">stopevent_mapping</span><span class="p">[</span><span class="n">source_node</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">source_node</span></div>
+
+
+<div class="viewcode-block" id="get_possible_targets"><a class="viewcode-back" href="../../../Algorithms/TIME_EXPANDED/TE_DIJ_functions.html#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.get_possible_targets">[docs]</a><span class="k">def</span> <span class="nf">get_possible_targets</span><span class="p">(</span><span class="n">stops_group</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">,</span> <span class="n">stopevent_mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the list of events from DESTINATION stop Id after D_TIME. These serve as possible target nodes for Dijkstra&#39;s algorithm</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stops_group: pandas group object on stoptimes file using stop id column.</span>
+<span class="sd">        DESTINATION (int): stop id of destination stop.</span>
+<span class="sd">        D_TIME (pandas.datetime): departure time.</span>
+<span class="sd">        stopevent_mapping (dict): mapping dictionary. Format: {(stop id, arrival time): new node id}</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        idx (tuple): tuple containing Indexes of the reachable event of target node in stoptimes file</span>
+<span class="sd">        target_list (tuple): tuple containing node Id corresponding reachable target nodes of to TE graph</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; idx, target_list = get_possible_targets(stops_group, 52, pd.to_datetime(&#39;2019-06-10 00:00:00&#39;), stopevent_mapping)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">desti_nodes</span> <span class="o">=</span> <span class="n">stops_group</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">DESTINATION</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;arrival_time&#39;</span><span class="p">)</span>
+    <span class="n">desti_nodes1</span> <span class="o">=</span> <span class="n">desti_nodes</span><span class="p">[</span><span class="n">desti_nodes</span><span class="o">.</span><span class="n">arrival_time</span> <span class="o">&gt;</span> <span class="n">D_TIME</span><span class="p">][[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;arrival_time&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+    <span class="n">idx</span><span class="p">,</span> <span class="n">target_list</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[(</span><span class="n">idx</span><span class="p">,</span> <span class="n">stopevent_mapping</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">)])</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">desti_nodes1</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()])</span>
+    <span class="k">return</span> <span class="n">idx</span><span class="p">,</span> <span class="n">target_list</span></div>
+
+
+<span class="k">def</span> <span class="nf">_siftdown</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="n">startpos</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="n">newitem</span> <span class="o">=</span> <span class="n">heap</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+    <span class="c1"># Follow the path to the root, moving parents down until finding a place</span>
+    <span class="c1"># newitem fits.</span>
+    <span class="k">while</span> <span class="n">pos</span> <span class="o">&gt;</span> <span class="n">startpos</span><span class="p">:</span>
+        <span class="n">parentpos</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">heap</span><span class="p">[</span><span class="n">parentpos</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">newitem</span> <span class="o">&lt;</span> <span class="n">parent</span><span class="p">:</span>
+            <span class="n">heap</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">parentpos</span>
+            <span class="k">continue</span>
+        <span class="k">break</span>
+    <span class="n">heap</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">newitem</span>
+
+
+<span class="k">def</span> <span class="nf">_siftup</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="n">endpos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span>
+    <span class="n">startpos</span> <span class="o">=</span> <span class="n">pos</span>
+    <span class="n">newitem</span> <span class="o">=</span> <span class="n">heap</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+    <span class="c1"># Bubble up the smaller child until hitting a leaf.</span>
+    <span class="n">childpos</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># leftmost child position</span>
+    <span class="k">while</span> <span class="n">childpos</span> <span class="o">&lt;</span> <span class="n">endpos</span><span class="p">:</span>
+        <span class="c1"># Set childpos to index of smaller child.</span>
+        <span class="n">rightpos</span> <span class="o">=</span> <span class="n">childpos</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">rightpos</span> <span class="o">&lt;</span> <span class="n">endpos</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">heap</span><span class="p">[</span><span class="n">childpos</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">heap</span><span class="p">[</span><span class="n">rightpos</span><span class="p">]:</span>
+            <span class="n">childpos</span> <span class="o">=</span> <span class="n">rightpos</span>
+        <span class="c1"># Move the smaller child up.</span>
+        <span class="n">heap</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">heap</span><span class="p">[</span><span class="n">childpos</span><span class="p">]</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">childpos</span>
+        <span class="n">childpos</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="c1"># The leaf at pos is empty now.  Put newitem there, and bubble it up</span>
+    <span class="c1"># to its final resting place (by sifting its parents down).</span>
+    <span class="n">heap</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">newitem</span>
+    <span class="n">_siftdown</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="n">startpos</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="heappush"><a class="viewcode-back" href="../../../Algorithms/TIME_EXPANDED/TE_DIJ_functions.html#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.heappush">[docs]</a><span class="k">def</span> <span class="nf">heappush</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Push item onto heap, maintaining the heap invariant.&quot;&quot;&quot;</span>
+    <span class="n">heap</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="n">_siftdown</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="heappop"><a class="viewcode-back" href="../../../Algorithms/TIME_EXPANDED/TE_DIJ_functions.html#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.heappop">[docs]</a><span class="k">def</span> <span class="nf">heappop</span><span class="p">(</span><span class="n">heap</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pop the smallest item off the heap, maintaining the heap invariant.&quot;&quot;&quot;</span>
+    <span class="n">lastelt</span> <span class="o">=</span> <span class="n">heap</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>  <span class="c1"># raises appropriate IndexError if heap is empty</span>
+    <span class="k">if</span> <span class="n">heap</span><span class="p">:</span>
+        <span class="n">returnitem</span> <span class="o">=</span> <span class="n">heap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">heap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">lastelt</span>
+        <span class="n">_siftup</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">returnitem</span>
+    <span class="k">return</span> <span class="n">lastelt</span></div>
+
+
+<div class="viewcode-block" id="edited_dijkstra_multitarget"><a class="viewcode-back" href="../../../Algorithms/TIME_EXPANDED/TE_DIJ_functions.html#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.edited_dijkstra_multitarget">[docs]</a><span class="k">def</span> <span class="nf">edited_dijkstra_multitarget</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target_list</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uses Dijkstra&#39;s algorithm to find shortest weighted paths. This functions builds on top of networkx implementation of Dijkstra&#39;s algorithm</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        G: NetworkX graph</span>
+<span class="sd">        SOURCE : non-empty iterable of nodes</span>
+<span class="sd">            Starting nodes for paths. If this is just an iterable containing</span>
+<span class="sd">            a single node, then all paths computed by this function will</span>
+<span class="sd">            start from that node. If there are two or more nodes in this</span>
+<span class="sd">            iterable, the computed paths may begin from any one of the start</span>
+<span class="sd">            nodes.</span>
+<span class="sd">        target_list : node label, optional</span>
+<span class="sd">            Ending node for path. Search is halted when target is found.</span>
+<span class="sd">        weight: function</span>
+<span class="sd">            Function with (u, v, data) input that returns that edges weight</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        distance : dictionary</span>
+<span class="sd">            A mapping from node to shortest distance to that node from one</span>
+<span class="sd">            of the SOURCE nodes.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; dist = edited_dijkstra_multitarget(G, SOURCE, target_list, weight)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">G_succ</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">_succ</span> <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">is_directed</span><span class="p">()</span> <span class="k">else</span> <span class="n">G</span><span class="o">.</span><span class="n">_adj</span>
+
+    <span class="n">push</span> <span class="o">=</span> <span class="n">heappush</span>
+    <span class="n">pop</span> <span class="o">=</span> <span class="n">heappop</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># dictionary of final distances</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># fringe is heapq with 3-tuples (distance,c,node)</span>
+    <span class="c1"># use the count c to avoid comparing nodes (may not be able to)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">count</span><span class="p">()</span>
+    <span class="n">fringe</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">seen</span><span class="p">[</span><span class="n">SOURCE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">push</span><span class="p">(</span><span class="n">fringe</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">next</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">SOURCE</span><span class="p">))</span>
+    <span class="k">while</span> <span class="n">fringe</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">=</span> <span class="n">pop</span><span class="p">(</span><span class="n">fringe</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dist</span><span class="p">:</span>
+            <span class="k">continue</span>  <span class="c1"># already searched this node.</span>
+        <span class="n">dist</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">target_list</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G_succ</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">cost</span> <span class="o">=</span> <span class="n">weight</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cost</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">vu_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">+</span> <span class="n">cost</span>
+            <span class="k">if</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">dist</span><span class="p">:</span>
+                <span class="n">u_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="p">[</span><span class="n">u</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">vu_dist</span> <span class="o">&lt;</span> <span class="n">u_dist</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Contradictory paths found:&quot;</span><span class="p">,</span> <span class="s2">&quot;negative weights?&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">u</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span> <span class="ow">or</span> <span class="n">vu_dist</span> <span class="o">&lt;</span> <span class="n">seen</span><span class="p">[</span><span class="n">u</span><span class="p">]:</span>
+                <span class="n">seen</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">vu_dist</span>
+                <span class="n">push</span><span class="p">(</span><span class="n">fringe</span><span class="p">,</span> <span class="p">(</span><span class="n">vu_dist</span><span class="p">,</span> <span class="nb">next</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">u</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">dist</span></div>
+
+
+<div class="viewcode-block" id="weight_function"><a class="viewcode-back" href="../../../Algorithms/TIME_EXPANDED/TE_DIJ_functions.html#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.weight_function">[docs]</a><span class="k">def</span> <span class="nf">weight_function</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    (Borrowed from NetworkX)</span>
+<span class="sd">    Returns a function that returns the weight of an edge.</span>
+
+<span class="sd">    The returned function is specifically suitable for input to</span>
+<span class="sd">    functions :func:`_dijkstra` and :func:`_bellman_ford_relaxation`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    G : NetworkX graph.</span>
+
+<span class="sd">    weight : string or function</span>
+<span class="sd">        If it is callable, `weight` itself is returned. If it is a string,</span>
+<span class="sd">        it is assumed to be the name of the edge attribute that represents</span>
+<span class="sd">        the weight of an edge. In that case, a function is returned that</span>
+<span class="sd">        gets the edge weight according to the specified edge attribute.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    function</span>
+<span class="sd">        This function returns a callable that accepts exactly three inputs:</span>
+<span class="sd">        a node, an node adjacent to the first one, and the edge attribute</span>
+<span class="sd">        dictionary for the eedge joining those nodes. That function returns</span>
+<span class="sd">        a number representing the weight of an edge.</span>
+
+<span class="sd">    If `G` is a multigraph, and `weight` is not callable, the</span>
+<span class="sd">    minimum edge weight over all parallel edges is returned. If any edge</span>
+<span class="sd">    does not have an attribute with key `weight`, it is assumed to</span>
+<span class="sd">    have weight one.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">weight</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">weight</span>
+    <span class="c1"># If the weight keyword argument is not callable, we assume it is a</span>
+    <span class="c1"># string representing the edge attribute containing the weight of</span>
+    <span class="c1"># the edge.</span>
+    <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">is_multigraph</span><span class="p">():</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="post_process_TE_DIJ"><a class="viewcode-back" href="../../../Algorithms/TIME_EXPANDED/TE_DIJ_functions.html#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.post_process_TE_DIJ">[docs]</a><span class="k">def</span> <span class="nf">post_process_TE_DIJ</span><span class="p">(</span><span class="n">out_dist</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">target_list</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">stop_times_file</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Post processing for TE_DIJ</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">        out_dist (dict): Distance dictionary of format {node id : arrival time}</span>
+<span class="sd">        target_list (tuple): tuple containing node Id corresponding reachable target nodes of to TE graph</span>
+<span class="sd">        stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.</span>
+<span class="sd">        D_TIME (pandas.datetime): departure time.</span>
+<span class="sd">        idx (tuple): tuple containing Indexes of the reachable event of target node in stoptimes file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        stop_reached (tuple): Stop event that is reached</span>
+<span class="sd">        time_reached (pandas.timestamp): arrival time at the stop event</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; stop_reached, time_reached = post_process_TE_DIJ(out_dist, target_list, stop_times_file, pd.to_datetime(&#39;2019-06-10 00:00:00&#39;), idx)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out_dist1</span> <span class="o">=</span> <span class="p">[(</span><span class="n">node</span><span class="p">,</span> <span class="n">out_dist</span><span class="p">[</span><span class="n">node</span><span class="p">])</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">target_list</span> <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">out_dist</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_dist1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No path exists&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_dist1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">final_result</span> <span class="o">=</span> <span class="n">out_dist1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">stop_reached</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">stop_times_file</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">target_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">final_result</span><span class="p">[</span><span class="mi">0</span><span class="p">])]][[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;arrival_time&#39;</span><span class="p">]])</span>
+        <span class="c1">#    [x[0] for x in nodes_dict.items() if x[1]==final_result[0]]</span>
+        <span class="n">time_reached</span> <span class="o">=</span> <span class="n">D_TIME</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">final_result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;seconds&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stop Event </span><span class="si">{</span><span class="n">stop_reached</span><span class="si">}</span><span class="s2"> was reached at </span><span class="si">{</span><span class="n">time_reached</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stop_reached</span><span class="p">,</span> <span class="n">time_reached</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">out_dist1</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">final_result</span> <span class="o">=</span> <span class="n">out_dist1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Error in TE_DIJ. Check why is output length &gt;1&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

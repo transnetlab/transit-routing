@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dict_builder.dict_builder_functions &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">dict_builder.dict_builder_functions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dict_builder.dict_builder_functions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module defines a function to save (using pickling) the GTFS information in the form of a dictionary.</span>
+<span class="sd">This is done for easy/faster data lookup.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+
+<div class="viewcode-block" id="build_save_route_by_stop"><a class="viewcode-back" href="../../dict_builder/dict_builder_functions.html#dict_builder.dict_builder_functions.build_save_route_by_stop">[docs]</a><span class="k">def</span> <span class="nf">build_save_route_by_stop</span><span class="p">(</span><span class="n">stop_times_file</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function saves a dictionary to provide easy access to all the routes passing through a stop_id.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.</span>
+<span class="sd">        NETWORK_NAME (str): name of the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        route_by_stop_dict_new (dict): keys: stop_id, values: list of routes passing through the stop_id. Format-&gt; dict[stop_id] = [route_id]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;building routes_by_stop&quot;</span><span class="p">)</span>
+    <span class="n">stops_by_route</span> <span class="o">=</span> <span class="n">stop_times_file</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;route_id&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_sequence&#39;</span><span class="p">])[</span>
+        <span class="p">[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;route_id&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;stop_id&#39;</span><span class="p">)</span>
+    <span class="n">route_by_stop_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">routes</span><span class="o">.</span><span class="n">route_id</span><span class="p">)</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">routes</span> <span class="ow">in</span> <span class="n">stops_by_route</span><span class="p">}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./dict_builder/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/routes_by_stop.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickle_file</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">route_by_stop_dict</span><span class="p">,</span> <span class="n">pickle_file</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;routes_by_stop done&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">route_by_stop_dict</span></div>
+
+
+<div class="viewcode-block" id="build_save_stops_dict"><a class="viewcode-back" href="../../dict_builder/dict_builder_functions.html#dict_builder.dict_builder_functions.build_save_stops_dict">[docs]</a><span class="k">def</span> <span class="nf">build_save_stops_dict</span><span class="p">(</span><span class="n">stop_times_file</span><span class="p">,</span> <span class="n">trips_file</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function saves a dictionary to provide easy access to all the stops in the route.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.</span>
+<span class="sd">        trips_file (pandas.dataframe): trips.txt file in GTFS.</span>
+<span class="sd">        NETWORK_NAME (str): name of the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        stops_dict (dict): keys: route_id, values: list of stop id in the route_id. Format-&gt; dict[route_id] = [stop_id]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;building stops dict&quot;</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;./dict_builder/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./dict_builder/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">trips_group</span> <span class="o">=</span> <span class="n">stop_times_file</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;trip_id&quot;</span><span class="p">)</span>  <span class="c1"># This drops all trips for which timestamps are not sorted</span>
+
+    <span class="n">trips_with_correct_timestamps</span> <span class="o">=</span> <span class="p">[</span><span class="nb">id</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">trip</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">trips_group</span><span class="p">)</span> <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">trip</span><span class="o">.</span><span class="n">arrival_time</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">trip</span><span class="o">.</span><span class="n">arrival_time</span><span class="o">.</span><span class="n">sort_values</span><span class="p">())]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trips_with_correct_timestamps</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trips_file</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Incorrect time sequence in stoptimes builder file&quot;</span><span class="p">)</span>
+    <span class="n">stop_times</span> <span class="o">=</span> <span class="n">stop_times_file</span><span class="p">[</span><span class="n">stop_times_file</span><span class="p">[</span><span class="s2">&quot;trip_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">trips_with_correct_timestamps</span><span class="p">)]</span>
+    <span class="n">route_groups</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;route_id&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_sequence&#39;</span><span class="p">])[[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;route_id&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_sequence&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;route_id&#39;</span><span class="p">)</span>
+    <span class="n">stops_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">routes</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;stop_sequence&#39;</span><span class="p">)[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">routes</span> <span class="ow">in</span> <span class="n">route_groups</span><span class="p">}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./dict_builder/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/stops_dict_pkl.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickle_file</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">stops_dict</span><span class="p">,</span> <span class="n">pickle_file</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stops_dict done&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stops_dict</span></div>
+
+
+<div class="viewcode-block" id="build_save_stopstimes_dict"><a class="viewcode-back" href="../../dict_builder/dict_builder_functions.html#dict_builder.dict_builder_functions.build_save_stopstimes_dict">[docs]</a><span class="k">def</span> <span class="nf">build_save_stopstimes_dict</span><span class="p">(</span><span class="n">stop_times_file</span><span class="p">,</span> <span class="n">trips_file</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function saves a dictionary to provide easy access to all the trips passing along a route id. Trips are sorted</span>
+<span class="sd">    in the increasing order of departure time. A trip is list of tuple of form (stop id, arrival time)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.</span>
+<span class="sd">        trips_file (pandas.dataframe): dataframe with transfers (footpath) details.</span>
+<span class="sd">        NETWORK_NAME (str): name of the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        stoptimes_dict (dict): keys: route ID, values: list of trips in the increasing order of start time. Format-&gt; dict[route_ID] = [trip_1, trip_2] where trip_1 = [(stop id, arrival time), (stop id, arrival time)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;building stoptimes dict&quot;</span><span class="p">)</span>
+
+    <span class="n">stop_times_file</span><span class="o">.</span><span class="n">arrival_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">stop_times_file</span><span class="o">.</span><span class="n">arrival_time</span><span class="p">)</span>
+    <span class="n">route_group</span> <span class="o">=</span> <span class="n">stop_times_file</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;route_id&quot;</span><span class="p">)</span>
+    <span class="n">stoptimes_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">r_id</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">r_id</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">route_group</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">r_id</span><span class="p">,</span> <span class="n">route</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">route_group</span><span class="p">):</span>
+        <span class="n">trip_group</span> <span class="o">=</span> <span class="n">route</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;trip_id&quot;</span><span class="p">)</span>  <span class="c1"># Collect trip start points</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">route</span><span class="p">[</span><span class="n">route</span><span class="o">.</span><span class="n">stop_sequence</span> <span class="o">==</span> <span class="mi">0</span><span class="p">][[</span><span class="s2">&quot;trip_id&quot;</span><span class="p">,</span> <span class="s2">&quot;arrival_time&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;arrival_time&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">trip_id</span> <span class="ow">in</span> <span class="n">temp</span><span class="p">[</span><span class="s2">&quot;trip_id&quot;</span><span class="p">]:</span>  <span class="c1"># Add them inorder</span>
+            <span class="n">trip</span> <span class="o">=</span> <span class="n">trip_group</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">trip_id</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;stop_sequence&quot;</span><span class="p">])</span>
+            <span class="n">stoptimes_dict</span><span class="p">[</span><span class="n">r_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">trip</span><span class="o">.</span><span class="n">stop_id</span><span class="p">,</span> <span class="n">trip</span><span class="o">.</span><span class="n">arrival_time</span><span class="p">)))</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./dict_builder/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/stoptimes_dict_pkl.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickle_file</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">stoptimes_dict</span><span class="p">,</span> <span class="n">pickle_file</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stoptimes dict done&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stoptimes_dict</span></div>
+
+
+<div class="viewcode-block" id="build_save_footpath_dict"><a class="viewcode-back" href="../../dict_builder/dict_builder_functions.html#dict_builder.dict_builder_functions.build_save_footpath_dict">[docs]</a><span class="k">def</span> <span class="nf">build_save_footpath_dict</span><span class="p">(</span><span class="n">transfers_file</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function saves a dictionary to provide easy access to all the footpaths through a stop id.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        transfers_file (pandas.dataframe): dataframe with transfers (footpath) details.</span>
+<span class="sd">        NETWORK_NAME (str): name of the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        footpath_dict (dict): keys: from stop_id, values: list of tuples of form (to stop id, footpath duration). Format-&gt; dict[stop_id]=[(stop_id, footpath_duration)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;building footpath dict..&quot;</span><span class="p">)</span>
+    <span class="n">footpath_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">transfers_file</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;from_stop_id&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">from_stop</span><span class="p">,</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
+        <span class="n">footpath_dict</span><span class="p">[</span><span class="n">from_stop</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">details</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">footpath_dict</span><span class="p">[</span><span class="n">from_stop</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">to_stop_id</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">min_transfer_time</span><span class="p">),</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;seconds&#39;</span><span class="p">)))</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./dict_builder/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/transfers_dict_full.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickle_file</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">footpath_dict</span><span class="p">,</span> <span class="n">pickle_file</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;transfers_dict done&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">footpath_dict</span></div>
+
+
+<div class="viewcode-block" id="build_stop_idx_in_route"><a class="viewcode-back" href="../../dict_builder/dict_builder_functions.html#dict_builder.dict_builder_functions.build_stop_idx_in_route">[docs]</a><span class="k">def</span> <span class="nf">build_stop_idx_in_route</span><span class="p">(</span><span class="n">stop_times_file</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function saves a dictionary to provide easy access to index of a stop in a route.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stop_times_file (pandas.dataframe): stop_times.txt file in GTFS.</span>
+<span class="sd">        NETWORK_NAME (str): name of the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        idx_by_route_stop_dict (dict): Keys: (route id, stop id), value: stop index. Format {(route id, stop id): stop index in route}.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pandas_group</span> <span class="o">=</span> <span class="n">stop_times_file</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;route_id&quot;</span><span class="p">,</span> <span class="s2">&quot;stop_id&quot;</span><span class="p">])</span>
+    <span class="n">idx_by_route_stop</span> <span class="o">=</span> <span class="p">{</span><span class="n">route_stop_pair</span><span class="p">:</span> <span class="n">details</span><span class="o">.</span><span class="n">stop_sequence</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">route_stop_pair</span><span class="p">,</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">pandas_group</span><span class="p">}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./dict_builder/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/idx_by_route_stop.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickle_file</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">idx_by_route_stop</span><span class="p">,</span> <span class="n">pickle_file</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;idx_by_route_stop done&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">idx_by_route_stop</span></div>
+
+
+<div class="viewcode-block" id="build_routesindx_by_stop_dict"><a class="viewcode-back" href="../../dict_builder/dict_builder_functions.html#dict_builder.dict_builder_functions.build_routesindx_by_stop_dict">[docs]</a><span class="k">def</span> <span class="nf">build_routesindx_by_stop_dict</span><span class="p">(</span><span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function saves a dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        NETWORK_NAME (str): name of the network</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        routesindx_by_stop_dict (dict): Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./dict_builder/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/stops_dict_pkl.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">stops_dict</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./dict_builder/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/routes_by_stop.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">routes_by_stop_dict</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="n">routesindx_by_stop_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">stop</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">listofroutes</span><span class="p">,</span> <span class="p">[</span><span class="n">stops_dict</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">stop</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">listofroutes</span><span class="p">]))</span> <span class="k">for</span> <span class="n">stop</span><span class="p">,</span> <span class="n">listofroutes</span> <span class="ow">in</span>
+                               <span class="n">routes_by_stop_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./dict_builder/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/routesindx_by_stop.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickle_file</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">routesindx_by_stop_dict</span><span class="p">,</span> <span class="n">pickle_file</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;routesindx_by_stop_dict done&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">routesindx_by_stop_dict</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">dict_builder.dict_builder_functions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

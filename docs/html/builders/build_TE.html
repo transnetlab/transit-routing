@@ -1,0 +1,288 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Build Time expanded Graph &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dijktra’s Algorithm" href="../Algorithms/TIME_EXPANDED/TE_DIJ.html" />
+    <link rel="prev" title="Time Expanded Dijkstra" href="../Algorithms/TIME_EXPANDED/index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../Algorithms/TIME_EXPANDED/TE_DIJ.html" title="Dijktra’s Algorithm"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../Algorithms/TIME_EXPANDED/index.html" title="Time Expanded Dijkstra"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../Algorithms/TIME_EXPANDED/index.html" accesskey="U">Time Expanded Dijkstra</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Build Time expanded Graph</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-builders.build_time_expanded">
+<span id="build-time-expanded-graph"></span><h1>Build Time expanded Graph<a class="headerlink" href="#module-builders.build_time_expanded" title="Permalink to this headline">¶</a></h1>
+<p>Builds the Time expanded Graph.</p>
+<dl class="py function">
+<dt id="builders.build_time_expanded.add_edges_for_footpaths">
+<code class="sig-prename descclassname"><span class="pre">builders.build_time_expanded.</span></code><code class="sig-name descname"><span class="pre">add_edges_for_footpaths</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfers_file</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/builders/build_time_expanded.html#add_edges_for_footpaths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_time_expanded.add_edges_for_footpaths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds edges corresponding to footpaths</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – dataframe with stoptimes details.</p></li>
+<li><p><strong>transfers_file</strong> (<em>pandas.dataframe</em>) – dataframe with transfers (footpath) details.</p></li>
+<li><p><strong>nodes_dict</strong> (<em>dict</em>) – mapping dictionary. Format: {(stop id, arrival time): new node id}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples of format: [(from node id, to node id, weight)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>foot_connection (list)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">foot_connections</span> <span class="o">=</span> <span class="n">add_edges_for_footpaths</span><span class="p">(</span><span class="n">stop_times_file</span><span class="p">,</span> <span class="n">nodes_dict</span><span class="p">,</span> <span class="n">transfers_file</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_time_expanded.add_edges_for_trips">
+<code class="sig-prename descclassname"><span class="pre">builders.build_time_expanded.</span></code><code class="sig-name descname"><span class="pre">add_edges_for_trips</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/builders/build_time_expanded.html#add_edges_for_trips"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_time_expanded.add_edges_for_trips" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds edges corresponding to trips</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – dataframe with stoptimes details.</p></li>
+<li><p><strong>nodes_dict</strong> (<em>dict</em>) – mapping dictionary. Format: {(stop id, arrival time): new node id}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples of format: [(from node id, to node id, weight)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>trip_edges (list)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">trip_edges</span> <span class="o">=</span> <span class="n">add_edges_for_trips</span><span class="p">(</span><span class="n">stop_times_file</span><span class="p">,</span> <span class="n">nodes_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_time_expanded.add_transfer_edges">
+<code class="sig-prename descclassname"><span class="pre">builders.build_time_expanded.</span></code><code class="sig-name descname"><span class="pre">add_transfer_edges</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/builders/build_time_expanded.html#add_transfer_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_time_expanded.add_transfer_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds transfer edges between nodes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – dataframe with stoptimes details.</p></li>
+<li><p><strong>nodes_dict</strong> (<em>dict</em>) – mapping dictionary. Format: {(stop id, arrival time): new node id}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples of format: [(from node id, to node id, weight)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>transfer_edges (list)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">transfer_edges</span> <span class="o">=</span> <span class="n">add_transfer_edges</span><span class="p">(</span><span class="n">stop_times_file</span><span class="p">,</span> <span class="n">nodes_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_time_expanded.combine_edges">
+<code class="sig-prename descclassname"><span class="pre">builders.build_time_expanded.</span></code><code class="sig-name descname"><span class="pre">combine_edges</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trip_edges</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">foot_connections</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_edges</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/builders/build_time_expanded.html#combine_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_time_expanded.combine_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines all 3 types of edges into a single list (trip, footpath, and transfer)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trip_edges</strong> (<em>list</em>) – list of tuples of format: [(from node id, to node id, weight)]</p></li>
+<li><p><strong>foot_connections</strong> (<em>list</em>) – list of tuples of format: [(from node id, to node id, weight)]</p></li>
+<li><p><strong>transfer_edges</strong> (<em>list</em>) – list of tuples of format: [(from node id, to node id, weight)]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples of format: [(from node id, to node id, weight)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>edges (list)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">edge_list</span> <span class="o">=</span> <span class="n">combine_edges</span><span class="p">(</span><span class="n">trip_edges</span><span class="p">,</span> <span class="n">foot_connections</span><span class="p">,</span> <span class="n">transfer_edges</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_time_expanded.dump_edges_dict">
+<code class="sig-prename descclassname"><span class="pre">builders.build_time_expanded.</span></code><code class="sig-name descname"><span class="pre">dump_edges_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/builders/build_time_expanded.html#dump_edges_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_time_expanded.dump_edges_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the edges list as a pickle file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edges</strong> (<em>list</em>) – list of tuples of format: [(from node id, to node id, weight)]</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dump_edges_dict</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="s1">&#39;anaheim&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_time_expanded.dump_graph_dict">
+<code class="sig-prename descclassname"><span class="pre">builders.build_time_expanded.</span></code><code class="sig-name descname"><span class="pre">dump_graph_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/builders/build_time_expanded.html#dump_graph_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_time_expanded.dump_graph_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds and saves a networkx multigraph object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edges</strong> – list of edges. Format: [(from stop, to stop, weight)]</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
+<li><p><strong>nodes_dict</strong> (<em>dict</em>) – mapping dictionary. Format: {(stop id, arrival time): new node id}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dump_graph_dict</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="s1">&#39;anaheim&#39;</span><span class="p">,</span> <span class="n">nodes_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_time_expanded.initialize">
+<code class="sig-prename descclassname"><span class="pre">builders.build_time_expanded.</span></code><code class="sig-name descname"><span class="pre">initialize</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../_modules/builders/build_time_expanded.html#initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_time_expanded.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the required inputs for building Time expanded graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string
+GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0
+start_time: timestamp object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>breaker (str)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">breaker</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">GENERATE_LOGFILE</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_time_expanded.main">
+<code class="sig-prename descclassname"><span class="pre">builders.build_time_expanded.</span></code><code class="sig-name descname"><span class="pre">main</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/builders/build_time_expanded.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_time_expanded.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../Algorithms/TIME_EXPANDED/index.html"
+                        title="previous chapter">Time Expanded Dijkstra</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../Algorithms/TIME_EXPANDED/TE_DIJ.html"
+                        title="next chapter">Dijktra’s Algorithm</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/builders/build_TE.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../Algorithms/TIME_EXPANDED/TE_DIJ.html" title="Dijktra’s Algorithm"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../Algorithms/TIME_EXPANDED/index.html" title="Time Expanded Dijkstra"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../Algorithms/TIME_EXPANDED/index.html" >Time Expanded Dijkstra</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Build Time expanded Graph</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

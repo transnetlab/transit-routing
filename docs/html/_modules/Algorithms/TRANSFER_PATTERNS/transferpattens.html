@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Algorithms.TRANSFER_PATTERNS.transferpattens &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.TRANSFER_PATTERNS.transferpattens</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Algorithms.TRANSFER_PATTERNS.transferpattens</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module contains transfer patterns implementation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">Algorithms.TRANSFER_PATTERNS.transferpattern_func</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="std_tp"><a class="viewcode-back" href="../../../Algorithms/Transfer_patterns/transferpattens.html#Algorithms.TRANSFER_PATTERNS.transferpattens.std_tp">[docs]</a><span class="k">def</span> <span class="nf">std_tp</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">routesindx_by_stop_dict</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">hub_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+           <span class="n">hubstops</span><span class="p">:</span> <span class="nb">set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Standard implementation of trasnfer patterns algorithms. Following functionality is supported regarding hubs:</span>
+<span class="sd">    1. Build hubs using brute force method. See transferpattern_func</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        SOURCE (int): stop id of source stop.</span>
+<span class="sd">        DESTINATION (int): stop id of destination stop.</span>
+<span class="sd">        D_TIME (pandas.datetime): departure time.</span>
+<span class="sd">        footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</span>
+<span class="sd">        NETWORK_NAME (str): name of the network</span>
+<span class="sd">        routesindx_by_stop_dict (dict): Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]</span>
+<span class="sd">        stops_dict (dict): preprocessed dict. Format {route_id: [ids of stops in the route]}.</span>
+<span class="sd">        hub_count (int):  Number of hub stops</span>
+<span class="sd">        hubstops (set): set containing id&#39;s of stop that are hubs</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pareto optimal journeys</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; output = std_tp(36, 52, pd.to_datetime(&#39;2022-06-30 05:41:00&#39;), footpath_dict, &#39;./anaheim&#39;, routesindx_by_stop_dict, stoptimes_dict, 0, set())</span>
+
+<span class="sd">    TODO: Add backtracking</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">TP_output</span> <span class="o">=</span> <span class="n">multicriteria_dij</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">routesindx_by_stop_dict</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">,</span> <span class="n">hub_count</span><span class="p">,</span> <span class="n">hubstops</span><span class="p">)</span>
+        <span class="n">pareto_journeys</span> <span class="o">=</span> <span class="p">[(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">TP_output</span><span class="p">[</span><span class="n">DESTINATION</span><span class="p">][</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="c1"># print(f&quot;Pareto optimal points: {pareto_journeys}&quot;)</span>
+        <span class="k">return</span> <span class="n">pareto_journeys</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;transfer pattern preprocessing incomplete not found&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.TRANSFER_PATTERNS.transferpattens</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

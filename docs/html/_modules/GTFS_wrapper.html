@@ -1,0 +1,611 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GTFS_wrapper &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">GTFS_wrapper</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for GTFS_wrapper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Apply necessary filters to GTFS set. </span>
+<span class="sd">Note that this file is GTFS-specific.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">chained_assignment</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># default=&#39;warn&#39;</span>
+
+<div class="viewcode-block" id="take_inputs"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.take_inputs">[docs]</a><span class="k">def</span> <span class="nf">take_inputs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Takes the required inputs for building GTFS wrapper</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        NETWORK_NAME, DATE_TOFILTER_ON, VALID_ROUTE_TYPES, BUILD_TRANSFER, breaker, READ_PATH, SAVE_PATH</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; NETWORK_NAME, DATE_TOFILTER_ON, VALID_ROUTE_TYPES, BUILD_TRANSFER, breaker, READ_PATH, SAVE_PATH = take_inputs()</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rename the gtfs.zip to network_gtfs.zip and place it in main directory.&quot;</span>
+          <span class="s2">&quot; For example, for anaheim, place the anaheim_gtfs.zip in the main directory.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Enter Example parameters to build test case.&quot;</span><span class="p">)</span>
+
+    <span class="n">NETWORK_NAME</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter Network name in small case. Example: anaheim</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">)</span>
+    <span class="n">DATE_TOFILTER_ON</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter date to filter on. Format: YYYYMMDD. Example: 20220630</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="c1"># TODO: display options according to dataset</span>
+    <span class="n">VALID_ROUTE_TYPES</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">new_route_type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter route types to keep GTFS set. For example: 3 (bus routes). Press -1 when done</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">new_route_type</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">VALID_ROUTE_TYPES</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_route_type</span><span class="p">)</span>
+    <span class="n">BUILD_TRANSFER</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter 1 to build transfers file. Else press 0. Example: 0.</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="n">BUILD_TBTR_FILES</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter 1 to build for TBTR preprocessing. Else press 0. Example: 1800</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="n">BUILD_TRANSFER_PATTERNS_FILES</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter 1 to build Transfer Patterns preprocessing. Else press 0. Example: 0</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="n">BUILD_CSA</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter 1 to build CSA preprocessing. Else press 0. Example: 0</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameters entered: </span><span class="se">\n</span><span class="s2"> Network Name: </span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="se">\n</span><span class="s2"> Date to filter on: </span><span class="si">{</span><span class="n">DATE_TOFILTER_ON</span><span class="si">}</span><span class="s2">&quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Valid Route types: </span><span class="si">{</span><span class="n">VALID_ROUTE_TYPES</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">BUILD_TRANSFER</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Build transfer file?: Yes&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Build transfer file?: No&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">BUILD_TBTR_FILES</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Build TBTR files?: Yes&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Build TBTR files?: No&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">BUILD_TRANSFER_PATTERNS_FILES</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Build Transfer Patterns files?: Yes&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Build Transfer Patterns files?: No&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">BUILD_CSA</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Build CSA files?: Yes&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Build CSA files?: No&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="c1"># BUILD_TRANSFER = 0</span>
+    <span class="c1"># WALKING_LIMIT = 180  # Distance is in meter and assumed speed is 1m/s</span>
+    <span class="c1"># DATE_TOFILTER_ON = 20220815</span>
+    <span class="c1"># NETWORK_NAME = &#39;./chicago&#39;</span>
+    <span class="c1"># VALID_ROUTE_TYPES = [3]</span>
+    <span class="n">READ_PATH</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;./Data/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/gtfs_o&#39;</span>
+    <span class="n">SAVE_PATH</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;./Data/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/&#39;</span>
+    <span class="n">param_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">BUILD_TRANSFER</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">BUILD_TBTR_FILES</span><span class="p">,</span> <span class="n">BUILD_TRANSFER_PATTERNS_FILES</span><span class="p">,</span> <span class="n">BUILD_CSA</span><span class="p">]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./builders/parameters_entered.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pickle_file</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">param_list</span><span class="p">,</span> <span class="n">pickle_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">DATE_TOFILTER_ON</span><span class="p">,</span> <span class="n">VALID_ROUTE_TYPES</span><span class="p">,</span> <span class="n">BUILD_TRANSFER</span><span class="p">,</span> <span class="n">breaker</span><span class="p">,</span> <span class="n">READ_PATH</span><span class="p">,</span> <span class="n">SAVE_PATH</span></div>
+
+
+<div class="viewcode-block" id="read_gtfs"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.read_gtfs">[docs]</a><span class="k">def</span> <span class="nf">read_gtfs</span><span class="p">(</span><span class="n">READ_PATH</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the GTFS set</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        READ_PATH (str): Path to read GTFS</span>
+<span class="sd">        NETWORK_NAME (str): Network name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        GTFS files</span>
+
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; calendar_dates, route, trips, stop_times, stops, calendar, transfer = read_gtfs(READ_PATH, &#39;anaheim&#39;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">_gtfs.zip&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
+        <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./Data/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/gtfs_o&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading GTFS data&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network: </span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">stop_times_column</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;arrival_time&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_sequence&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;trip_id&#39;</span><span class="p">]</span>
+    <span class="n">stops_column</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;stop_lat&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_lon&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_id&#39;</span><span class="p">]</span>
+    <span class="n">trips_column</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;route_id&#39;</span><span class="p">,</span> <span class="s1">&#39;trip_id&#39;</span><span class="p">,</span> <span class="s1">&#39;service_id&#39;</span><span class="p">]</span>
+    <span class="n">calendar_dates</span><span class="p">,</span> <span class="n">calendar</span><span class="p">,</span> <span class="n">transfer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">transfer</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">READ_PATH</span><span class="si">}</span><span class="s1">/transfer.txt&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;transfer.txt missing&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">calendar</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">READ_PATH</span><span class="si">}</span><span class="s1">/calendar.txt&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;calender.txt missing&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">calendar_dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">READ_PATH</span><span class="si">}</span><span class="s1">/calendar_dates.txt&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;calender_dates.txt missing&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">route</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">READ_PATH</span><span class="si">}</span><span class="s1">/routes.txt&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;routes.txt missing&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">trips</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">READ_PATH</span><span class="si">}</span><span class="s1">/trips.txt&#39;</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="n">trips_column</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;trips.txt missing&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">stop_times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">READ_PATH</span><span class="si">}</span><span class="s1">/stop_times.txt&#39;</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="n">stop_times_column</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;stop_times.txt missing&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">stops</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">READ_PATH</span><span class="si">}</span><span class="s1">/stops.txt&#39;</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="n">stops_column</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;stop_name&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">stops</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">READ_PATH</span><span class="si">}</span><span class="s1">/stops.txt&#39;</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="n">stops_column</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;stops.txt missing&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">calendar_dates</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">trips</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">stops</span><span class="p">,</span> <span class="n">calendar</span><span class="p">,</span> <span class="n">transfer</span></div>
+
+
+<div class="viewcode-block" id="remove_unwanted_route"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.remove_unwanted_route">[docs]</a><span class="k">def</span> <span class="nf">remove_unwanted_route</span><span class="p">(</span><span class="n">VALID_ROUTE_TYPES</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">route</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove unwanted routes like sea ferries, Metro</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        VALID_ROUTE_TYPES (list):</span>
+<span class="sd">        route: GTFS routes.txt file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Filters route file and a set containing all routes ids.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; valid_routes_set, route = remove_unwanted_route([3], route)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Removing unwanted routes&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total routes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">route</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Route types distribution:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">route</span><span class="o">.</span><span class="n">route_type</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">route</span> <span class="o">=</span> <span class="n">route</span><span class="p">[</span><span class="n">route</span><span class="o">.</span><span class="n">route_type</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">VALID_ROUTE_TYPES</span><span class="p">)]</span>
+    <span class="n">valid_routes_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">route</span><span class="o">.</span><span class="n">route_id</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total routes after filtering on route_types: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_routes_set</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">valid_routes_set</span><span class="p">,</span> <span class="n">route</span></div>
+
+
+<div class="viewcode-block" id="filter_trips_routes_ondates"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.filter_trips_routes_ondates">[docs]</a><span class="k">def</span> <span class="nf">filter_trips_routes_ondates</span><span class="p">(</span><span class="n">valid_routes_set</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">calendar_dates</span><span class="p">,</span> <span class="n">calendar</span><span class="p">,</span> <span class="n">trips</span><span class="p">,</span> <span class="n">DATE_TOFILTER_ON</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter the trips file based on calendar. Only One-days data is assumed here.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        valid_routes_set (set): set containing valid route ids</span>
+<span class="sd">        calendar_dates: GTFS Calendar_dates.txt file</span>
+<span class="sd">        calendar: GTFS calendar.txt file</span>
+<span class="sd">        trips: GTFS trips.txt file</span>
+<span class="sd">        DATE_TOFILTER_ON (int): date on which GTFS set is filtered</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Filtered trips file and a set of valid trips and routes.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        calendar_dates can be used in two sense. In the first case, it acts as a supplement to calendar.txt by defining listing the service id</span>
+<span class="sd">        removed or added on a particular day (recommended usage).In the second case, it acts independently by listing all the service active</span>
+<span class="sd">        on the particular day. See  GTFS reference for more details.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">calendar</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span> <span class="n">calendar</span><span class="o">.</span><span class="n">end_date</span> <span class="o">=</span> <span class="n">calendar</span><span class="o">.</span><span class="n">start_date</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">calendar</span><span class="o">.</span><span class="n">end_date</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">day_name</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">DATE_TOFILTER_ON</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">day_name</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">calendar</span> <span class="o">=</span> <span class="n">calendar</span><span class="p">[((</span><span class="n">calendar</span><span class="o">.</span><span class="n">start_date</span> <span class="o">&lt;=</span> <span class="n">DATE_TOFILTER_ON</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">DATE_TOFILTER_ON</span> <span class="o">&lt;=</span> <span class="n">calendar</span><span class="o">.</span><span class="n">end_date</span><span class="p">))]</span>
+    <span class="n">working_service_id</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">calendar</span><span class="p">[</span><span class="n">calendar</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">day_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">service_id</span><span class="p">)</span>
+    <span class="n">new_service_id_added</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">calendar_dates</span><span class="p">[(</span><span class="n">calendar_dates</span><span class="o">.</span><span class="n">date</span> <span class="o">==</span> <span class="n">DATE_TOFILTER_ON</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">calendar_dates</span><span class="o">.</span><span class="n">exception_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">service_id</span><span class="p">)</span>
+    <span class="n">service_id_removed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">calendar_dates</span><span class="p">[(</span><span class="n">calendar_dates</span><span class="o">.</span><span class="n">date</span> <span class="o">==</span> <span class="n">DATE_TOFILTER_ON</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">calendar_dates</span><span class="o">.</span><span class="n">exception_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)]</span><span class="o">.</span><span class="n">service_id</span><span class="p">)</span>
+    <span class="n">valid_service_id</span> <span class="o">=</span> <span class="n">working_service_id</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">new_service_id_added</span><span class="p">)</span> <span class="o">-</span> <span class="n">service_id_removed</span>
+    <span class="n">trips</span> <span class="o">=</span> <span class="n">trips</span><span class="p">[</span><span class="n">trips</span><span class="o">.</span><span class="n">service_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">valid_service_id</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">trips</span><span class="o">.</span><span class="n">route_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">valid_routes_set</span><span class="p">)]</span>
+    <span class="n">valid_trips</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">trips</span><span class="o">.</span><span class="n">trip_id</span><span class="p">)</span>
+    <span class="n">valid_route</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">trips</span><span class="o">.</span><span class="n">route_id</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After Filtering on date </span><span class="si">{</span><span class="n">DATE_TOFILTER_ON</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Valid trips:  </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_trips</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Valid routes:  </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_route</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">trips</span><span class="p">,</span> <span class="n">valid_trips</span><span class="p">,</span> <span class="n">valid_route</span></div>
+
+    <span class="c1"># print(f&quot;Filtering trips based on date: {DATE_TOFILTER_ON}&quot;)</span>
+    <span class="c1"># if type(calendar_dates)==type(None):</span>
+    <span class="c1">#     valid_trips = set(trips.trip_id)</span>
+    <span class="c1">#     valid_route = set(trips.route_id)</span>
+    <span class="c1">#     return trips, valid_trips, valid_route</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     calendar_dates.sort_values(by=&#39;date&#39;, inplace=True)</span>
+    <span class="c1">#     calendar_dates[(calendar_dates.exception_type == 1)].groupby(&#39;date&#39;).count().sort_values(&#39;service_id&#39;)</span>
+    <span class="c1">#     valid_service_id = set(</span>
+    <span class="c1">#         calendar_dates[(calendar_dates.date == DATE_TOFILTER_ON) &amp; (calendar_dates.exception_type == 1)][&#39;service_id&#39;])</span>
+    <span class="c1">#     trips = trips[trips.service_id.isin(valid_service_id) &amp; trips.route_id.isin(valid_routes_set)]</span>
+    <span class="c1">#     valid_trips = set(trips.trip_id)</span>
+    <span class="c1">#     valid_route = set(trips.route_id)</span>
+    <span class="c1">#     print(f&quot;Valid trips:  {len(valid_trips)}&quot;)</span>
+    <span class="c1">#     print(f&quot;Valid routes:  {len(valid_route)}&quot;)</span>
+    <span class="c1">#     print(breaker)</span>
+    <span class="c1">#     return trips, valid_trips, valid_route</span>
+
+
+<div class="viewcode-block" id="filter_stoptimes"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.filter_stoptimes">[docs]</a><span class="k">def</span> <span class="nf">filter_stoptimes</span><span class="p">(</span><span class="n">valid_trips</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">trips</span><span class="p">,</span> <span class="n">DATE_TOFILTER_ON</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter stoptimes file</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        valid_trips (set): GTFS set containing trips</span>
+<span class="sd">        trips: GTFS trips.txt file</span>
+<span class="sd">        DATE_TOFILTER_ON (int): date on which GTFS set is filtered</span>
+<span class="sd">        stop_times: GTFS stoptimes.txt file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Filtered stops mapping and stoptimes file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Filtering stop_times.txt&quot;</span><span class="p">)</span>
+    <span class="n">stop_times</span><span class="o">.</span><span class="n">stop_sequence</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">stop_sequence</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">stop_times</span><span class="o">.</span><span class="n">stop_id</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">stop_id</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">stop_times</span> <span class="o">=</span> <span class="n">stop_times</span><span class="p">[</span><span class="n">stop_times</span><span class="o">.</span><span class="n">trip_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">valid_trips</span><span class="p">)]</span>
+    <span class="n">stop_times</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">&#39;stop_sequence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;trip_id&quot;</span><span class="p">)[</span><span class="s2">&quot;stop_sequence&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="n">stop_times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;trip_id&#39;</span><span class="p">)</span>
+    <span class="n">stoplist</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">stop_times</span><span class="o">.</span><span class="n">stop_id</span><span class="p">)))</span>
+    <span class="n">stops_map</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">t</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stoplist</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;new_stop_id&#39;</span><span class="p">])</span>
+    <span class="n">stop_times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">stop_times</span><span class="p">,</span> <span class="n">stops_map</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;stop_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;new_stop_id&#39;</span><span class="p">:</span> <span class="s1">&#39;stop_id&#39;</span><span class="p">})</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Applying dates&quot;</span><span class="p">)</span>
+
+    <span class="c1">#Correct timestamp of format 9:30:00 to 09:30:00</span>
+    <span class="n">stop_times</span><span class="o">.</span><span class="n">arrival_time</span> <span class="o">=</span> <span class="p">[</span><span class="n">time_value</span> <span class="k">if</span> <span class="n">time_value</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;0</span><span class="si">{</span><span class="n">time_value</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">time_value</span> <span class="ow">in</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">arrival_time</span><span class="p">]</span>
+
+    <span class="n">DATE_TOFILTER_ON</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">DATE_TOFILTER_ON</span><span class="p">)[:</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">DATE_TOFILTER_ON</span><span class="p">)[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">DATE_TOFILTER_ON</span><span class="p">)[</span><span class="mi">6</span><span class="p">:]</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">last_stamp</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;arrival_time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">arrival_time</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">data_list</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">DATE_TOFILTER_ON</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">ceil</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_stamp</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="mi">24</span><span class="p">))</span>
+    <span class="n">date_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="mi">24</span><span class="p">)]</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="mi">24</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="mi">24</span><span class="p">))</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">stop_times</span><span class="o">.</span><span class="n">arrival_time</span><span class="p">)]</span>
+    <span class="c1"># nex_date = DATE_TOFILTER_ON[:-2] + str(int(DATE_TOFILTER_ON[-2:]) + 1)</span>
+    <span class="c1"># date_list = [</span>
+    <span class="c1">#     pd.to_datetime(DATE_TOFILTER_ON + &#39; &#39; + x) if int(x[:2]) &lt; 24 else pd.to_datetime(nex_date + &#39; &#39; + str(int(x[:2]) - 24) + x[2:])</span>
+    <span class="c1">#     for x in stop_times.arrival_time]</span>
+    <span class="n">stop_times</span><span class="o">.</span><span class="n">arrival_time</span> <span class="o">=</span> <span class="n">date_list</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stops_map</span><span class="p">,</span> <span class="n">stop_times</span></div>
+
+
+<div class="viewcode-block" id="filter_stopsfile"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.filter_stopsfile">[docs]</a><span class="k">def</span> <span class="nf">filter_stopsfile</span><span class="p">(</span><span class="n">stops_map</span><span class="p">,</span> <span class="n">stops</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply filter to stops file</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stops_map: stop id mapping</span>
+<span class="sd">        stops: GTFS stops.txt file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Filtered stops file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Filtering stops.txt&quot;</span><span class="p">)</span>
+    <span class="n">stops</span><span class="o">.</span><span class="n">stop_id</span> <span class="o">=</span> <span class="n">stops</span><span class="o">.</span><span class="n">stop_id</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">stops</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">stops</span><span class="p">,</span> <span class="n">stops_map</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;stop_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;new_stop_id&#39;</span><span class="p">:</span> <span class="s1">&#39;stop_id&#39;</span><span class="p">})</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Valid stops left: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">stops</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stops</span></div>
+
+
+<div class="viewcode-block" id="rename_route"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.rename_route">[docs]</a><span class="k">def</span> <span class="nf">rename_route</span><span class="p">(</span><span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rename the route Id to integer. Route Id are assumed to start from 1000.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stop_times: GTFS stoptimes.txt file</span>
+<span class="sd">        trips: GTFS trips.txt file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Route Id mapping, filtered stoptimes and trip file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Renaming routes&quot;</span><span class="p">)</span>
+    <span class="n">trip_groups</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;trip_id&quot;</span><span class="p">)</span>
+    <span class="n">stops_dict_rev</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">route_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">route_id</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># Rename Route_id starting from 1000</span>
+    <span class="n">temp_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">trip_detail</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">trip_groups</span><span class="p">):</span>
+        <span class="n">route_seq</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">trip_detail</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;stop_sequence&#39;</span><span class="p">)[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">route_seq</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">temp_set</span><span class="p">:</span>
+            <span class="n">stops_dict_rev</span><span class="p">[</span><span class="n">route_seq</span><span class="p">]</span> <span class="o">=</span> <span class="n">route_id</span>
+            <span class="n">temp_set</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">route_seq</span><span class="p">))</span>
+            <span class="n">route_id</span> <span class="o">=</span> <span class="n">route_id</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">route_map</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">stops_dict_rev</span><span class="p">[</span><span class="n">route_seq</span><span class="p">]</span>
+    <span class="c1"># Update new route_id in stoptimes file</span>
+    <span class="n">route_map_db</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">route_map</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;trip_id&#39;</span><span class="p">,</span> <span class="s1">&#39;new_route_id&#39;</span><span class="p">])</span>
+    <span class="n">stop_times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">stop_times</span><span class="p">,</span> <span class="n">route_map_db</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;trip_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;route_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;new_route_id&#39;</span><span class="p">:</span> <span class="s1">&#39;route_id&#39;</span><span class="p">})</span>
+    <span class="n">trips</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">trips</span><span class="p">,</span> <span class="n">route_map_db</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;trip_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;route_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;new_route_id&#39;</span><span class="p">:</span> <span class="s1">&#39;route_id&#39;</span><span class="p">})</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">route_map_db</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span></div>
+
+
+<div class="viewcode-block" id="rename_trips"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.rename_trips">[docs]</a><span class="k">def</span> <span class="nf">rename_trips</span><span class="p">(</span><span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rename trips</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stop_times: GTFS stoptimes.txt file</span>
+<span class="sd">        trips: GTFS trips.txt file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Filtered stoptimes.txt and trips.txt file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Renaming trips&quot;</span><span class="p">)</span>
+    <span class="n">trip_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">route_groups</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;route_id&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trips</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stop_times</span><span class="p">[</span><span class="n">stop_times</span><span class="o">.</span><span class="n">stop_sequence</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: Not every trip has first stop, rewrite code below&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">rid</span><span class="p">,</span> <span class="n">trip_detail</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">route_groups</span><span class="p">):</span>
+            <span class="n">trip_seq</span> <span class="o">=</span> <span class="nb">enumerate</span><span class="p">(</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">trip_detail</span><span class="p">[</span><span class="n">trip_detail</span><span class="o">.</span><span class="n">stop_sequence</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;arrival_time&#39;</span><span class="p">)[</span><span class="s1">&#39;trip_id&#39;</span><span class="p">]))</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">trip_seq</span><span class="p">:</span>
+                <span class="n">trip_map</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">rid</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="n">trip_map_db</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">trip_map</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;trip_id&#39;</span><span class="p">,</span> <span class="s1">&#39;new_trip_id&#39;</span><span class="p">])</span>
+    <span class="n">stop_times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">stop_times</span><span class="p">,</span> <span class="n">trip_map_db</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;trip_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;trip_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;new_trip_id&#39;</span><span class="p">:</span> <span class="s1">&#39;trip_id&#39;</span><span class="p">})</span>
+    <span class="n">trips</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">trips</span><span class="p">,</span> <span class="n">trip_map_db</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;trip_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;trip_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;new_trip_id&#39;</span><span class="p">:</span> <span class="s1">&#39;trip_id&#39;</span><span class="p">})</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span></div>
+
+
+<div class="viewcode-block" id="remove_overlapping_trips"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.remove_overlapping_trips">[docs]</a><span class="k">def</span> <span class="nf">remove_overlapping_trips</span><span class="p">(</span><span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove overlapping trips, i.e., all trips should follow first-in-first-out (FIFO) property.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stop_times: GTFS stoptimes.txt file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Filtered stoptimes file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Removing overlapping trips&quot;</span><span class="p">)</span>
+    <span class="c1"># overlap = set()</span>
+    <span class="n">overlap_tid</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">route_groups</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;route_id&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">r_idx</span><span class="p">,</span> <span class="n">route_trips</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">route_groups</span><span class="p">):</span>
+        <span class="n">route_trips_groups</span> <span class="o">=</span> <span class="n">route_trips</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;trip_id&#39;</span><span class="p">)</span>
+        <span class="n">route_trips_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">tid</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">trip</span><span class="o">.</span><span class="n">arrival_time</span><span class="p">))</span> <span class="k">for</span> <span class="n">tid</span><span class="p">,</span> <span class="n">trip</span> <span class="ow">in</span> <span class="n">route_trips_groups</span><span class="p">]</span>
+        <span class="n">route_trips_list</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">route_trips_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">f_tid</span><span class="p">,</span> <span class="n">first_trip</span> <span class="o">=</span> <span class="n">route_trips_list</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+            <span class="n">s_tid</span><span class="p">,</span> <span class="n">second_trip</span> <span class="o">=</span> <span class="n">route_trips_list</span><span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">second_trip</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">&lt;=</span> <span class="n">first_trip</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">first_trip</span><span class="p">)]):</span>
+                <span class="c1"># overlap = overlap.union({r_idx})</span>
+                <span class="n">overlap_tid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f_tid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">overlap_tid</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">overlap_tid</span><span class="p">)</span><span class="si">}</span><span class="s2"> trips were overlapped&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;0 trips were overlapped&quot;</span><span class="p">)</span>
+    <span class="n">overlap_tid</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">overlap_tid</span><span class="p">)</span>
+    <span class="n">stop_times</span> <span class="o">=</span> <span class="n">stop_times</span><span class="p">[</span><span class="o">~</span><span class="n">stop_times</span><span class="o">.</span><span class="n">trip_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">overlap_tid</span><span class="p">)]</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stop_times</span><span class="o">.</span><span class="n">trip_id</span><span class="p">)</span>
+    <span class="n">trips</span> <span class="o">=</span> <span class="n">trips</span><span class="p">[</span><span class="n">trips</span><span class="o">.</span><span class="n">trip_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">temp</span><span class="p">)]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="c1"># if overlap:</span>
+    <span class="c1">#     print(f&quot;{len(overlap)} had overlapping trips&quot;)</span>
+    <span class="c1"># stop_times = stop_times[~stop_times.route_id.isin(overlap)]</span>
+    <span class="k">return</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span></div>
+
+
+<div class="viewcode-block" id="check_trip_len"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.check_trip_len">[docs]</a><span class="k">def</span> <span class="nf">check_trip_len</span><span class="p">(</span><span class="n">stop_times</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensures that number of stops in all trips should be &gt;2.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stop_times: GTFS stoptimes.txt file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Checking trips length&quot;</span><span class="p">)</span>
+    <span class="n">trip_group</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;trip_id&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">trip_details</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">trip_group</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trip_group</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: Trips of len&lt;2 present in stoptimes&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="stoptimes_filter"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.stoptimes_filter">[docs]</a><span class="k">def</span> <span class="nf">stoptimes_filter</span><span class="p">(</span><span class="n">stop_times</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply filters to stoptimes file. Following filters are applied:</span>
+<span class="sd">        1. Remove singleton routes, i.e., route of length 1. These can come due to various filters applied before.</span>
+<span class="sd">        2. Drop routes circling back to same stop</span>
+<span class="sd">        3. Rename stop_sequence for every trip starting from 0</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stop_times: GTFS stoptimes.txt file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Filtered stoptimes.txt GTFS file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Applying final stoptimes filter&quot;</span><span class="p">)</span>
+    <span class="n">stops_group</span> <span class="o">=</span> <span class="n">stop_times</span><span class="p">[[</span><span class="s1">&#39;stop_id&#39;</span><span class="p">,</span> <span class="s2">&quot;route_id&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;stop_id&#39;</span><span class="p">)</span>
+    <span class="n">routes_group</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;route_id&#39;</span><span class="p">)</span>
+    <span class="n">solo_routes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">rid</span><span class="p">,</span> <span class="n">route_details</span> <span class="ow">in</span> <span class="n">routes_group</span><span class="p">:</span>
+        <span class="n">intersect</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">stops_seq</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">route_details</span><span class="o">.</span><span class="n">stop_id</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">stops_seq</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">stops_group</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="s1">&#39;route_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">difference</span><span class="p">({</span><span class="n">rid</span><span class="p">}))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">intersect</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">intersect</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">solo_routes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rid</span><span class="p">)</span>
+    <span class="n">stop_times</span> <span class="o">=</span> <span class="n">stop_times</span><span class="p">[</span><span class="o">~</span><span class="n">stop_times</span><span class="o">.</span><span class="n">route_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">solo_routes</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+        <span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;route_id&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_sequence&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;route_id&#39;</span><span class="p">])</span>
+    <span class="c1">##########################################</span>
+    <span class="c1"># Drop routes circling back to same stop</span>
+    <span class="n">stop_times</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;trip_id&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_id&#39;</span><span class="p">])</span>
+    <span class="c1">##########################################</span>
+    <span class="c1"># For every trip stop_sequence should be continuous sequence starting from 0.</span>
+    <span class="n">stop_times</span><span class="p">[</span><span class="s1">&#39;stop_sequence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stop_times</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;trip_id&quot;</span><span class="p">)[</span><span class="s2">&quot;stop_sequence&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">,</span>
+                                                                                      <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="c1">##########################################</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stop_times</span></div>
+
+
+<div class="viewcode-block" id="filter_trips"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.filter_trips">[docs]</a><span class="k">def</span> <span class="nf">filter_trips</span><span class="p">(</span><span class="n">trips</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">stops</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter trips file. Trip Id are renamed as a_b where a is the route id and b is the sequence of</span>
+<span class="sd">    trip (arranged according to departure time)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        trips: GTFS trips.txt file</span>
+<span class="sd">        stop_times: GTFS stoptimes.txt file</span>
+<span class="sd">        stops: GTFS stops.txt file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Filtered trips, stoptimes and stops file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Applying final trips filter&quot;</span><span class="p">)</span>
+    <span class="c1"># Rename all trip_id with following format: Routeid_trip_count.</span>
+    <span class="c1"># E.g., 502_4 is 4th trip (sorted according to departure time) on route 502.</span>
+    <span class="c1"># trips = trips[trips.trip_id.isin(stop_times.trip_id)].drop(columns=[&#39;service_id&#39;])</span>
+    <span class="n">trips</span> <span class="o">=</span> <span class="n">trips</span><span class="p">[</span><span class="n">trips</span><span class="o">.</span><span class="n">trip_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">stop_times</span><span class="o">.</span><span class="n">trip_id</span><span class="p">)]</span>
+    <span class="n">stops</span> <span class="o">=</span> <span class="n">stops</span><span class="p">[</span><span class="n">stops</span><span class="o">.</span><span class="n">stop_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">stop_times</span><span class="o">.</span><span class="n">stop_id</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;stop_id&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">tid_list</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">trips</span><span class="o">.</span><span class="n">trip_id</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">))</span>
+    <span class="n">trips</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tid_list</span>
+    <span class="n">trips</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trips</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">trips</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trips</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;route_id&quot;</span><span class="p">)[</span><span class="s1">&#39;tid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">trips</span><span class="p">[</span><span class="s1">&#39;new_trip_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trips</span><span class="p">[</span><span class="s1">&#39;route_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">trips</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">stop_times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;trip_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;trip_id&#39;</span><span class="p">,</span> <span class="s1">&#39;tid&#39;</span><span class="p">,</span> <span class="s1">&#39;route_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;new_trip_id&#39;</span><span class="p">:</span> <span class="s1">&#39;trip_id&#39;</span><span class="p">})</span>
+    <span class="n">trips</span> <span class="o">=</span> <span class="n">trips</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;trip_id&#39;</span><span class="p">,</span> <span class="s1">&#39;tid&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;new_trip_id&#39;</span><span class="p">:</span> <span class="s1">&#39;trip_id&#39;</span><span class="p">})</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">trips</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">stops</span></div>
+
+
+<div class="viewcode-block" id="save_final"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.save_final">[docs]</a><span class="k">def</span> <span class="nf">save_final</span><span class="p">(</span><span class="n">SAVE_PATH</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">trips</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">stops</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the final GTFS set and print statistics</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        SAVE_PATH (str): Path to save GTFS</span>
+<span class="sd">        trips: GTFS trips.txt file</span>
+<span class="sd">        stop_times: GTFS stop_times.txt file</span>
+<span class="sd">        stops: GTFS stops.txt file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Save the files to save location</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving files&quot;</span><span class="p">)</span>
+    <span class="n">stop_times</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SAVE_PATH</span><span class="si">}</span><span class="s1">/stop_times.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">stop_times</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SAVE_PATH</span><span class="si">}</span><span class="s1">/stop_times.txt&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">stops</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SAVE_PATH</span><span class="si">}</span><span class="s1">/stops.txt&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">stops</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SAVE_PATH</span><span class="si">}</span><span class="s1">/stops.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">trips</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SAVE_PATH</span><span class="si">}</span><span class="s1">/trips.txt&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1">#####################################</span>
+    <span class="c1"># Print final statistics</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Final stops count    : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">stops</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Final trips count    : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">trips</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Final routes count   : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">trips</span><span class="o">.</span><span class="n">route_id</span><span class="p">))</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../GTFS_wrapper.html#GTFS_wrapper.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main function</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    #TODO: Call build_transfer_file if the parameter is 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">DATE_TOFILTER_ON</span><span class="p">,</span> <span class="n">VALID_ROUTE_TYPES</span><span class="p">,</span> <span class="n">BUILD_TRANSFER</span><span class="p">,</span> <span class="n">breaker</span><span class="p">,</span> <span class="n">READ_PATH</span><span class="p">,</span> <span class="n">SAVE_PATH</span> <span class="o">=</span> <span class="n">take_inputs</span><span class="p">()</span>
+    <span class="n">calendar_dates</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">trips</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">stops</span><span class="p">,</span> <span class="n">calendar</span><span class="p">,</span> <span class="n">transfer</span> <span class="o">=</span> <span class="n">read_gtfs</span><span class="p">(</span><span class="n">READ_PATH</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">)</span>
+    <span class="n">valid_routes</span><span class="p">,</span> <span class="n">route</span> <span class="o">=</span> <span class="n">remove_unwanted_route</span><span class="p">(</span><span class="n">VALID_ROUTE_TYPES</span><span class="p">,</span> <span class="n">route</span><span class="p">)</span>
+    <span class="n">trips</span><span class="p">,</span> <span class="n">valid_trips</span><span class="p">,</span> <span class="n">valid_route</span> <span class="o">=</span> <span class="n">filter_trips_routes_ondates</span><span class="p">(</span><span class="n">valid_routes</span><span class="p">,</span> <span class="n">calendar_dates</span><span class="p">,</span> <span class="n">calendar</span><span class="p">,</span> <span class="n">trips</span><span class="p">,</span> <span class="n">DATE_TOFILTER_ON</span><span class="p">)</span>
+    <span class="n">stops_map</span><span class="p">,</span> <span class="n">stop_times</span> <span class="o">=</span> <span class="n">filter_stoptimes</span><span class="p">(</span><span class="n">valid_trips</span><span class="p">,</span> <span class="n">trips</span><span class="p">,</span> <span class="n">DATE_TOFILTER_ON</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">)</span>
+    <span class="n">stops</span> <span class="o">=</span> <span class="n">filter_stopsfile</span><span class="p">(</span><span class="n">stops_map</span><span class="p">,</span> <span class="n">stops</span><span class="p">)</span>
+    <span class="n">route_map_db</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span> <span class="o">=</span> <span class="n">rename_route</span><span class="p">(</span><span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span><span class="p">)</span>
+    <span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span> <span class="o">=</span> <span class="n">rename_trips</span><span class="p">(</span><span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span><span class="p">)</span>
+    <span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span> <span class="o">=</span> <span class="n">remove_overlapping_trips</span><span class="p">(</span><span class="n">stop_times</span><span class="p">,</span> <span class="n">trips</span><span class="p">)</span>
+    <span class="n">check_trip_len</span><span class="p">(</span><span class="n">stop_times</span><span class="p">)</span>
+    <span class="n">stop_times</span> <span class="o">=</span> <span class="n">stoptimes_filter</span><span class="p">(</span><span class="n">stop_times</span><span class="p">)</span>
+    <span class="n">trips</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">stops</span> <span class="o">=</span> <span class="n">filter_trips</span><span class="p">(</span><span class="n">trips</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">stops</span><span class="p">)</span>
+    <span class="n">save_final</span><span class="p">(</span><span class="n">SAVE_PATH</span><span class="p">,</span> <span class="n">trips</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">stops</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+    <span class="c1"># build_transfers_file(READ_PATH, stops, WALKING_LIMIT, transfer)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">breaker</span> <span class="o">=</span> <span class="s2">&quot;________________________________________________________________&quot;</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">GTFS_wrapper</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hyptbtr &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="TBTR Functions" href="TBTR_functions.html" />
+    <link rel="prev" title="One-To-Many rTBTR" href="one_many_tbtr.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="TBTR_functions.html" title="TBTR Functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="one_many_tbtr.html" title="One-To-Many rTBTR"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Trip-based Public Transit Routing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Hyptbtr</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-Algorithms.TBTR.hyptbtr">
+<span id="hyptbtr"></span><h1>Hyptbtr<a class="headerlink" href="#module-Algorithms.TBTR.hyptbtr" title="Permalink to this headline">¶</a></h1>
+<p>Module contains HypTBTR implementation.</p>
+<dl class="py function">
+<dt id="Algorithms.TBTR.hyptbtr.hyptbtr">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.TBTR.hyptbtr.</span></code><code class="sig-name descname"><span class="pre">hyptbtr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_TIME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TRANSFER</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WALKING_FROM_SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PRINT_ITINERARY</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_out</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trip_groups</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routes_by_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoptimes_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">footpath_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_by_route_stop_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trip_transfer_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trip_set</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../../_modules/Algorithms/TBTR/hyptbtr.html#hyptbtr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.TBTR.hyptbtr.hyptbtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hyptbtr implementation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
+<li><p><strong>MAX_TRANSFER</strong> (<em>int</em>) – maximum transfer limit.</p></li>
+<li><p><strong>WALKING_FROM_SOURCE</strong> (<em>int</em>) – 1 or 0. 1 means walking from SOURCE is allowed.</p></li>
+<li><p><strong>PRINT_ITINERARY</strong> (<em>int</em>) – 1 or 0. 1 means print complete path.</p></li>
+<li><p><strong>stop_out</strong> (<em>dict</em>) – key: stop-id (int), value: stop-cell id of key (int). Note: stop-cell id=-1 denotes cut stop.</p></li>
+<li><p><strong>trip_groups</strong> (<em>dict</em>) – key: tuple of all possible combinations of stop cell id,</p></li>
+<li><p><strong>value</strong> – set of trip ids belonging to the stop cell combination</p></li>
+<li><p><strong>routes_by_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {stop_id: [id of routes passing through stop]}.</p></li>
+<li><p><strong>stops_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [ids of stops in the route]}.</p></li>
+<li><p><strong>stoptimes_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</p></li>
+<li><p><strong>footpath_dict</strong> (<em>dict</em>) – preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</p></li>
+<li><p><strong>idx_by_route_stop_dict</strong> (<em>dict</em>) – preprocessed dict. Format {(route id, stop id): stop index in route}.</p></li>
+<li><p><strong>trip_transfer_dict</strong> (<em>nested dict</em>) – keys: id of trip we are transferring from, value: {stop number: list of tuples</p></li>
+<li><p><strong>form</strong> (<em>of</em>) – </p></li>
+<li><p><strong>trip_set</strong> (<em>set</em>) – set of trip ids from which trip-transfers are available.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of pareto-optimal arrival Timestamps</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>out (list)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">hyptbtr</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2019-06-10 00:00:00&#39;</span><span class="p">),</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stop_out</span><span class="p">,</span> <span class="n">trip_groups</span><span class="p">,</span> <span class="n">routes_by_stop_dict</span><span class="p">,</span> <span class="n">stops_dict</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">,</span> <span class="n">idx_by_route_stop_dict</span><span class="p">,</span> <span class="n">trip_transfer_dict</span><span class="p">,</span> <span class="n">trip_set</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>HypRAPTORz</p>
+</div>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="one_many_tbtr.html"
+                        title="previous chapter">One-To-Many rTBTR</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="TBTR_functions.html"
+                        title="next chapter">TBTR Functions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Algorithms/TBTR/hyptbtr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="TBTR_functions.html" title="TBTR Functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="one_many_tbtr.html" title="One-To-Many rTBTR"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Trip-based Public Transit Routing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Hyptbtr</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

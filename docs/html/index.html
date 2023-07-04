@@ -41,84 +41,111 @@
   <div class="section" id="welcome-to-transit-routing-s-documentation">
 <h1>Welcome to Transit-routing’s documentation!<a class="headerlink" href="#welcome-to-transit-routing-s-documentation" title="Permalink to this headline">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/transnetlab/transit-routing"><img alt="_images/logo.png" class="align-center" src="_images/logo.png" /></a>
-<p>This repository provides various efficient algorithms to solve bicriteria shortest path problems in public transit routing. We mainly focus on two popular approaches: Round-Based Public Transit Routing (RAPTOR) and Trip-Based public Transit Routing (TBTR) working on arrival time and number of transfers as the two optimization criteria. Apart from the already published HypRAPTOR, we also include our variant of HypTBTR. Furthermore, both HypRAPTOR and HypTBTR have been extended using multilevel partitioning (MhypTBTR and MhypRAPTOR).</p>
+<p>Conventional approaches model the transit network as a time-expanded or time-dependent graph and run a variant of the Dijkstra’s algorithm. However, this method turns out to be too slow for large networks. Furthermore, while planning a journey using public transit, the number of transfers is equally important besides travel time. Popular techniques developed for PTR in the past decade include—Transfer Patterns algorithm, Connection Scan Algorithm (CSA), Round based Public Transit Routing algorithm (RAPTOR), and Trip-Based public Transit Routing (TBTR) algorithm. This repository provides various efficient algorithms to solve bicriteria shortest path problems in public transit routing.</p>
+<p>We mainly focus on two popular approaches: Round-Based Public Transit Routing (RAPTOR) and Trip-Based public Transit Routing (TBTR) working on arrival time and number of transfers as the two optimization criteria. Apart from the already published HypRAPTOR, we also include our variant of HypTBTR. Furthermore, both HypRAPTOR and HypTBTR have been extended using multilevel partitioning (MhypTBTR and MhypRAPTOR).</p>
 <p>Additionally, to make the RAPTOR and TBTR approach more practical, we also include One-To-Many rTBTR and One-To-Many rRAPTOR. These not only reduce the preprocessing times of the partitioning variants but also significantly outperform the existing approach for location-based queries (as a location can have multiple stops near it)</p>
 <p>Switzerland’s public transit network has been provided as a test case. The figure below shows the transit stop location (left) and 4-way partitioning using KaHyPar (right).</p>
 <img alt="_images/location.png" class="align-center" src="_images/location.png" />
-<table class="colwidths-given docutils align-default" id="id12">
-<caption><span class="caption-text">List of Algorithms</span><a class="headerlink" href="#id12" title="Permalink to this table">¶</a></caption>
+<table class="colwidths-given docutils align-default" id="id15">
+<caption><span class="caption-text">List of Algorithms</span><a class="headerlink" href="#id15" title="Permalink to this table">¶</a></caption>
 <colgroup>
-<col style="width: 40%" />
+<col style="width: 29%" />
+<col style="width: 29%" />
+<col style="width: 14%" />
 <col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
+<col style="width: 9%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Algorithms</p></th>
+<th class="head"><p>Varient</p></th>
 <th class="head"><p>Source</p></th>
 <th class="head"><p>Status</p></th>
 <th class="head"><p>Comments</p></th>
 </tr>
 </thead>
 <tbody>
+<tr class="row-even"><td><p>Time-Expanded Graph</p></td>
+<td><p>Dijkstra Algorithm</p></td>
+<td><p><a class="reference external" href="https://arxiv.org/abs/2111.06654">link</a></p></td>
+<td><p>Complete</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>RAPTOR</p></td>
+<td><p>Standard RAPTOR</p></td>
+<td><p><a class="reference external" href="https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534/">link</a></p></td>
+<td><p>Complete</p></td>
+<td></td>
+</tr>
 <tr class="row-even"><td><p>RAPTOR</p></td>
+<td><p>rRAPTOR</p></td>
 <td><p><a class="reference external" href="https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534/">link</a></p></td>
 <td><p>Complete</p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p>TBTR</p></td>
-<td><p><a class="reference external" href="https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85">link</a></p></td>
-<td><p>Complete</p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>rRAPTOR</p></td>
-<td><p><a class="reference external" href="https://pubsonline.informs.org/doi/abs/10.1287/trsc.2014.0534/">link</a></p></td>
-<td><p>Complete</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>rTBTR</p></td>
-<td><p><a class="reference external" href="https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85">link</a></p></td>
-<td><p>Complete</p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>One-To-Many rRAPTOR</p></td>
-<td><p><a class="reference external" href="https://arxiv.org/abs/2111.06654">link</a></p></td>
-<td><p>To be added soon</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p>One-To-Many rTBTR</p></td>
-<td><p><a class="reference external" href="https://arxiv.org/abs/2111.06654">link</a></p></td>
-<td><p>Complete</p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p>HypRAPTOR</p></td>
+<tr class="row-odd"><td><p>RAPTOR</p></td>
+<td><p>HypRAPTOR</p></td>
 <td><p><a class="reference external" href="https://drops.dagstuhl.de/opus/volltexte/2017/7896/">link</a></p></td>
 <td><p>Complete</p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p>HypTBTR</p></td>
+<tr class="row-even"><td><p>RAPTOR</p></td>
+<td><p>One-To-Many rRAPTOR</p></td>
+<td><p><a class="reference external" href="https://arxiv.org/abs/2111.06654">link</a></p></td>
+<td><p>To be added soon</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>TBTR</p></td>
+<td><p>Standard TBTR</p></td>
+<td><p><a class="reference external" href="https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85">link</a></p></td>
+<td><p>Complete</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>TBTR</p></td>
+<td><p>rTBTR</p></td>
+<td><p><a class="reference external" href="https://link.springer.com/chapter/10.1007/978-3-662-48350-3_85">link</a></p></td>
+<td><p>Complete</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>TBTR</p></td>
+<td><p>One-To-Many rTBTR</p></td>
 <td><p><a class="reference external" href="https://arxiv.org/abs/2111.06654">link</a></p></td>
 <td><p>Complete</p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p>MHypTBTR</p></td>
+<tr class="row-even"><td><p>TBTR</p></td>
+<td><p>HypTBTR</p></td>
 <td><p><a class="reference external" href="https://arxiv.org/abs/2111.06654">link</a></p></td>
 <td><p>Complete</p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p>MHypTBTR</p></td>
+<tr class="row-odd"><td><p>TBTR</p></td>
+<td><p>MHypTBTR</p></td>
 <td><p><a class="reference external" href="https://arxiv.org/abs/2111.06654">link</a></p></td>
 <td><p>Complete</p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p>Transfer Patterns</p></td>
+<tr class="row-even"><td><p>TBTR</p></td>
+<td><p>MHypTBTR</p></td>
+<td><p><a class="reference external" href="https://arxiv.org/abs/2111.06654">link</a></p></td>
+<td><p>Complete</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Transfer Patterns</p></td>
+<td><p>Standard TP</p></td>
 <td><p><a class="reference external" href="https://link.springer.com/chapter/10.1007/978-3-642-15775-2_25">link</a></p></td>
 <td><p>Complete</p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p>Scalable Transfer Patterns</p></td>
+<tr class="row-even"><td><p>Transfer Patterns</p></td>
+<td><p>Scalable TP</p></td>
 <td><p><a class="reference external" href="https://epubs.siam.org/doi/abs/10.1137/1.9781611974317.2">link</a></p></td>
 <td><p>To be addeed soon</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Connection Scan Algorithm</p></td>
+<td><p>Standard CSA</p></td>
+<td><p><a class="reference external" href="https://epubs.siam.org/doi/abs/10.1137/1.9781611974317.2">link</a></p></td>
+<td><p>Complete</p></td>
 <td></td>
 </tr>
 </tbody>
@@ -129,9 +156,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="GTFS_preprocessing.html">GTFS preprocessing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RAPTOR/index.html">RAPTOR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="TBTR/index.html">Trip-based Public Transit Routing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Transfer_patterns/index.html">Transfer Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Algorithms.html">List of Algoirthms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Miscellaneous Functions</a></li>
 </ul>
 </div>
@@ -146,7 +171,8 @@
 <ol class="arabic simple">
 <li><dl class="simple">
 <dt><strong>Prateek Agarwal</strong></dt><dd><ul class="simple">
-<li><p>Ph.D. at Indian Institute of Science (IISc) Bengaluru, India.</p></li>
+<li><p>Ph.D. at <a class="reference external" href="https://iisc.ac.in/">Indian Institute of Science Bengaluru India</a></p></li>
+<li><p>Website: <a class="reference external" href="https://sites.google.com/view/prateek-agarwal/">https://sites.google.com/view/prateek-agarwal/</a></p></li>
 <li><p>Mail Id: <a class="reference external" href="mailto:prateeka&#37;&#52;&#48;iisc&#46;ac&#46;in">prateeka<span>&#64;</span>iisc<span>&#46;</span>ac<span>&#46;</span>in</a></p></li>
 </ul>
 </dd>
@@ -154,7 +180,7 @@
 </li>
 <li><dl class="simple">
 <dt><strong>Tarun Rambha</strong></dt><dd><ul class="simple">
-<li><p>Assistant Professor in the Department of Civil Engineering and the Center for Infrastructure, Sustainable Transportation and Urban Planning (CiSTUP) at Indian Institute of Science (IISc) Bengaluru, India.</p></li>
+<li><p>Assistant Professor in the Civil Engineering and the Center for Infrastructure, Sustainable Transportation and Urban Planning (CiSTUP) at <a class="reference external" href="https://iisc.ac.in/">Indian Institute of Science Bengaluru India</a>.</p></li>
 <li><p>Website: <a class="reference external" href="http://civil.iisc.ernet.in/~tarunr/">http://civil.iisc.ernet.in/~tarunr/</a></p></li>
 <li><p>Mail Id: <a class="reference external" href="mailto:tarunrambha&#37;&#52;&#48;iisc&#46;ac&#46;in">tarunrambha<span>&#64;</span>iisc<span>&#46;</span>ac<span>&#46;</span>in</a></p></li>
 </ul>
@@ -165,7 +191,7 @@
 </div>
 <div class="section" id="copyright-and-license">
 <h2>Copyright and license<a class="headerlink" href="#copyright-and-license" title="Permalink to this headline">¶</a></h2>
-<p>The content of this repository is bounded by MIT License. For more information see COPYING file.</p>
+<p>The content of this repository is bounded by MIT License. For more information see <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/LICENSE">COPYING file</a></p>
 </div>
 </div>
 
@@ -228,7 +254,7 @@
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
   </body>

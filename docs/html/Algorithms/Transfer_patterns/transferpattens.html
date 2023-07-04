@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Standard Transfer Patterns &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Transfer Patterns functions" href="transferpattern_func.html" />
+    <link rel="prev" title="Build Transfer Patterns" href="../../builders/build_transfer_patterns.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="transferpattern_func.html" title="Transfer Patterns functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../../builders/build_transfer_patterns.html" title="Build Transfer Patterns"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Transfer Patterns</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Standard Transfer Patterns</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-Algorithms.TRANSFER_PATTERNS.transferpattens">
+<span id="standard-transfer-patterns"></span><h1>Standard Transfer Patterns<a class="headerlink" href="#module-Algorithms.TRANSFER_PATTERNS.transferpattens" title="Permalink to this headline">¶</a></h1>
+<p>Module contains transfer patterns implementation.</p>
+<dl class="py function">
+<dt id="Algorithms.TRANSFER_PATTERNS.transferpattens.std_tp">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.TRANSFER_PATTERNS.transferpattens.</span></code><code class="sig-name descname"><span class="pre">std_tp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">SOURCE:</span> <span class="pre">int</span></em>, <em class="sig-param"><span class="pre">DESTINATION:</span> <span class="pre">int</span></em>, <em class="sig-param"><span class="pre">D_TIME</span></em>, <em class="sig-param"><span class="pre">footpath_dict:</span> <span class="pre">dict</span></em>, <em class="sig-param"><span class="pre">NETWORK_NAME:</span> <span class="pre">str</span></em>, <em class="sig-param"><span class="pre">routesindx_by_stop_dict</span></em>, <em class="sig-param"><span class="pre">stoptimes_dict:</span> <span class="pre">dict</span></em>, <em class="sig-param"><span class="pre">hub_count:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></em>, <em class="sig-param"><span class="pre">hubstops:</span> <span class="pre">set</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'set'&gt;</span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../../_modules/Algorithms/TRANSFER_PATTERNS/transferpattens.html#std_tp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.TRANSFER_PATTERNS.transferpattens.std_tp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard implementation of trasnfer patterns algorithms. Following functionality is supported regarding hubs:
+1. Build hubs using brute force method. See transferpattern_func</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
+<li><p><strong>footpath_dict</strong> (<em>dict</em>) – preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
+<li><p><strong>routesindx_by_stop_dict</strong> (<em>dict</em>) – Keys: stop id, value: [(route_id, stop index), (route_id, stop index)]</p></li>
+<li><p><strong>stops_dict</strong> (<em>dict</em>) – preprocessed dict. Format {route_id: [ids of stops in the route]}.</p></li>
+<li><p><strong>hub_count</strong> (<em>int</em>) – Number of hub stops</p></li>
+<li><p><strong>hubstops</strong> (<em>set</em>) – set containing id’s of stop that are hubs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pareto optimal journeys</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">std_tp</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2022-06-30 05:41:00&#39;</span><span class="p">),</span> <span class="n">footpath_dict</span><span class="p">,</span> <span class="s1">&#39;./anaheim&#39;</span><span class="p">,</span> <span class="n">routesindx_by_stop_dict</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>TODO: Add backtracking</p>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../../builders/build_transfer_patterns.html"
+                        title="previous chapter">Build Transfer Patterns</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="transferpattern_func.html"
+                        title="next chapter">Transfer Patterns functions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Algorithms/Transfer_patterns/transferpattens.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="transferpattern_func.html" title="Transfer Patterns functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../../builders/build_transfer_patterns.html" title="Build Transfer Patterns"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Transfer Patterns</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Standard Transfer Patterns</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSA.std_csa &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CSA.std_csa</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for CSA.std_csa</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module contains standard Connection Scan Algorithm (CSA) implementation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">CSA.csa_functions</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="std_csa"><a class="viewcode-back" href="../../CSA/std_csa.html#CSA.std_csa.std_csa">[docs]</a><span class="k">def</span> <span class="nf">std_csa</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">,</span> <span class="n">connections_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">WALKING_FROM_SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Standard CSA implementation</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        SOURCE (int): stop id of source stop.</span>
+<span class="sd">        DESTINATION (int): stop id of destination stop.</span>
+<span class="sd">        D_TIME (pandas.datetime): departure time.</span>
+<span class="sd">        connections_list:</span>
+<span class="sd">        WALKING_FROM_SOURCE (int): 1 or 0. 1 indicates walking from SOURCE is allowed.</span>
+<span class="sd">        footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</span>
+<span class="sd">        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        output (tuple): tuple containing the best arrival time.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; output = std_csa(36, 52, pd.to_datetime(&#39;2022-06-30 06:30:00&#39;), connections_list, 1, footpath_dict, 1)</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Optimal arrival time is: {output}&quot;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stop_label</span><span class="p">,</span> <span class="n">trip_set</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">,</span> <span class="n">inf_time</span> <span class="o">=</span> <span class="n">initialize_csa</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">,</span> <span class="n">WALKING_FROM_SOURCE</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">departure_stop</span><span class="p">,</span> <span class="n">arrival_stop</span><span class="p">,</span> <span class="n">departure_time</span><span class="p">,</span> <span class="n">arrival_time</span><span class="p">,</span> <span class="n">tid</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">connections_list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">departure_time</span> <span class="o">&lt;</span> <span class="n">D_TIME</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">departure_time</span> <span class="o">&gt;</span> <span class="n">stop_label</span><span class="p">[</span><span class="n">DESTINATION</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">PRINT_ITINERARY</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Terminated due to time-based target pruning&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">trip_set</span><span class="p">[</span><span class="n">tid</span><span class="p">]</span> <span class="ow">or</span> <span class="n">stop_label</span><span class="p">[</span><span class="n">departure_stop</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">departure_time</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">stop_label</span><span class="p">[</span><span class="n">arrival_stop</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">arrival_time</span><span class="p">:</span>
+                    <span class="n">stop_label</span><span class="p">[</span><span class="n">arrival_stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">arrival_time</span>
+                    <span class="n">pi_label</span><span class="p">[</span><span class="n">arrival_stop</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+                    <span class="n">trip_set</span><span class="p">[</span><span class="n">tid</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">footpath_stop</span><span class="p">,</span> <span class="n">duration</span> <span class="ow">in</span> <span class="n">footpath_dict</span><span class="p">[</span><span class="n">arrival_stop</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="n">stop_label</span><span class="p">[</span><span class="n">footpath_stop</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">arrival_time</span> <span class="o">+</span> <span class="n">duration</span><span class="p">:</span>
+                                <span class="n">stop_label</span><span class="p">[</span><span class="n">footpath_stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">arrival_time</span> <span class="o">+</span> <span class="n">duration</span>
+                                <span class="n">pi_label</span><span class="p">[</span><span class="n">footpath_stop</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;walking&quot;</span><span class="p">,</span> <span class="n">arrival_stop</span><span class="p">,</span> <span class="n">footpath_stop</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                        <span class="k">pass</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">post_process_csa</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">,</span> <span class="n">connections_list</span><span class="p">,</span> <span class="n">stop_label</span><span class="p">,</span> <span class="n">inf_time</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CSA.std_csa</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

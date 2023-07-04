@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Functions related to Dijktra’s Algorithm &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Miscellaneous Functions" href="../../miscellaneous.html" />
+    <link rel="prev" title="Dijktra’s Algorithm" href="TE_DIJ.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../miscellaneous.html" title="Miscellaneous Functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="TE_DIJ.html" title="Dijktra’s Algorithm"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Time Expanded Dijkstra</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Functions related to Dijktra’s Algorithm</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions">
+<span id="functions-related-to-dijktra-s-algorithm"></span><h1>Functions related to Dijktra’s Algorithm<a class="headerlink" href="#module-Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions" title="Permalink to this headline">¶</a></h1>
+<p>This module contains functions related to Time-expanded Dijkstra’s algorithm</p>
+<dl class="py function">
+<dt id="Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.edited_dijkstra_multitarget">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.</span></code><code class="sig-name descname"><span class="pre">edited_dijkstra_multitarget</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../../_modules/Algorithms/TIME_EXPANDED_DIJKSTRA/TE_DIJ_functions.html#edited_dijkstra_multitarget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.edited_dijkstra_multitarget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses Dijkstra’s algorithm to find shortest weighted paths. This functions builds on top of networkx implementation of Dijkstra’s algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> – NetworkX graph</p></li>
+<li><p><strong>SOURCE</strong> – non-empty iterable of nodes
+Starting nodes for paths. If this is just an iterable containing
+a single node, then all paths computed by this function will
+start from that node. If there are two or more nodes in this
+iterable, the computed paths may begin from any one of the start
+nodes.</p></li>
+<li><p><strong>target_list</strong> – node label, optional
+Ending node for path. Search is halted when target is found.</p></li>
+<li><p><strong>weight</strong> – function
+Function with (u, v, data) input that returns that edges weight</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>dictionary</dt><dd><p>A mapping from node to shortest distance to that node from one
+of the SOURCE nodes.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>distance</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dist</span> <span class="o">=</span> <span class="n">edited_dijkstra_multitarget</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">,</span> <span class="n">target_list</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.get_possible_targets">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.</span></code><code class="sig-name descname"><span class="pre">get_possible_targets</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stops_group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DESTINATION</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_TIME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopevent_mapping</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../../_modules/Algorithms/TIME_EXPANDED_DIJKSTRA/TE_DIJ_functions.html#get_possible_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.get_possible_targets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of events from DESTINATION stop Id after D_TIME. These serve as possible target nodes for Dijkstra’s algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stops_group</strong> – pandas group object on stoptimes file using stop id column.</p></li>
+<li><p><strong>DESTINATION</strong> (<em>int</em>) – stop id of destination stop.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
+<li><p><strong>stopevent_mapping</strong> (<em>dict</em>) – mapping dictionary. Format: {(stop id, arrival time): new node id}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple containing Indexes of the reachable event of target node in stoptimes file
+target_list (tuple): tuple containing node Id corresponding reachable target nodes of to TE graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>idx (tuple)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span><span class="p">,</span> <span class="n">target_list</span> <span class="o">=</span> <span class="n">get_possible_targets</span><span class="p">(</span><span class="n">stops_group</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2019-06-10 00:00:00&#39;</span><span class="p">),</span> <span class="n">stopevent_mapping</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.get_sourcenode">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.</span></code><code class="sig-name descname"><span class="pre">get_sourcenode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stops_group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_TIME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopevent_mapping</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="../../_modules/Algorithms/TIME_EXPANDED_DIJKSTRA/TE_DIJ_functions.html#get_sourcenode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.get_sourcenode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Using the earliest arrival event from the source node (after D_TIME), find the ID of the node in TE graph.
+This serves as source stop for Dijkstra’s algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stops_group</strong> – pandas group object on stoptimes file using stop id column.</p></li>
+<li><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
+<li><p><strong>stopevent_mapping</strong> (<em>dict</em>) – mapping dictionary. Format: {(stop id, arrival time): new node id}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Source node Id corresponding to TE graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>source_node (int)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source_node</span> <span class="o">=</span> <span class="n">get_sourcenode</span><span class="p">(</span><span class="n">stops_group</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2019-06-10 00:00:00&#39;</span><span class="p">),</span> <span class="n">stopevent_mapping</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.heappop">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.</span></code><code class="sig-name descname"><span class="pre">heappop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Algorithms/TIME_EXPANDED_DIJKSTRA/TE_DIJ_functions.html#heappop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.heappop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pop the smallest item off the heap, maintaining the heap invariant.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.heappush">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.</span></code><code class="sig-name descname"><span class="pre">heappush</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Algorithms/TIME_EXPANDED_DIJKSTRA/TE_DIJ_functions.html#heappush"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.heappush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push item onto heap, maintaining the heap invariant.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.post_process_TE_DIJ">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.</span></code><code class="sig-name descname"><span class="pre">post_process_TE_DIJ</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_dist</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_times_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D_TIME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../../_modules/Algorithms/TIME_EXPANDED_DIJKSTRA/TE_DIJ_functions.html#post_process_TE_DIJ"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.post_process_TE_DIJ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post processing for TE_DIJ</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_dist</strong> (<em>dict</em>) – Distance dictionary of format {node id : arrival time}</p></li>
+<li><p><strong>target_list</strong> (<em>tuple</em>) – tuple containing node Id corresponding reachable target nodes of to TE graph</p></li>
+<li><p><strong>stop_times_file</strong> (<em>pandas.dataframe</em>) – stop_times.txt file in GTFS.</p></li>
+<li><p><strong>D_TIME</strong> (<em>pandas.datetime</em>) – departure time.</p></li>
+<li><p><strong>idx</strong> (<em>tuple</em>) – tuple containing Indexes of the reachable event of target node in stoptimes file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Stop event that is reached
+time_reached (pandas.timestamp): arrival time at the stop event</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>stop_reached (tuple)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stop_reached</span><span class="p">,</span> <span class="n">time_reached</span> <span class="o">=</span> <span class="n">post_process_TE_DIJ</span><span class="p">(</span><span class="n">out_dist</span><span class="p">,</span> <span class="n">target_list</span><span class="p">,</span> <span class="n">stop_times_file</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2019-06-10 00:00:00&#39;</span><span class="p">),</span> <span class="n">idx</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.weight_function">
+<code class="sig-prename descclassname"><span class="pre">Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.</span></code><code class="sig-name descname"><span class="pre">weight_function</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/Algorithms/TIME_EXPANDED_DIJKSTRA/TE_DIJ_functions.html#weight_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Algorithms.TIME_EXPANDED_DIJKSTRA.TE_DIJ_functions.weight_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>(Borrowed from NetworkX)
+Returns a function that returns the weight of an edge.</p>
+<p>The returned function is specifically suitable for input to
+functions <code class="xref py py-func docutils literal notranslate"><span class="pre">_dijkstra()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">_bellman_ford_relaxation()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> (<em>NetworkX graph.</em>) – </p></li>
+<li><p><strong>weight</strong> (<em>string</em><em> or </em><em>function</em>) – If it is callable, <cite>weight</cite> itself is returned. If it is a string,
+it is assumed to be the name of the edge attribute that represents
+the weight of an edge. In that case, a function is returned that
+gets the edge weight according to the specified edge attribute.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>function</em> – This function returns a callable that accepts exactly three inputs:
+a node, an node adjacent to the first one, and the edge attribute
+dictionary for the eedge joining those nodes. That function returns
+a number representing the weight of an edge.</p></li>
+<li><p>If <cite>G</cite> is a multigraph, and <cite>weight</cite> is not callable, the</p></li>
+<li><p><em>minimum edge weight over all parallel edges is returned. If any edge</em></p></li>
+<li><p>does not have an attribute with key <cite>weight</cite>, it is assumed to</p></li>
+<li><p><em>have weight one.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="TE_DIJ.html"
+                        title="previous chapter">Dijktra’s Algorithm</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../miscellaneous.html"
+                        title="next chapter">Miscellaneous Functions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Algorithms/TIME_EXPANDED/TE_DIJ_functions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../miscellaneous.html" title="Miscellaneous Functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="TE_DIJ.html" title="Dijktra’s Algorithm"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Time Expanded Dijkstra</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Functions related to Dijktra’s Algorithm</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

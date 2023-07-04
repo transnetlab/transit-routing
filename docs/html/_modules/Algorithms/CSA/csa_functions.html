@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Algorithms.CSA.csa_functions &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.CSA.csa_functions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Algorithms.CSA.csa_functions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="initialize_csa"><a class="viewcode-back" href="../../../Algorithms/CSA/csa_functions.html#Algorithms.CSA.csa_functions.initialize_csa">[docs]</a><span class="k">def</span> <span class="nf">initialize_csa</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">WALKING_FROM_SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">footpath_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">D_TIME</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize values for CSA.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        SOURCE (int): stop id of source stop.</span>
+<span class="sd">        WALKING_FROM_SOURCE (int): 1 or 0. 1 indicates walking from SOURCE is allowed.</span>
+<span class="sd">        footpath_dict (dict): preprocessed dict. Format {from_stop_id: [(to_stop_id, footpath_time)]}.</span>
+<span class="sd">        D_TIME (pandas.datetime): departure time.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        stop_label(dict): dict to maintain best arrival label {stop id: pandas.datetime}.</span>
+<span class="sd">        trip_set(dict): dict to check if a trip has been scanned or not{ trip id: boolean}.</span>
+<span class="sd">        pi_label(dict): dict used for backtracking labels. Format {stop id : label}. label is (&quot;walking&quot;, from stop, to_stop, footpath duration)</span>
+<span class="sd">        or (&#39;connection&#39;, connection id)</span>
+<span class="sd">        inf_time (pandas.datetime): Variable indicating infinite time.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">inf_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s2">&quot;today&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="s2">&quot;365 day&quot;</span><span class="p">)</span>
+
+    <span class="n">stop_label</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">inf_time</span><span class="p">)</span>
+    <span class="n">trip_set</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">pi_label</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">stop_label</span><span class="p">[</span><span class="n">SOURCE</span><span class="p">]</span> <span class="o">=</span> <span class="n">D_TIME</span>
+
+    <span class="k">if</span> <span class="n">WALKING_FROM_SOURCE</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">to_stop</span><span class="p">,</span> <span class="n">duration</span> <span class="ow">in</span> <span class="n">footpath_dict</span><span class="p">[</span><span class="n">SOURCE</span><span class="p">]:</span>
+                <span class="n">stop_label</span><span class="p">[</span><span class="n">to_stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">D_TIME</span> <span class="o">+</span> <span class="n">duration</span>
+                <span class="n">pi_label</span><span class="p">[</span><span class="n">to_stop</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;walking&quot;</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">,</span> <span class="n">to_stop</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">stop_label</span><span class="p">,</span> <span class="n">trip_set</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">,</span> <span class="n">inf_time</span></div>
+
+
+<div class="viewcode-block" id="load_connections_dict"><a class="viewcode-back" href="../../../Algorithms/CSA/csa_functions.html#Algorithms.CSA.csa_functions.load_connections_dict">[docs]</a><span class="k">def</span> <span class="nf">load_connections_dict</span><span class="p">(</span><span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    loads connection array.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        NETWORK_NAME (str): Network name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        connections_list (list): list of connections. Format: [[connection id, fro stop, to stop, from time, to time, trip id]]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./dict_builder/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/connections_dict_pkl.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">connections_list</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">connections_list</span></div>
+
+
+<div class="viewcode-block" id="post_process_csa"><a class="viewcode-back" href="../../../Algorithms/CSA/csa_functions.html#Algorithms.CSA.csa_functions.post_process_csa">[docs]</a><span class="k">def</span> <span class="nf">post_process_csa</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">connections_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">stop_label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">inf_time</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Post processing functions for CSA. Currently supported functionality are</span>
+<span class="sd">    1. Print complete journey</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        SOURCE (int): stop id of source stop.</span>
+<span class="sd">        DESTINATION (int): stop id of destination stop.</span>
+<span class="sd">        D_TIME (pandas.datetime): departure time.</span>
+<span class="sd">        pi_label(dict): dict used for backtracking labels. Format {stop id : label}. label is (&quot;walking&quot;, from stop, to_stop, footpath duration)</span>
+<span class="sd">        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.</span>
+<span class="sd">        connections_list (list): list of connections. Format: [[connection id, fro stop, to stop, from time, to time, trip id]]</span>
+<span class="sd">        stop_label(dict): dict to maintain best arrival label {stop id: pandas.datetime}.</span>
+<span class="sd">        inf_time (pandas.datetime): Variable indicating infinite time.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        output (tuple): If the destination is not reachable (None), else tuple containing the best arrival time.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stop_label</span><span class="p">[</span><span class="n">DESTINATION</span><span class="p">]</span><span class="o">!=</span><span class="n">inf_time</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">(</span><span class="n">stop_label</span><span class="p">[</span><span class="n">DESTINATION</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">PRINT_ITINERARY</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">current_stop</span> <span class="o">=</span> <span class="n">DESTINATION</span>
+        <span class="k">if</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">current_stop</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DESTINATION cannot be reached&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">journey</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">while</span> <span class="n">current_stop</span> <span class="o">!=</span> <span class="n">SOURCE</span><span class="p">:</span>
+                <span class="n">current_label</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">current_stop</span><span class="p">]</span>
+                <span class="c1"># print(current_stop)</span>
+                <span class="k">if</span> <span class="n">current_label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;connection&#39;</span><span class="p">:</span>
+                    <span class="n">connect</span> <span class="o">=</span> <span class="n">connections_list</span><span class="p">[</span><span class="n">current_label</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                    <span class="c1"># print(connect)</span>
+                    <span class="n">journey</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">connect</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                    <span class="n">current_stop</span> <span class="o">=</span> <span class="n">connect</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">footpath</span> <span class="o">=</span> <span class="n">current_label</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                    <span class="c1"># print(footpath)</span>
+                    <span class="n">journey</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">footpath</span><span class="p">)</span>
+                    <span class="n">current_stop</span> <span class="o">=</span> <span class="n">current_label</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">connection_journey</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">journey</span><span class="p">))</span>
+            <span class="n">_print_Journey_legs_csv</span><span class="p">(</span><span class="n">connection_journey</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+<span class="k">def</span> <span class="nf">_print_Journey_legs_csv</span><span class="p">(</span><span class="n">journey</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span><span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    prints the legs of journey for CSA</span>
+<span class="sd">    #TODO: Combine legs by trips to get better output</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        journey (list): list of optimal labels</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">leg</span> <span class="ow">in</span> <span class="n">journey</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">leg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;from </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> board at </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="si">}</span><span class="s2"> and get down on </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="si">}</span><span class="s2"> along </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;from </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> walk till </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.CSA.csa_functions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

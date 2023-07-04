@@ -1,0 +1,400 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Algorithms.RAPTOR.raptor_functions &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.RAPTOR.raptor_functions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Algorithms.RAPTOR.raptor_functions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module contains function related to RAPTOR, rRAPTOR, One-To-Many rRAPTOR, HypRAPTOR</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span> <span class="k">as</span> <span class="n">deque</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="initialize_raptor"><a class="viewcode-back" href="../../../Algorithms/RAPTOR/raptor_functions.html#Algorithms.RAPTOR.raptor_functions.initialize_raptor">[docs]</a><span class="k">def</span> <span class="nf">initialize_raptor</span><span class="p">(</span><span class="n">routes_by_stop_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">MAX_TRANSFER</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Initialize values for RAPTOR.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        routes_by_stop_dict (dict): preprocessed dict. Format {stop_id: [id of routes passing through stop]}.</span>
+<span class="sd">        SOURCE (int): stop id of source stop.</span>
+<span class="sd">        MAX_TRANSFER (int): maximum transfer limit.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        marked_stop (deque): deque to store marked stop.</span>
+<span class="sd">        marked_stop_dict (dict): Binary variable indicating if a stop is marked. Keys: stop Id, value: 0 or 1.</span>
+<span class="sd">        label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.</span>
+<span class="sd">        pi_label (dict): Nested dict used for backtracking labels. Format {round : {stop_id: pointer_label}}</span>
+<span class="sd">        if stop is reached by walking, pointer_label= (&#39;walking&#39;, from stop id, to stop id, time, arrival time)}} else pointer_label= (trip boarding time, boarding_point, stop id, arr_by_trip, trip id)</span>
+<span class="sd">        star_label (dict): dict to maintain best arrival label {stop id: pandas.datetime}.</span>
+<span class="sd">        inf_time (pandas.datetime): Variable indicating infinite time (pandas.datetime).</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; output = initialize_raptor(routes_by_stop_dict, 20775, 4)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">inf_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s2">&quot;today&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="s2">&quot;365 day&quot;</span><span class="p">)</span>
+    <span class="c1">#    inf_time = pd.to_datetime(&#39;2022-01-15 19:00:00&#39;)</span>
+
+    <span class="n">pi_label</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="p">{</span><span class="n">stop</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">stop</span> <span class="ow">in</span> <span class="n">routes_by_stop_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">MAX_TRANSFER</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)}</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="p">{</span><span class="n">stop</span><span class="p">:</span> <span class="n">inf_time</span> <span class="k">for</span> <span class="n">stop</span> <span class="ow">in</span> <span class="n">routes_by_stop_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">MAX_TRANSFER</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)}</span>
+    <span class="n">star_label</span> <span class="o">=</span> <span class="p">{</span><span class="n">stop</span><span class="p">:</span> <span class="n">inf_time</span> <span class="k">for</span> <span class="n">stop</span> <span class="ow">in</span> <span class="n">routes_by_stop_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+
+    <span class="n">marked_stop</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+    <span class="n">marked_stop_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">stop</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">stop</span> <span class="ow">in</span> <span class="n">routes_by_stop_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+    <span class="n">marked_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SOURCE</span><span class="p">)</span>
+    <span class="n">marked_stop_dict</span><span class="p">[</span><span class="n">SOURCE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">marked_stop</span><span class="p">,</span> <span class="n">marked_stop_dict</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">,</span> <span class="n">star_label</span><span class="p">,</span> <span class="n">inf_time</span></div>
+
+
+<div class="viewcode-block" id="check_stop_validity"><a class="viewcode-back" href="../../../Algorithms/RAPTOR/raptor_functions.html#Algorithms.RAPTOR.raptor_functions.check_stop_validity">[docs]</a><span class="k">def</span> <span class="nf">check_stop_validity</span><span class="p">(</span><span class="n">stops</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Check if the entered SOURCE and DESTINATION stop id are present in stop list or not.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stops: GTFS stops.txt</span>
+<span class="sd">        SOURCE (int): stop id of source stop.</span>
+<span class="sd">        DESTINATION (int): stop id of destination stop.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; output = check_stop_validity(stops, 20775, 1482)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">SOURCE</span> <span class="ow">in</span> <span class="n">stops</span><span class="o">.</span><span class="n">stop_id</span> <span class="ow">and</span> <span class="n">DESTINATION</span> <span class="ow">in</span> <span class="n">stops</span><span class="o">.</span><span class="n">stop_id</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;correct inputs&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;incorrect inputs&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="get_latest_trip_new"><a class="viewcode-back" href="../../../Algorithms/RAPTOR/raptor_functions.html#Algorithms.RAPTOR.raptor_functions.get_latest_trip_new">[docs]</a><span class="k">def</span> <span class="nf">get_latest_trip_new</span><span class="p">(</span><span class="n">stoptimes_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">route</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">arrival_time_at_pi</span><span class="p">,</span> <span class="n">pi_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">change_time</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Get latest trip after a certain timestamp from the given stop of a route.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stoptimes_dict (dict): preprocessed dict. Format {route_id: [[trip_1], [trip_2]]}.</span>
+<span class="sd">        route (int): id of route.</span>
+<span class="sd">        arrival_time_at_pi (pandas.datetime): arrival time at stop pi.</span>
+<span class="sd">        pi_index (int): index of the stop from which route was boarded.</span>
+<span class="sd">        change_time (pandas.datetime): change time at stop (set to 0).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        If a trip exists:</span>
+<span class="sd">            trip index, trip</span>
+<span class="sd">        else:</span>
+<span class="sd">            -1,-1   (e.g. when there is no trip after the given timestamp)</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; output = get_latest_trip_new(stoptimes_dict, 1000, pd.to_datetime(&#39;2019-06-10 17:40:00&#39;), 0, pd.to_timedelta(0, unit=&#39;seconds&#39;))</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">trip_idx</span><span class="p">,</span> <span class="n">trip</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stoptimes_dict</span><span class="p">[</span><span class="n">route</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">trip</span><span class="p">[</span><span class="n">pi_index</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">arrival_time_at_pi</span> <span class="o">+</span> <span class="n">change_time</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">route</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">trip_idx</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">stoptimes_dict</span><span class="p">[</span><span class="n">route</span><span class="p">][</span><span class="n">trip_idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># No trip is found after arrival_time_at_pi</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># No trip exsist for this route. in this case check tripid from trip file for this route and then look waybill.ID. Likely that trip is across days thats why it is rejected in stoptimes builder while checking</span></div>
+
+
+<div class="viewcode-block" id="post_processing"><a class="viewcode-back" href="../../../Algorithms/RAPTOR/raptor_functions.html#Algorithms.RAPTOR.raptor_functions.post_processing">[docs]</a><span class="k">def</span> <span class="nf">post_processing</span><span class="p">(</span><span class="n">DESTINATION</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Post processing for std_RAPTOR. Currently supported functionality:</span>
+<span class="sd">        1. Rounds in which DESTINATION is reached</span>
+<span class="sd">        2. Trips for covering pareto optimal set</span>
+<span class="sd">        3. Pareto optimal timestamps.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        DESTINATION (int): stop id of destination stop.</span>
+<span class="sd">        pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}</span>
+<span class="sd">        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.</span>
+<span class="sd">        label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        rounds_inwhich_desti_reached (list): list of rounds in which DESTINATION is reached. Format - [int]</span>
+<span class="sd">        trip_set (list): list of trips ids required to cover optimal journeys. Format - [char]</span>
+<span class="sd">        rap_out (list): list of pareto-optimal arrival timestamps. Format = [(pandas.datetime)]</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; output = post_processing(1482, pi_label, 1, label)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">rounds_inwhich_desti_reached</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pi_label</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">DESTINATION</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">rounds_inwhich_desti_reached</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="k">if</span> <span class="n">PRINT_ITINERARY</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DESTINATION cannot be reached with given MAX_TRANSFERS&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rounds_inwhich_desti_reached</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+        <span class="n">pareto_set</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">trip_set</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rap_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">DESTINATION</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rounds_inwhich_desti_reached</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rounds_inwhich_desti_reached</span><span class="p">:</span>
+            <span class="n">transfer_needed</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">journey</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">stop</span> <span class="o">=</span> <span class="n">DESTINATION</span>
+            <span class="k">while</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">journey</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">])</span>
+                <span class="n">mode</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;walking&#39;</span><span class="p">:</span>
+                    <span class="n">stop</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">trip_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">stop</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">journey</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+            <span class="n">pareto_set</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">transfer_needed</span><span class="p">,</span> <span class="n">journey</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">PRINT_ITINERARY</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">_print_Journey_legs</span><span class="p">(</span><span class="n">pareto_set</span><span class="p">)</span>
+        <span class="c1">#        _save_routesExplored(save_routes, routes_exp)</span>
+        <span class="k">return</span> <span class="n">rounds_inwhich_desti_reached</span><span class="p">,</span> <span class="n">trip_set</span><span class="p">,</span> <span class="n">rap_out</span></div>
+
+
+<span class="k">def</span> <span class="nf">_print_Journey_legs</span><span class="p">(</span><span class="n">pareto_journeys</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Prints journey in correct format. Parent Function: post_processing</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pareto_journeys (list): pareto optimal set.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; output = _print_Journey_legs(pareto_journeys)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">journey</span> <span class="ow">in</span> <span class="n">pareto_journeys</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">leg</span> <span class="ow">in</span> <span class="n">journey</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">leg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;walking&#39;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;from </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> walk till  </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1"> for </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="si">}</span><span class="s1"> seconds&#39;</span><span class="p">)</span>
+            <span class="c1">#                print(f&#39;from {leg[1]} walk till  {leg[2]} for {leg[3]} minutes and reach at {leg[4].time()}&#39;)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;from </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> board at </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="si">}</span><span class="s1"> and get down on </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1"> at </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="si">}</span><span class="s1"> along </span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;####################################&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="post_processing_onetomany_rraptor"><a class="viewcode-back" href="../../../Algorithms/RAPTOR/raptor_functions.html#Algorithms.RAPTOR.raptor_functions.post_processing_onetomany_rraptor">[docs]</a><span class="k">def</span> <span class="nf">post_processing_onetomany_rraptor</span><span class="p">(</span><span class="n">DESTINATION_LIST</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">OPTIMIZED</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    post processing for Ont-To-Many rRAPTOR. Currently supported functionality:</span>
+<span class="sd">        1. Print the output</span>
+<span class="sd">        2. Routes required for covering pareto-optimal set.</span>
+<span class="sd">        3. Trips required for covering pareto-optimal set.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        DESTINATION_LIST (list): list of stop ids of destination stop.</span>
+<span class="sd">        pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}</span>
+<span class="sd">        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.</span>
+<span class="sd">        label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.</span>
+<span class="sd">        OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        if OPTIMIZED==1:</span>
+<span class="sd">            final_trips (list): list of trips required to cover all pareto-optimal journeys. format - [trip_id]</span>
+<span class="sd">        elif OPTIMIZED==0:</span>
+<span class="sd">            final_routes (list): list of routes required to cover all pareto-optimal journeys. format - [route_id]</span>
+
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; output = post_processing_onetomany_rraptor([1482], pi_label, 1, label, 0)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">OPTIMIZED</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">final_trips</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">DESTINATION</span> <span class="ow">in</span> <span class="n">DESTINATION_LIST</span><span class="p">:</span>
+            <span class="n">rounds_inwhich_desti_reached</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pi_label</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">DESTINATION</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">rounds_inwhich_desti_reached</span><span class="p">:</span>
+                <span class="n">rounds_inwhich_desti_reached</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+                <span class="n">trip_set</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rounds_inwhich_desti_reached</span><span class="p">:</span>
+                    <span class="n">stop</span> <span class="o">=</span> <span class="n">DESTINATION</span>
+                    <span class="k">while</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">mode</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;walking&#39;</span><span class="p">:</span>
+                            <span class="n">stop</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">trip_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="n">stop</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">final_trips</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">trip_set</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">final_trips</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">final_routes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">DESTINATION</span> <span class="ow">in</span> <span class="n">DESTINATION_LIST</span><span class="p">:</span>
+            <span class="n">rounds_inwhich_desti_reached</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pi_label</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">DESTINATION</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">rounds_inwhich_desti_reached</span> <span class="o">==</span> <span class="p">[]:</span>
+                <span class="k">if</span> <span class="n">PRINT_ITINERARY</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DESTINATION cannot be reached with given MAX_TRANSFERS&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rounds_inwhich_desti_reached</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+                <span class="n">pareto_set</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">trip_set</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># rap_out = [label[k][DESTINATION] for k in rounds_inwhich_desti_reached]</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rounds_inwhich_desti_reached</span><span class="p">:</span>
+                    <span class="n">transfer_needed</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">journey</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">stop</span> <span class="o">=</span> <span class="n">DESTINATION</span>
+                    <span class="k">while</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">journey</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">])</span>
+                        <span class="n">mode</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;walking&#39;</span><span class="p">:</span>
+                            <span class="n">stop</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">trip_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="n">stop</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">journey</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+                    <span class="n">pareto_set</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">transfer_needed</span><span class="p">,</span> <span class="n">journey</span><span class="p">))</span>
+                    <span class="k">for</span> <span class="n">trip</span> <span class="ow">in</span> <span class="n">trip_set</span><span class="p">:</span>
+                        <span class="n">final_routes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">trip</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="k">if</span> <span class="n">PRINT_ITINERARY</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">_print_Journey_legs</span><span class="p">(</span><span class="n">pareto_set</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">final_routes</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="post_processing_rraptor"><a class="viewcode-back" href="../../../Algorithms/RAPTOR/raptor_functions.html#Algorithms.RAPTOR.raptor_functions.post_processing_rraptor">[docs]</a><span class="k">def</span> <span class="nf">post_processing_rraptor</span><span class="p">(</span><span class="n">DESTINATION</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pi_label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">PRINT_ITINERARY</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">OPTIMIZED</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Full post processing for rRAPTOR. Currently supported functionality:</span>
+<span class="sd">        1. Print the output</span>
+<span class="sd">        2. Routes required for covering pareto-optimal journeys.</span>
+<span class="sd">        3. Trips required for covering pareto-optimal journeys.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        DESTINATION (int): stop id of destination stop.</span>
+<span class="sd">        pi_label (dict): Nested dict used for backtracking. Primary keys: Round, Secondary keys: stop id. Format- {round : {stop_id: pointer_label}}</span>
+<span class="sd">        PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.</span>
+<span class="sd">        label (dict): nested dict to maintain label. Format {round : {stop_id: pandas.datetime}}.</span>
+<span class="sd">        OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        if OPTIMIZED==1:</span>
+<span class="sd">            final_trips (list): List of trips required to cover all pareto-optimal journeys. Format - [trip_id]</span>
+<span class="sd">        elif OPTIMIZED==0:</span>
+<span class="sd">            final_routes (list): List of routes required to cover all pareto-optimal journeys. Format - [route_id]</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; output = post_processing_onetomany_rraptor([1482], pi_label, 1, label, 0)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">rounds_inwhich_desti_reached</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pi_label</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">DESTINATION</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">OPTIMIZED</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">final_trip</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">rounds_inwhich_desti_reached</span><span class="p">:</span>
+            <span class="n">rounds_inwhich_desti_reached</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rounds_inwhich_desti_reached</span><span class="p">:</span>
+                <span class="n">stop</span> <span class="o">=</span> <span class="n">DESTINATION</span>
+                <span class="k">while</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">mode</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;walking&#39;</span><span class="p">:</span>
+                        <span class="n">stop</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">final_trip</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">stop</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">final_trip</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">final_routes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">rounds_inwhich_desti_reached</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="k">if</span> <span class="n">PRINT_ITINERARY</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DESTINATION cannot be reached with given MAX_TRANSFERS&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">final_routes</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rounds_inwhich_desti_reached</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+            <span class="n">pareto_set</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">trip_set</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># rap_out = [label[k][DESTINATION] for k in rounds_inwhich_desti_reached]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">rounds_inwhich_desti_reached</span><span class="p">:</span>
+                <span class="n">transfer_needed</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">journey</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">stop</span> <span class="o">=</span> <span class="n">DESTINATION</span>
+                <span class="k">while</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">journey</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">])</span>
+                    <span class="n">mode</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;walking&#39;</span><span class="p">:</span>
+                        <span class="n">stop</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">trip_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">stop</span> <span class="o">=</span> <span class="n">pi_label</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">stop</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">journey</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+                <span class="n">pareto_set</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">transfer_needed</span><span class="p">,</span> <span class="n">journey</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">trip</span> <span class="ow">in</span> <span class="n">trip_set</span><span class="p">:</span>
+                    <span class="n">final_routes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">trip</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="n">PRINT_ITINERARY</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">_print_Journey_legs</span><span class="p">(</span><span class="n">pareto_set</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">final_routes</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Algorithms.RAPTOR.raptor_functions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

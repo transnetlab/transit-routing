@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Functions realted to GTFS Wrapper &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Functions realted to building transfers file." href="builders/build_transfer_file.html" />
+    <link rel="prev" title="GTFS preprocessing" href="GTFS_preprocessing.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="builders/build_transfer_file.html" title="Functions realted to building transfers file."
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="GTFS_preprocessing.html" title="GTFS preprocessing"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="GTFS_preprocessing.html" accesskey="U">GTFS preprocessing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Functions realted to GTFS Wrapper</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="functions-realted-to-gtfs-wrapper">
+<h1>Functions realted to GTFS Wrapper<a class="headerlink" href="#functions-realted-to-gtfs-wrapper" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Due to the irregularities in the GTFS set, several preprocessing filters were applied. E.g.</dt><dd><ul>
+<li><p>Route Ids are integer and start from 1000.</p></li>
+<li><p>Trip Ids string of format a_b, where a is route Id and b is the sequence number of the trip when arranged in ascending order (according to departure time from the first stop).</p></li>
+<li><p>Stop Ids are integer and start from 1.</p></li>
+<li><p>Stop sequence in stoptimes.txt file is made continuous.</p></li>
+<li><p>Overlapping trips along a route are removed</p></li>
+<li><p>Disjoint routes (i.e., routes which cannot be reached from any other route in the network) are removed. These generally include waterways, airways.</p></li>
+<li><p>The timetable provided is for a day. All the timestamps are converted into pandas.datetime format.</p></li>
+<li><p>calendar_dates can be used in two sense. In the first case, it acts as a supplement to calendar.txt by defining listing the service id removed or added on a particular day (recommended usage).In the second case, it acts independently by listing all the service active on the particular day. See  GTFS reference for more details. Currently only first type of functionality is supported.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>For implementation details, see <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/GTFS_wrapper.py">GTFS_wrapper.py</a>.</p>
+<div class="section" id="module-GTFS_wrapper">
+<span id="description"></span><h2>Description<a class="headerlink" href="#module-GTFS_wrapper" title="Permalink to this headline">¶</a></h2>
+<p>Apply necessary filters to GTFS set.
+Note that this file is GTFS-specific.</p>
+<dl class="py function">
+<dt id="GTFS_wrapper.check_trip_len">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">check_trip_len</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/GTFS_wrapper.html#check_trip_len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.check_trip_len" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensures that number of stops in all trips should be &gt;2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stop_times</strong> – GTFS stoptimes.txt file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.filter_stopsfile">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">filter_stopsfile</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stops_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GTFS_wrapper.html#filter_stopsfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.filter_stopsfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply filter to stops file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stops_map</strong> – stop id mapping</p></li>
+<li><p><strong>stops</strong> – GTFS stops.txt file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filtered stops file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.filter_stoptimes">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">filter_stoptimes</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_trips</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trips</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DATE_TOFILTER_ON</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_times</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="_modules/GTFS_wrapper.html#filter_stoptimes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.filter_stoptimes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter stoptimes file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>valid_trips</strong> (<em>set</em>) – GTFS set containing trips</p></li>
+<li><p><strong>trips</strong> – GTFS trips.txt file</p></li>
+<li><p><strong>DATE_TOFILTER_ON</strong> (<em>int</em>) – date on which GTFS set is filtered</p></li>
+<li><p><strong>stop_times</strong> – GTFS stoptimes.txt file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filtered stops mapping and stoptimes file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.filter_trips">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">filter_trips</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trips</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GTFS_wrapper.html#filter_trips"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.filter_trips" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter trips file. Trip Id are renamed as a_b where a is the route id and b is the sequence of
+trip (arranged according to departure time)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trips</strong> – GTFS trips.txt file</p></li>
+<li><p><strong>stop_times</strong> – GTFS stoptimes.txt file</p></li>
+<li><p><strong>stops</strong> – GTFS stops.txt file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filtered trips, stoptimes and stops file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.filter_trips_routes_ondates">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">filter_trips_routes_ondates</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_routes_set</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calendar_dates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calendar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trips</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DATE_TOFILTER_ON</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="_modules/GTFS_wrapper.html#filter_trips_routes_ondates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.filter_trips_routes_ondates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the trips file based on calendar. Only One-days data is assumed here.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>valid_routes_set</strong> (<em>set</em>) – set containing valid route ids</p></li>
+<li><p><strong>calendar_dates</strong> – GTFS Calendar_dates.txt file</p></li>
+<li><p><strong>calendar</strong> – GTFS calendar.txt file</p></li>
+<li><p><strong>trips</strong> – GTFS trips.txt file</p></li>
+<li><p><strong>DATE_TOFILTER_ON</strong> (<em>int</em>) – date on which GTFS set is filtered</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filtered trips file and a set of valid trips and routes.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>calendar_dates can be used in two sense. In the first case, it acts as a supplement to calendar.txt by defining listing the service id
+removed or added on a particular day (recommended usage).In the second case, it acts independently by listing all the service active
+on the particular day. See  GTFS reference for more details.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.main">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">main</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/GTFS_wrapper.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p>#TODO: Call build_transfer_file if the parameter is 1</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.read_gtfs">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">read_gtfs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">READ_PATH</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GTFS_wrapper.html#read_gtfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.read_gtfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the GTFS set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>READ_PATH</strong> (<em>str</em>) – Path to read GTFS</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – Network name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>GTFS files</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">calendar_dates</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">trips</span><span class="p">,</span> <span class="n">stop_times</span><span class="p">,</span> <span class="n">stops</span><span class="p">,</span> <span class="n">calendar</span><span class="p">,</span> <span class="n">transfer</span> <span class="o">=</span> <span class="n">read_gtfs</span><span class="p">(</span><span class="n">READ_PATH</span><span class="p">,</span> <span class="s1">&#39;anaheim&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.remove_overlapping_trips">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">remove_overlapping_trips</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trips</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GTFS_wrapper.html#remove_overlapping_trips"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.remove_overlapping_trips" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove overlapping trips, i.e., all trips should follow first-in-first-out (FIFO) property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stop_times</strong> – GTFS stoptimes.txt file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filtered stoptimes file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.remove_unwanted_route">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">remove_unwanted_route</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">VALID_ROUTE_TYPES</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">route</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="_modules/GTFS_wrapper.html#remove_unwanted_route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.remove_unwanted_route" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove unwanted routes like sea ferries, Metro</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>VALID_ROUTE_TYPES</strong> (<em>list</em>) – </p></li>
+<li><p><strong>route</strong> – GTFS routes.txt file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filters route file and a set containing all routes ids.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">valid_routes_set</span><span class="p">,</span> <span class="n">route</span> <span class="o">=</span> <span class="n">remove_unwanted_route</span><span class="p">([</span><span class="mi">3</span><span class="p">],</span> <span class="n">route</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.rename_route">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">rename_route</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trips</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="_modules/GTFS_wrapper.html#rename_route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.rename_route" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rename the route Id to integer. Route Id are assumed to start from 1000.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop_times</strong> – GTFS stoptimes.txt file</p></li>
+<li><p><strong>trips</strong> – GTFS trips.txt file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Route Id mapping, filtered stoptimes and trip file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.rename_trips">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">rename_trips</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trips</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GTFS_wrapper.html#rename_trips"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.rename_trips" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rename trips</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stop_times</strong> – GTFS stoptimes.txt file</p></li>
+<li><p><strong>trips</strong> – GTFS trips.txt file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filtered stoptimes.txt and trips.txt file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.save_final">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">save_final</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SAVE_PATH</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trips</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stops</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/GTFS_wrapper.html#save_final"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.save_final" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the final GTFS set and print statistics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SAVE_PATH</strong> (<em>str</em>) – Path to save GTFS</p></li>
+<li><p><strong>trips</strong> – GTFS trips.txt file</p></li>
+<li><p><strong>stop_times</strong> – GTFS stop_times.txt file</p></li>
+<li><p><strong>stops</strong> – GTFS stops.txt file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.stoptimes_filter">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">stoptimes_filter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GTFS_wrapper.html#stoptimes_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.stoptimes_filter" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Apply filters to stoptimes file. Following filters are applied:</dt><dd><ol class="arabic simple">
+<li><p>Remove singleton routes, i.e., route of length 1. These can come due to various filters applied before.</p></li>
+<li><p>Drop routes circling back to same stop</p></li>
+<li><p>Rename stop_sequence for every trip starting from 0</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stop_times</strong> – GTFS stoptimes.txt file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filtered stoptimes.txt GTFS file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GTFS_wrapper.take_inputs">
+<code class="sig-prename descclassname"><span class="pre">GTFS_wrapper.</span></code><code class="sig-name descname"><span class="pre">take_inputs</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="_modules/GTFS_wrapper.html#take_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#GTFS_wrapper.take_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the required inputs for building GTFS wrapper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>NETWORK_NAME, DATE_TOFILTER_ON, VALID_ROUTE_TYPES, BUILD_TRANSFER, breaker, READ_PATH, SAVE_PATH</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">DATE_TOFILTER_ON</span><span class="p">,</span> <span class="n">VALID_ROUTE_TYPES</span><span class="p">,</span> <span class="n">BUILD_TRANSFER</span><span class="p">,</span> <span class="n">breaker</span><span class="p">,</span> <span class="n">READ_PATH</span><span class="p">,</span> <span class="n">SAVE_PATH</span> <span class="o">=</span> <span class="n">take_inputs</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Functions realted to GTFS Wrapper</a><ul>
+<li><a class="reference internal" href="#module-GTFS_wrapper">Description</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="GTFS_preprocessing.html"
+                        title="previous chapter">GTFS preprocessing</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="builders/build_transfer_file.html"
+                        title="next chapter">Functions realted to building transfers file.</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/GTFS_wrapper.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="builders/build_transfer_file.html" title="Functions realted to building transfers file."
+             >next</a> |</li>
+        <li class="right" >
+          <a href="GTFS_preprocessing.html" title="GTFS preprocessing"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="GTFS_preprocessing.html" >GTFS preprocessing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Functions realted to GTFS Wrapper</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

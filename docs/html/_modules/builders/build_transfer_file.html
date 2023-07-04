@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>builders.build_transfer_file &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">builders.build_transfer_file</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for builders.build_transfer_file</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Builds the transfer.txt file.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">haversine</span> <span class="kn">import</span> <span class="n">haversine_vector</span><span class="p">,</span> <span class="n">Unit</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+
+
+<div class="viewcode-block" id="extract_graph"><a class="viewcode-back" href="../../builders/build_transfer_file.html#builders.build_transfer_file.extract_graph">[docs]</a><span class="k">def</span> <span class="nf">extract_graph</span><span class="p">(</span><span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">breaker</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts the required OSM.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        NETWORK_NAME (str): name of the network</span>
+<span class="sd">        stops_list (list):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        networkx graph, list of tuple [(stop id, nearest OSM node)]</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; G, stops_list = extract_graph(&quot;anaheim&quot;, breaker)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./Data/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">/gtfs_o/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">_G.pickle&quot;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+        <span class="c1"># G = nx.read_gpickle(f&quot;./GTFS/{NETWORK_NAME}/gtfs_o/{NETWORK_NAME}_G.pickle&quot;)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Graph imported from disk&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Graph import failed </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">. Extracting OSM graph for </span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s1">&#39;drive&#39;</span><span class="p">)</span>
+        <span class="c1"># TODO: Change this to bound box + 1 km</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of Edges: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of Nodes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving </span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./Data/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">/gtfs_o/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">_G.pickle&quot;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">))</span>
+        <span class="c1"># nx.write_gpickle(G, f&quot;./GTFS/{NETWORK_NAME}/gtfs_o/{NETWORK_NAME}_G.pickle&quot;)</span>
+    <span class="n">stops_db</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./Data/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/stops.txt&#39;</span><span class="p">)</span>
+    <span class="n">stops_db</span> <span class="o">=</span> <span class="n">stops_db</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;stop_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">stops_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stops_db</span><span class="o">.</span><span class="n">stop_id</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">osm_nodes</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">nearest_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">stops_db</span><span class="o">.</span><span class="n">stop_lon</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">stops_db</span><span class="o">.</span><span class="n">stop_lat</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: OSMnx.nearest_nodes failed. Switching to Brute force for finding nearest OSM node...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fix the above import for faster results&quot;</span><span class="p">)</span>
+        <span class="n">node_names</span><span class="p">,</span> <span class="n">node_coordinates</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">node_coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">node</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">]))</span>
+            <span class="n">node_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">dist_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">stop</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">stops_db</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+            <span class="n">dist_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">haversine_vector</span><span class="p">(</span><span class="n">node_coordinates</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_coordinates</span><span class="p">)</span> <span class="o">*</span> <span class="p">[(</span><span class="n">stop</span><span class="o">.</span><span class="n">stop_lat</span><span class="p">,</span> <span class="n">stop</span><span class="o">.</span><span class="n">stop_lon</span><span class="p">)],</span> <span class="n">unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">METERS</span><span class="p">))</span>
+        <span class="n">osm_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">node_names</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dist_list</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unique STOPS: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">stops_db</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unique OSM nodes identified: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">osm_nodes</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">stops_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">stops_list</span><span class="p">,</span> <span class="n">osm_nodes</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">G</span><span class="p">,</span> <span class="n">stops_list</span></div>
+
+
+<div class="viewcode-block" id="find_transfer_len"><a class="viewcode-back" href="../../builders/build_transfer_file.html#builders.build_transfer_file.find_transfer_len">[docs]</a><span class="k">def</span> <span class="nf">find_transfer_len</span><span class="p">(</span><span class="n">source_info</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs shortest path algorithm from source stop with cutoff limit of WALKING_LIMIT * 2</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source_info (tuple): Format (stop id, nearest OSM node)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        temp_list (list): list of format: [(bus stop id, osm node id, distance between the two nodes)]</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; temp_list = find_transfer_len(source_info)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># print(source_info[0])</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">single_source_dijkstra_path_length</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">source_info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">WALKING_LIMIT</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+    <span class="n">reachable_osmnodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">temp_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">source_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stopid</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="n">osm_nodet</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">stopid</span><span class="p">,</span> <span class="n">osm_nodet</span><span class="p">)</span> <span class="ow">in</span> <span class="n">stops_list</span> <span class="k">if</span> <span class="n">osm_nodet</span> <span class="ow">in</span> <span class="n">reachable_osmnodes</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">temp_list</span></div>
+
+
+<div class="viewcode-block" id="transitive_closure"><a class="viewcode-back" href="../../builders/build_transfer_file.html#builders.build_transfer_file.transitive_closure">[docs]</a><span class="k">def</span> <span class="nf">transitive_closure</span><span class="p">(</span><span class="n">input_list</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensures transitive closure of footpath graph</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_list (tuple): list of format [(network graph object)]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        new_edges (list):</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">graph_object</span><span class="p">,</span> <span class="n">connected_component</span> <span class="o">=</span> <span class="n">input_list</span>
+    <span class="n">new_edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">connected_component</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">desti</span> <span class="ow">in</span> <span class="n">connected_component</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">source</span> <span class="o">!=</span> <span class="n">desti</span> <span class="ow">and</span> <span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">desti</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">G_new</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
+                <span class="n">new_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">source</span><span class="p">,</span> <span class="n">desti</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">dijkstra_path_length</span><span class="p">(</span><span class="n">G_new</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">desti</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;length&quot;</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">new_edges</span></div>
+
+
+<div class="viewcode-block" id="post_process"><a class="viewcode-back" href="../../builders/build_transfer_file.html#builders.build_transfer_file.post_process">[docs]</a><span class="k">def</span> <span class="nf">post_process</span><span class="p">(</span><span class="n">G_new</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ini_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Post process the transfer file. Following functionality are included:</span>
+<span class="sd">        1. Checks if the transfers graph is transitively closed.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        transfer_file: GTFS transfers.txt file</span>
+<span class="sd">        WALKING_LIMIT (int): Maximum walking limit</span>
+<span class="sd">        NETWORK_NAME (str): Network name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">footpath</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G_new</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">reve_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">G_new</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+    <span class="n">footpath</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">reve_edges</span><span class="p">)</span>
+    <span class="n">transfer_file</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">footpath</span><span class="p">)</span>
+    <span class="n">transfer_file</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">transfer_file</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">transfer_file</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;from_stop_id&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;to_stop_id&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;min_transfer_time&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">transfer_file</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;min_transfer_time&#39;</span><span class="p">,</span> <span class="s1">&#39;from_stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;to_stop_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">transfer_file</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./DATA/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">/transfers.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">transfer_file</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./DATA/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s2">/transfers.txt&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Before Transitive closure: </span><span class="si">{</span><span class="n">ini_len</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After  Transitive closure (final file): </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">transfer_file</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total transfers: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">transfer_file</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Longest transfer: </span><span class="si">{</span><span class="n">transfer_file</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">min_transfer_time</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time required: </span><span class="si">{</span><span class="nb">round</span><span class="p">((</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="initialize"><a class="viewcode-back" href="../../builders/build_transfer_file.html#builders.build_transfer_file.initialize">[docs]</a><span class="k">def</span> <span class="nf">initialize</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize variables for building transfers file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        breaker (str): print line breaker</span>
+<span class="sd">        G: Network graph of NETWORK NAME</span>
+<span class="sd">        stops_list (list):</span>
+<span class="sd">        CORES (int): Number of codes to be used</span>
+<span class="sd">        WALKING_LIMIT (int): Maximum allowed walking time</span>
+<span class="sd">        start_time: timestamp object</span>
+<span class="sd">        USE_PARALlEL (int): 1 for parallel and 0 for serial</span>
+<span class="sd">        GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0</span>
+
+<span class="sd">    Warnings:</span>
+<span class="sd">        Building Transfers file requires OSMnX module.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    &gt;&gt;&gt; breaker, G, stops_list, CORES, WALKING_LIMIT, start_time, USE_PARALlEL, GENERATE_LOGFILE = initialize()</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">breaker</span> <span class="o">=</span> <span class="s2">&quot;________________________________________________________________&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Building transfers file. Enter following parameters.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">WALKING_LIMIT</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter maximum allowed walking limit in seconds. Format: YYYYMMDD. Example: 180</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="n">USE_PARALlEL</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+        <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Transfer.txt can be built in parallel. Enter 1 to use multiprocessing in shortest path computation. Else press 0. Example: 0</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="n">CORES</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">USE_PARALlEL</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">CORES</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Enter number of CORES (&gt;=1). </span><span class="se">\n</span><span class="s2">Available cores (logical and physical):  </span><span class="si">{</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RAM </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">total</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1024.0</span> <span class="o">**</span> <span class="mi">3</span><span class="p">))</span><span class="si">}</span><span class="s1"> GB (% used:</span><span class="si">{</span><span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    <span class="n">GENERATE_LOGFILE</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Press 1 to redirect output to a log file in logs folder. Else press 0. Example: 0</span><span class="se">\n</span><span class="s2">: &quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./logs/.&#39;</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./logs/.&#39;</span><span class="p">)</span>
+
+    <span class="n">G</span><span class="p">,</span> <span class="n">stops_list</span> <span class="o">=</span> <span class="n">extract_graph</span><span class="p">(</span><span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">breaker</span><span class="p">)</span>
+    <span class="c1"># stops_db = stops_db.sort_values(by=&#39;stop_id&#39;).reset_index(drop=True).reset_index().rename(columns={&quot;index&quot;: &#39;new_stop_id&#39;})</span>
+    <span class="k">return</span> <span class="n">breaker</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">stops_list</span><span class="p">,</span> <span class="n">CORES</span><span class="p">,</span> <span class="n">WALKING_LIMIT</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">USE_PARALlEL</span><span class="p">,</span> <span class="n">GENERATE_LOGFILE</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./parameters_entered.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">parameter_files</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">BUILD_TRANSFER</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">BUILD_TBTR_FILES</span><span class="p">,</span> <span class="n">BUILD_TRANSFER_PATTERNS_FILES</span><span class="p">,</span> <span class="n">BUILD_CSA</span> <span class="o">=</span> <span class="n">parameter_files</span>
+    <span class="c1"># BUILD_TRANSFER, NETWORK_NAME, BUILD_TBTR_FILES = 1, &quot;Atlanta&quot;, 1</span>
+    <span class="k">if</span> <span class="n">BUILD_TRANSFER</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Import at top create Sphinx error</span>
+        <span class="kn">import</span> <span class="nn">osmnx</span> <span class="k">as</span> <span class="nn">ox</span>
+        <span class="kn">import</span> <span class="nn">psutil</span>
+        <span class="n">ox</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">use_cache</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">ox</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">log_console</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">breaker</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">stops_list</span><span class="p">,</span> <span class="n">CORES</span><span class="p">,</span> <span class="n">WALKING_LIMIT</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">USE_PARALlEL</span><span class="p">,</span> <span class="n">GENERATE_LOGFILE</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">GENERATE_LOGFILE</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./logs/Transfer_builder</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">USE_PARALlEL</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">CORES</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">find_transfer_len</span><span class="p">,</span> <span class="n">stops_list</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">find_transfer_len</span><span class="p">(</span><span class="n">source_info</span><span class="p">)</span> <span class="k">for</span> <span class="n">source_info</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">stops_list</span><span class="p">)]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">breaker</span><span class="p">)</span>
+        <span class="n">stops_db</span><span class="p">,</span> <span class="n">osm_nodes</span><span class="p">,</span> <span class="n">G</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">item2</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">for</span> <span class="n">item2</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+        <span class="n">transfer_file</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;from_stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;to_stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;min_transfer_time&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Post-processing section</span>
+        <span class="n">transfer_file</span> <span class="o">=</span> <span class="n">transfer_file</span><span class="p">[</span><span class="n">transfer_file</span><span class="o">.</span><span class="n">from_stop_id</span> <span class="o">!=</span> <span class="n">transfer_file</span><span class="o">.</span><span class="n">to_stop_id</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;from_stop_id&#39;</span><span class="p">,</span> <span class="s1">&#39;to_stop_id&#39;</span><span class="p">])</span>
+        <span class="n">transfer_file</span> <span class="o">=</span> <span class="n">transfer_file</span><span class="p">[(</span><span class="n">transfer_file</span><span class="o">.</span><span class="n">min_transfer_time</span> <span class="o">&lt;</span> <span class="n">WALKING_LIMIT</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">transfer_file</span><span class="o">.</span><span class="n">min_transfer_time</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">transfer_file</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./DATA/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/gtfs_o/transfers.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">transfer_file</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./DATA/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/gtfs_o/transfers.txt&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">ini_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">transfer_file</span><span class="p">)</span>
+        <span class="n">G_new</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>  <span class="c1"># Ensure transitive closure of footpath graph</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">transfer_file</span><span class="o">.</span><span class="n">from_stop_id</span><span class="p">,</span> <span class="n">transfer_file</span><span class="o">.</span><span class="n">to_stop_id</span><span class="p">,</span> <span class="n">transfer_file</span><span class="o">.</span><span class="n">min_transfer_time</span><span class="p">))</span>
+        <span class="n">G_new</span><span class="o">.</span><span class="n">add_weighted_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+        <span class="n">connected_compnent_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">G_new</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span><span class="n">G_new</span><span class="p">)]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total connected components identified: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">connected_compnent_list</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">USE_PARALlEL</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ensuring Transitive closure in parallel...&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">CORES</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+                <span class="n">new_edge_list</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">transitive_closure</span><span class="p">,</span> <span class="n">connected_compnent_list</span><span class="p">)</span>
+            <span class="n">new_edge_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">new_edge_list</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ensuring Transitive closure in serial...&quot;</span><span class="p">)</span>
+            <span class="n">new_edge_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">transitive_closure</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span> <span class="k">for</span> <span class="n">input_list</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">connected_compnent_list</span><span class="p">)]</span>
+            <span class="n">new_edge_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">new_edge_list</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+        <span class="n">G_new</span><span class="o">.</span><span class="n">add_weighted_edges_from</span><span class="p">(</span><span class="n">new_edge_list</span><span class="p">)</span>
+        <span class="n">post_process</span><span class="p">(</span><span class="n">G_new</span><span class="p">,</span> <span class="n">NETWORK_NAME</span><span class="p">,</span> <span class="n">ini_len</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">GENERATE_LOGFILE</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">transfer_file</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./Data/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/gtfs_o/transfers.txt&#39;</span><span class="p">)</span>
+            <span class="n">transfer_file</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./Data/GTFS/</span><span class="si">{</span><span class="n">NETWORK_NAME</span><span class="si">}</span><span class="s1">/transfers.txt&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using  Transfers.txt found in GTFS set. Warning: Ensure that transfers are transitively closed.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transfers file missing. Either build the file by setting BUILD_TRANSFER to 1 or place transfers.txt in zip file.&quot;</span><span class="p">)</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">builders.build_transfer_file</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

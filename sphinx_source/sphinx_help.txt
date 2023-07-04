@@ -1,0 +1,13 @@
+1. Directries for source and build folders are  sphinx_source and docs. These were changed in makefile and make.
+2. Do not run make clean command as that will delete all files under the docs folder. Github requires html file to be present just inside the docs folder. If you run make clean by mistake, create a following html file
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta http-equiv="refresh" content="0; url=./html/index.html" />
+  </head>
+
+</html>
+3. Additionally a .nojekyll is also required by github. Just create a new file and rename it as such. 
+4. Run make html command

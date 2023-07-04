@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Functions realted to building transfers file. &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dictionaries for faster lookup." href="../dict_builder/dict_builder_functions.html" />
+    <link rel="prev" title="Functions realted to GTFS Wrapper" href="../GTFS_wrapper.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../dict_builder/dict_builder_functions.html" title="Dictionaries for faster lookup."
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../GTFS_wrapper.html" title="Functions realted to GTFS Wrapper"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../GTFS_preprocessing.html" accesskey="U">GTFS preprocessing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Functions realted to building transfers file.</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="functions-realted-to-building-transfers-file">
+<h1>Functions realted to building transfers file.<a class="headerlink" href="#functions-realted-to-building-transfers-file" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/build_transfer_file.py">build_transfer_file.py</a>. has been provided to transfers_file.txt. This module requires OSMNX package. Following inputs are required:</dt><dd><ul>
+<li><p>The graph (if not found on disk) is extracted using <a class="reference external" href="https://www.openstreetmap.org/#map=4/21.84/82.79">OpenStreetMaps</a></p></li>
+<li><p>For every stop, shortest path comutation is performaed within a radius maximum walking limit.</p></li>
+<li><p>Ensures the transitive closure of footpaths.</p></li>
+</ul>
+</dd>
+<dt>Following additional inputs are required.</dt><dd><ul>
+<li><p>WALKING_LIMIT (int)- Maximum allowed walking time. Note that the final transfers file can have longer transfers due to transitive closure.</p></li>
+<li><p>CORES (int): Number of codes to be used. Shortest path computation can be done in parallel.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="section" id="module-builders.build_transfer_file">
+<span id="description"></span><h2>Description<a class="headerlink" href="#module-builders.build_transfer_file" title="Permalink to this headline">¶</a></h2>
+<p>Builds the transfer.txt file.</p>
+<dl class="py function">
+<dt id="builders.build_transfer_file.extract_graph">
+<code class="sig-prename descclassname"><span class="pre">builders.build_transfer_file.</span></code><code class="sig-name descname"><span class="pre">extract_graph</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">breaker</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../_modules/builders/build_transfer_file.html#extract_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_file.extract_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the required OSM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – name of the network</p></li>
+<li><p><strong>stops_list</strong> (<em>list</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>networkx graph, list of tuple [(stop id, nearest OSM node)]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">G</span><span class="p">,</span> <span class="n">stops_list</span> <span class="o">=</span> <span class="n">extract_graph</span><span class="p">(</span><span class="s2">&quot;anaheim&quot;</span><span class="p">,</span> <span class="n">breaker</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_transfer_file.find_transfer_len">
+<code class="sig-prename descclassname"><span class="pre">builders.build_transfer_file.</span></code><code class="sig-name descname"><span class="pre">find_transfer_len</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/builders/build_transfer_file.html#find_transfer_len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_file.find_transfer_len" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs shortest path algorithm from source stop with cutoff limit of WALKING_LIMIT * 2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>source_info</strong> (<em>tuple</em>) – Format (stop id, nearest OSM node)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of format: [(bus stop id, osm node id, distance between the two nodes)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>temp_list (list)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">temp_list</span> <span class="o">=</span> <span class="n">find_transfer_len</span><span class="p">(</span><span class="n">source_info</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_transfer_file.initialize">
+<code class="sig-prename descclassname"><span class="pre">builders.build_transfer_file.</span></code><code class="sig-name descname"><span class="pre">initialize</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../_modules/builders/build_transfer_file.html#initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_file.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize variables for building transfers file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>print line breaker
+G: Network graph of NETWORK NAME
+stops_list (list):
+CORES (int): Number of codes to be used
+WALKING_LIMIT (int): Maximum allowed walking time
+start_time: timestamp object
+USE_PARALlEL (int): 1 for parallel and 0 for serial
+GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>breaker (str)</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Building Transfers file requires OSMnX module.</p>
+</div>
+<p>Examples:
+&gt;&gt;&gt; breaker, G, stops_list, CORES, WALKING_LIMIT, start_time, USE_PARALlEL, GENERATE_LOGFILE = initialize()</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_transfer_file.post_process">
+<code class="sig-prename descclassname"><span class="pre">builders.build_transfer_file.</span></code><code class="sig-name descname"><span class="pre">post_process</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ini_len</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/builders/build_transfer_file.html#post_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_file.post_process" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Post process the transfer file. Following functionality are included:</dt><dd><ol class="arabic simple">
+<li><p>Checks if the transfers graph is transitively closed.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transfer_file</strong> – GTFS transfers.txt file</p></li>
+<li><p><strong>WALKING_LIMIT</strong> (<em>int</em>) – Maximum walking limit</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – Network name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_transfer_file.transitive_closure">
+<code class="sig-prename descclassname"><span class="pre">builders.build_transfer_file.</span></code><code class="sig-name descname"><span class="pre">transitive_closure</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/builders/build_transfer_file.html#transitive_closure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_file.transitive_closure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensures transitive closure of footpath graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_list</strong> (<em>tuple</em>) – list of format [(network graph object)]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>new_edges (list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Functions realted to building transfers file.</a><ul>
+<li><a class="reference internal" href="#module-builders.build_transfer_file">Description</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../GTFS_wrapper.html"
+                        title="previous chapter">Functions realted to GTFS Wrapper</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../dict_builder/dict_builder_functions.html"
+                        title="next chapter">Dictionaries for faster lookup.</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/builders/build_transfer_file.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../dict_builder/dict_builder_functions.html" title="Dictionaries for faster lookup."
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../GTFS_wrapper.html" title="Functions realted to GTFS Wrapper"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../GTFS_preprocessing.html" >GTFS preprocessing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Functions realted to building transfers file.</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>

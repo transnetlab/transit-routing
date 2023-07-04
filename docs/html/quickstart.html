@@ -73,7 +73,10 @@ python main.py
 <span class="n">Date</span><span class="p">:</span> <span class="mi">20220630</span>
 <span class="n">Bus</span> <span class="n">routes</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
 <span class="n">build</span> <span class="n">transfers</span> <span class="n">file</span><span class="p">:</span> <span class="mi">0</span>
-<span class="n">build</span> <span class="n">TBTR</span> <span class="n">files</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">build</span> <span class="n">TBTR</span> <span class="n">files</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">build</span> <span class="n">CSA</span> <span class="n">files</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">build</span> <span class="n">Transfer</span> <span class="n">Pattern</span> <span class="n">files</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">build</span> <span class="n">Time</span> <span class="n">Expanded</span> <span class="n">files</span><span class="p">:</span> <span class="mi">0</span>
 <span class="n">use</span> <span class="n">test</span> <span class="n">case</span><span class="p">:</span> <span class="mi">1</span>
 <span class="n">RAPTOR</span> <span class="n">environment</span><span class="p">:</span> <span class="mi">0</span>
 <span class="n">Standard</span> <span class="n">RAPTOR</span><span class="p">:</span> <span class="mi">0</span>
@@ -113,12 +116,11 @@ Optimal arrival time are: [[Timestamp(&#39;2022-06-30 15:12:00&#39;), Timestamp(
 <div class="section" id="running-your-instance">
 <h2>Running your instance<a class="headerlink" href="#running-your-instance" title="Permalink to this headline">¶</a></h2>
 <p>Due to inconsistencies in the GTFS sets available online, they cannot be used directly.
-Moreover, a significant amount of preprocessing (e.g., transitively closed footpaths,
-non-overtaking trips, continuous stop sequence) is required. The <a class="reference external" href="https://transitfeeds.com/p/chicago-transit-authority/165">Chicago</a> test network
-is generated in accordance with these. <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/GTFS_wrapper.py">GTFS_wrapper.py</a> provides the functions to convert GTFS set into required format. See GTFS preprocessing for further details.</p>
-<p>Rename your GTFS.zip to network_GTFS.zip (e.g. chicago_GTFS.zip) and place it in main directory. Run <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a> and
+A significant amount of preprocessing (e.g., transitively closed footpaths,
+non-overtaking trips, continuous stop sequence) is required. <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/GTFS_wrapper.py">GTFS_wrapper.py</a> provides the functions to convert GTFS set into required format. See GTFS preprocessing for further details.</p>
+<p>Rename your GTFS.zip to network_GTFS.zip (e.g., anaheim_GTFS.zip) and place it in main directory. Run <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/main.py">main.py</a> and
 enter the variables accordingly.</p>
-<p>Once the GTFS set is processed successfully, directly run <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/query_file.py">query_file.py</a> to find shortest paths.</p>
+<p>Once the GTFS set is processed successfully, directly run <a class="reference external" href="https://github.com/transnetlab/transit-routing/blob/main/query_file.py">query_file.py</a> to find optiaml journeys.</p>
 </div>
 <div class="section" id="additional-notes">
 <h2>Additional notes<a class="headerlink" href="#additional-notes" title="Permalink to this headline">¶</a></h2>
@@ -196,7 +198,7 @@ enter the variables accordingly.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+        &#169; Copyright 2023, Prateek Agarwal, Tarun Rambha.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
   </body>

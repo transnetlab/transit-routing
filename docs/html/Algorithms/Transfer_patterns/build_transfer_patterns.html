@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Build Transfer Patterns &#8212; Transit-routing Pending documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Transfer Patterns functions" href="transferpattern_func.html" />
+    <link rel="prev" title="Transfer Patterns" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="transferpattern_func.html" title="Transfer Patterns functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Transfer Patterns"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Transfer Patterns</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Build Transfer Patterns</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-builders.build_transfer_patterns">
+<span id="build-transfer-patterns"></span><h1>Build Transfer Patterns<a class="headerlink" href="#module-builders.build_transfer_patterns" title="Permalink to this headline">¶</a></h1>
+<p>Builds structures related to transfer patterns</p>
+<dl class="py function">
+<dt id="builders.build_transfer_patterns.initialize">
+<code class="sig-prename descclassname"><span class="pre">builders.build_transfer_patterns.</span></code><code class="sig-name descname"><span class="pre">initialize</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="reference internal" href="../../_modules/builders/build_transfer_patterns.html#initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_patterns.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize variables for building transfer patterns file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>print line breaker
+G: Network graph of NETWORK NAME
+stops_list (list):
+CORES (int): Number of codes to be used
+WALKING_LIMIT (int): Maximum allowed walking time
+start_time: timestamp object
+USE_PARALlEL (int): 1 for parallel and 0 for serial
+MAX_TRANSFER (int): maximum transfer limit for which transfer patterns will be built.
+WALKING_FROM_SOURCE (int): 1 or 0. 1 indicates walking from SOURCE is allowed.
+PRINT_ITINERARY (int): 1 or 0. 1 means print complete path.
+OPTIMIZED (int): 1 or 0. 1 means collect trips and 0 means collect routes.
+GENERATE_LOGFILE (int): 1 to redirect and save a log file. Else 0
+USE_TBTR (int): 1 to use TBTR for generating transfer patterns. 0 for RAPTOR
+CHANGE_TIME_SEC (int): change-time in seconds.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>breaker (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_transfer_patterns.post_process">
+<code class="sig-prename descclassname"><span class="pre">builders.build_transfer_patterns.</span></code><code class="sig-name descname"><span class="pre">post_process</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">runtime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CORES</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HUB_COUNT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../../_modules/builders/build_transfer_patterns.html#post_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_patterns.post_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post process and print the statistics realted to transfer patterns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>runtime</strong> (<em>float</em>) – total runtime in minutes</p></li>
+<li><p><strong>CORES</strong> (<em>int</em>) – Number of codes to be used</p></li>
+<li><p><strong>HUB_COUNT</strong> (<em>int</em>) – number of hub stops</p></li>
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – GTFS path</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_transfer_patterns.remove_older_files">
+<code class="sig-prename descclassname"><span class="pre">builders.build_transfer_patterns.</span></code><code class="sig-name descname"><span class="pre">remove_older_files</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NETWORK_NAME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HUB_COUNT</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../../_modules/builders/build_transfer_patterns.html#remove_older_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_patterns.remove_older_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new (empty) directory for saving transfer patterns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NETWORK_NAME</strong> (<em>str</em>) – GTFS path</p></li>
+<li><p><strong>HUB_COUNT</strong> (<em>int</em>) – Number of hub stops</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_transfer_patterns.run_raptor">
+<code class="sig-prename descclassname"><span class="pre">builders.build_transfer_patterns.</span></code><code class="sig-name descname"><span class="pre">run_raptor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/builders/build_transfer_patterns.html#run_raptor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_patterns.run_raptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate transfer patterns in parallel using RAPTOR. Transfer patterns are saved locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="builders.build_transfer_patterns.run_tbtr">
+<code class="sig-prename descclassname"><span class="pre">builders.build_transfer_patterns.</span></code><code class="sig-name descname"><span class="pre">run_tbtr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SOURCE</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../../_modules/builders/build_transfer_patterns.html#run_tbtr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#builders.build_transfer_patterns.run_tbtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate transfer patterns in parallel using TBTR. Transfer patterns are saved locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>SOURCE</strong> (<em>int</em>) – stop id of source stop.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Transfer Patterns</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="transferpattern_func.html"
+                        title="next chapter">Transfer Patterns functions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Algorithms/Transfer_patterns/build_transfer_patterns.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="transferpattern_func.html" title="Transfer Patterns functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Transfer Patterns"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Transit-routing Pending documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../Algorithms.html" >List of Algoirthms</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Transfer Patterns</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Build Transfer Patterns</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Prateek Agarwal, Tarun Rambha.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+    </div>
+  </body>
+</html>
