@@ -473,6 +473,7 @@ def filter_trips(trips, stop_times, stops, trip_map_db):
 
     stop_times = pd.merge(stop_times, trips, on='trip_id').drop(columns=['trip_id', 'tid', 'route_id']).rename(
         columns={'new_trip_id': 'trip_id'})
+    stop_times["departure_time"] = stop_times["arrival_time"]
     trips = trips.drop(columns=['trip_id', 'tid']).rename(columns={'new_trip_id': 'trip_id'})
     print(breaker)
     return trips, stop_times, stops, trip_map_db
