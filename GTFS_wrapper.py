@@ -247,7 +247,7 @@ def filter_stoptimes(valid_trips: set, trips, DATE_TOFILTER_ON: int, stop_times)
 
     DATE_TOFILTER_ON = f'{str(DATE_TOFILTER_ON)[:4]}-{str(DATE_TOFILTER_ON)[4:6]}-{str(DATE_TOFILTER_ON)[6:]}'
     last_stamp = stop_times.sort_values(by="arrival_time").arrival_time.iloc[-1]
-    data_list = pd.date_range(DATE_TOFILTER_ON, periods=ceil(int(last_stamp[:2]) / 24))
+    data_list = pd.date_range(DATE_TOFILTER_ON, periods=ceil(int(last_stamp[:2]) / 24)+ 1)
     date_list = [data_list[int(int(x[:2]) / 24)] + pd.to_timedelta(str(int(x[:2]) - 24 * int(int(x[:2]) / 24)) + x[2:]) for x in tqdm(stop_times.arrival_time)]
     # nex_date = DATE_TOFILTER_ON[:-2] + str(int(DATE_TOFILTER_ON[-2:]) + 1)
     # date_list = [
