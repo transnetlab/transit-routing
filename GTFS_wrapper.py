@@ -247,7 +247,7 @@ def filter_stoptimes(valid_trips: set, trips, DATE_TOFILTER_ON: int, stop_times)
 
     DATE_TOFILTER_ON = f'{str(DATE_TOFILTER_ON)[:4]}-{str(DATE_TOFILTER_ON)[4:6]}-{str(DATE_TOFILTER_ON)[6:]}'
     last_stamp = stop_times.sort_values(by="arrival_time").arrival_time.iloc[-1]
-    data_list = pd.date_range(DATE_TOFILTER_ON, periods=ceil(int(last_stamp[:2]) / 24))
+    data_list = pd.date_range(DATE_TOFILTER_ON, periods=ceil(int(last_stamp[:2]) / 24)+ 1)
     date_list = [data_list[int(int(x[:2]) / 24)] + pd.to_timedelta(str(int(x[:2]) - 24 * int(int(x[:2]) / 24)) + x[2:]) for x in tqdm(stop_times.arrival_time)]
     # nex_date = DATE_TOFILTER_ON[:-2] + str(int(DATE_TOFILTER_ON[-2:]) + 1)
     # date_list = [
@@ -308,6 +308,7 @@ def rename_route(stop_times, trips) -> tuple:
     trips = pd.merge(trips, route_map_db, on='trip_id').drop(columns=['route_id']).rename(
         columns={'new_route_id': 'route_id'})
     print(breaker)
+    route_map_db = pd.merge(route_map_db, trips[["trip_id", "route_id"]], left_on='trip_id', right_on='trip_id').drop(columns='trip_id').drop_duplicates().reset_index(drop=True)
     return route_map_db, stop_times, trips
 
 
@@ -318,6 +319,7 @@ def rename_trips(stop_times, trips):
     Args:
         stop_times: GTFS stoptimes.txt file
         trips: GTFS trips.txt file
+        trip_map_db: trip id mapping
 
     Returns:
         Filtered stoptimes.txt and trips.txt file
@@ -339,7 +341,7 @@ def rename_trips(stop_times, trips):
         columns={'new_trip_id': 'trip_id'})
     trips = pd.merge(trips, trip_map_db, on='trip_id').drop(columns=['trip_id']).rename(columns={'new_trip_id': 'trip_id'})
     print(breaker)
-    return stop_times, trips
+    return stop_times, trips, trip_map_db
 
 
 def remove_overlapping_trips(stop_times, trips):
@@ -441,7 +443,7 @@ def stoptimes_filter(stop_times):
     return stop_times
 
 
-def filter_trips(trips, stop_times, stops):
+def filter_trips(trips, stop_times, stops, trip_map_db):
     """
     Filter trips file. Trip Id are renamed as a_b where a is the route id and b is the sequence of
     trip (arranged according to departure time)
@@ -450,6 +452,7 @@ def filter_trips(trips, stop_times, stops):
         trips: GTFS trips.txt file
         stop_times: GTFS stoptimes.txt file
         stops: GTFS stops.txt file
+        trip_map_db: Trip map database
 
     Returns:
         Filtered trips, stoptimes and stops file
@@ -465,14 +468,18 @@ def filter_trips(trips, stop_times, stops):
     trips['tid'] = trips['tid'].astype(int)
     trips['tid'] = trips.groupby("route_id")['tid'].rank(method="first", ascending=True).astype(int) - 1
     trips['new_trip_id'] = trips['route_id'].astype(str) + "_" + trips['tid'].astype(str)
+
+    trip_map_db = pd.merge(trip_map_db.rename(columns={'new_trip_id': "changed", "trip_id":"GTFS_name"}), trips[["trip_id", "new_trip_id"]], left_on="changed", right_on="trip_id")[["GTFS_name", "new_trip_id"]]
+
     stop_times = pd.merge(stop_times, trips, on='trip_id').drop(columns=['trip_id', 'tid', 'route_id']).rename(
         columns={'new_trip_id': 'trip_id'})
+    stop_times["departure_time"] = stop_times["arrival_time"]
     trips = trips.drop(columns=['trip_id', 'tid']).rename(columns={'new_trip_id': 'trip_id'})
     print(breaker)
-    return trips, stop_times, stops
+    return trips, stop_times, stops, trip_map_db
 
 
-def save_final(SAVE_PATH: str, trips, stop_times, stops) -> None:
+def save_final(SAVE_PATH: str, trips, stop_times, stops, routesDB, route_map_db, trip_map_db, stops_map) -> None:
     """
     Save the final GTFS set and print statistics
 
@@ -492,11 +499,16 @@ def save_final(SAVE_PATH: str, trips, stop_times, stops) -> None:
     stops.to_csv(f'{SAVE_PATH}/stops.txt', index=False)
     stops.to_csv(f'{SAVE_PATH}/stops.csv', index=False)
     trips.to_csv(f'{SAVE_PATH}/trips.txt', index=False)
+    routesDB.to_csv(f'{SAVE_PATH}/routes.txt', index=False)
     #####################################
+    route_map_db.to_csv(f'{SAVE_PATH}/route_mappings.csv', index=False)
+    trip_map_db.to_csv(f'{SAVE_PATH}/trip_mappings.csv', index=False)
+    stops_map.to_csv(f'{SAVE_PATH}/stops_mappings.csv', index=False)
     # Print final statistics
     print(f'Final stops count    : {len(stops)}')
     print(f'Final trips count    : {len(trips)}')
-    print(f'Final routes count   : {len(set(trips.route_id))}')
+    print(f'Final routes count   : {len(routesDB)}')
+    print(f'Final stopevents count   : {len(stop_times)}')
     print(breaker)
     return None
 
@@ -516,12 +528,14 @@ def main() -> None:
     stops_map, stop_times = filter_stoptimes(valid_trips, trips, DATE_TOFILTER_ON, stop_times)
     stops = filter_stopsfile(stops_map, stops)
     route_map_db, stop_times, trips = rename_route(stop_times, trips)
-    stop_times, trips = rename_trips(stop_times, trips)
+    stop_times, trips, trip_map_db = rename_trips(stop_times, trips)
     stop_times, trips = remove_overlapping_trips(stop_times, trips)
     check_trip_len(stop_times)
     stop_times = stoptimes_filter(stop_times)
-    trips, stop_times, stops = filter_trips(trips, stop_times, stops)
-    save_final(SAVE_PATH, trips, stop_times, stops)
+    trips, stop_times, stops, trip_map_db = filter_trips(trips, stop_times, stops, trip_map_db)
+    stops["zone_id"] = stops["stop_id"] #needed for PTAP project
+    routesDB  = pd.DataFrame(trips["route_id"].drop_duplicates().reset_index(drop=True))
+    save_final(SAVE_PATH, trips, stop_times, stops, routesDB, route_map_db, trip_map_db, stops_map)
     return None
     # build_transfers_file(READ_PATH, stops, WALKING_LIMIT, transfer)
 
